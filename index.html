@@ -165,6 +165,7 @@ dialog legend{padding:0 6px;color:var(--ink2)}
 .mod[aria-current="true"] .stp{background:var(--mark);color:#14243A}
 .grp{letter-spacing:.02em;text-transform:none;font-weight:600;color:#7F93A8;padding-top:16px}
 .brand b{letter-spacing:.01em}
+.projbtn{display:block;margin-top:8px;max-width:100%;text-align:left;background:rgba(255,255,255,.08);color:#E8EEF5;border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:4px 8px;font:inherit;font-size:.85em;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .brand .ver{display:inline-block;margin-top:6px;font-size:.75em;padding:0 8px;border-radius:999px;background:rgba(242,183,5,.18);color:#F2D27A}
 .topbar{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:10px 0 10px;margin:-10px 0 12px;border-bottom:1px solid var(--line2)}
 .crumb{display:block;font-size:.55em;font-weight:500;color:var(--muted);letter-spacing:.01em;margin-bottom:2px}
@@ -187,7 +188,7 @@ dialog legend{padding:0 6px;color:var(--ink2)}
 <body>
 <div class="app">
   <nav class="rail" aria-label="เครื่องมือ">
-    <div class="brand"><b>Civil Toolkit</b><span>ชุดเครื่องมือวิศวกรโยธา</span><br><i class="ver">v2.2 · กฎกระทรวง 2566</i></div>
+    <div class="brand"><b>Civil Toolkit</b><span>ชุดเครื่องมือวิศวกรโยธา</span><br><i class="ver">v2.4 · กฎกระทรวง 2566</i><button id="projName" class="projbtn" onclick="__ctGo('home')" title="โครงการที่เปิดอยู่"></button></div>
     <button class="mod" data-module="home"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10l7-6 7 6v7h-5v-4H8v4H3z"/></svg><span>ภาพรวมโครงการ</span></button>
     <div class="grp">แบบจำลองอาคาร</div>
     <button class="mod" data-module="bim"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6l7-3 7 3v8l-7 3-7-3z"/><path d="M3 6l7 3 7-3M10 9v8"/></svg><span>แบบจำลองโครงสร้าง 3 มิติ</span></button>
@@ -211,6 +212,7 @@ dialog legend{padding:0 6px;color:var(--ink2)}
     <button class="mod" data-module="rebar"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="6" cy="10" r="2.5"/><circle cx="14" cy="10" r="2.5"/></svg><span>ตารางเหล็กเสริม</span></button>
     <div class="grp">ปริมาณงาน</div>
     <button class="mod" data-module="boq"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3h10v14H5z"/><path d="M8 7h4M8 10h4M8 13h2"/></svg><span>ถอดปริมาณและ BOQ</span></button>
+    <button class="mod" data-module="estimate"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 3h12v14H4z"/><path d="M7 7h6M7 10h2M11 10h2M7 13h2M11 13h2"/></svg><span>ประมาณราคาทั้งหลัง</span></button>
     <div class="grp">สำรวจและวางผัง</div>
     <button class="mod" data-module="trav"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15l4-9 7 2 3 7z"/></svg><span>วงรอบ</span></button>
     <button class="mod" data-module="level"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 14h14M6 14V8M14 14V6"/><circle cx="10" cy="6" r="2"/></svg><span>งานระดับ</span></button>
@@ -424,11 +426,13 @@ dialog legend{padding:0 6px;color:var(--ink2)}
       <div class="cols" data-mod="stair">
         <div class="stack">
           <div class="panel">
-            <h2>บันได (ท้องเรียบ วางพาดทางเดียว)</h2>
+            <h2>บันได ค.ส.ล.</h2>
             <div class="fields">
+              <label class="f full">รูปแบบบันได<select data-k="stype"><option value="straight">บันไดตรง (ท้องเรียบพาดทางเดียว)</option><option value="landing">บันไดมีชานพัก (กลับทาง)</option><option value="L">บันไดหักฉาก (ตัว L มีชานพัก)</option><option value="spiral">บันไดวน (ขั้นยื่นจากเสากลาง)</option></select></label>
               <label class="f">ชื่อบันได<input type="text" data-k="name" maxlength="30"></label>
               <label class="f">จำนวน (สำหรับ BOQ) <span class="unit">ชิ้น</span><input type="number" inputmode="numeric" data-k="qty" min="0" step="1"></label>
-              <label class="f">ช่วงราบ L <span class="unit">ม.</span><input type="number" inputmode="decimal" data-k="Lh" min="0.5" step="0.1"></label>
+              <label class="f"><span id="stairLhLbl">ช่วงราบช่วงขั้นบันได</span> <span class="unit">ม.</span><input type="number" inputmode="decimal" data-k="Lh" min="0.5" step="0.1"></label>
+              <label class="f" id="stairLandLbl">ความยาวชานพัก (แนวราบ) <span class="unit">ม.</span><input type="number" inputmode="decimal" data-k="Lland" min="0" step="0.1"></label>
               <label class="f">ความกว้างบันได <span class="unit">ม.</span><input type="number" inputmode="decimal" data-k="width" min="0.5" step="0.05"></label>
               <label class="f">ลูกตั้ง R <span class="unit">ซม.</span><input type="number" inputmode="decimal" data-k="R" min="5" step="0.5"></label>
               <label class="f">ลูกนอน T <span class="unit">ซม.</span><input type="number" inputmode="decimal" data-k="T" min="15" step="0.5"></label>
@@ -1410,17 +1414,26 @@ dialog legend{padding:0 6px;color:var(--ink2)}
   var CT = root.CT;
   function designStair(inp, mat, grade, P) {
     P = P || CT.DEFAULTS;
+    var st = inp.stype || 'straight', spiral = st === 'spiral', land = (st === 'landing' || st === 'L') ? Math.max(0, inp.Lland || 0) : 0;
     var th = Math.atan(inp.R / inp.T), cs = Math.cos(th), sdm = inp.method === 'SDM', db = CT.BAR[inp.bar], t = inp.t;
-    var sw = P.unitWt * 1000 * (t / 100 / cs + inp.R / 200);                 /* kg per horizontal m² */
+    var sw = P.unitWt * 1000 * (t / 100 / (spiral ? 1 : cs) + inp.R / 200);                 /* kg per horizontal m² */
     var D = inp.dl + sw, L = inp.ll, w = sdm ? P.sdm.loadD * D + P.sdm.loadL * L : D + L;
-    var sup = CT.SLAB_SUP[inp.support], Lh = inp.Lh, d = t - inp.cover - db / 2;
-    var o = { input: inp, theta: th * 180 / Math.PI, cos: cs, sw: sw, D: D, L: L, w: w, sup: sup, d: d, items: [], Ls: Lh / cs };
+    var swL = P.unitWt * 1000 * t / 100, DL2 = inp.dl + swL, w2 = sdm ? P.sdm.loadD * DL2 + P.sdm.loadL * L : DL2 + L;
+    var sup = CT.SLAB_SUP[spiral ? 'cantilever' : inp.support], Lh = inp.Lh, Lsp = Lh + land, d = t - inp.cover - db / 2;
+    var weq = w;
+    if (land > 0) {        /* two-zone load: flight w over Lh, landing w2 over land; equivalent uniform giving the same simple-span max moment */
+      var Ra = (w * Lh * (Lsp - Lh / 2) + w2 * land * land / 2) / Lsp, Mx = 0;
+      for (var q = 0; q <= 400; q++) { var x = Lsp * q / 400, M = Ra * x - (x <= Lh ? w * x * x / 2 : w * Lh * (x - Lh / 2) + w2 * (x - Lh) * (x - Lh) / 2); Mx = Math.max(Mx, M); }
+      weq = 8 * Mx / (Lsp * Lsp);
+    }
+    var o = { input: inp, stype: st, land: land, theta: th * 180 / Math.PI, cos: cs, sw: sw, D: D, L: L, w: w, w2: w2, DL2: DL2, weq: weq, Lsp: Lsp, sup: sup, d: d, items: [], Ls: spiral ? Lh : Lh / cs + land };
     var rt = CT._tempRatio(grade, mat.fy, P), asT = rt * 100 * t; o.rhoTemp = rt; o.AsTemp = asT;
-    function item(label, c, smax) { var Mk = c * w * Lh * Lh, q = CT.reqAs(inp.method, Mk / 1000, 100, d, mat, P); q.label = label; q.coef = c; q.Mkgm = Mk; o.items.push(CT._slabSteel(q, t, db, asT, smax)); }
+    function item(label, c, smax) { var Mk = c * weq * Lsp * Lsp, q = CT.reqAs(inp.method, Mk / 1000, 100, d, mat, P); q.label = label; q.coef = c; q.Mkgm = Mk; o.items.push(CT._slabSteel(q, t, db, asT, smax)); }
     if (sup.mp) item('เหล็กหลัก กลางช่วง (ล่าง)', sup.mp, Math.min(3 * t, 45));
-    if (sup.mn) item('เหล็กหลัก ที่ฐานรองรับ (บน)', sup.mn, Math.min(3 * t, 45));
+    if (sup.mn) item(spiral ? 'เหล็กหลักขั้นบันไดยื่นจากเสากลาง (บน)' : 'เหล็กหลัก ที่ฐานรองรับ (บน)', sup.mn, Math.min(3 * t, 45));
     o.items.push(CT._slabSteel({ label: 'เหล็กกระจาย (ตามขวาง)', coef: null, AsCalc: 0, d: d, M: 0 }, t, db, asT, Math.min(5 * t, 45)));
-    o.shear = CT._slabShear(inp.method, sup.v * w * Lh, d, mat, P);
+    var Vmax = land > 0 ? Math.max((w * Lh * (Lsp - Lh / 2) + w2 * land * land / 2) / Lsp, (w * Lh * Lh / 2 + w2 * land * (Lh + land / 2)) / Lsp) * sup.v / 0.5 : sup.v * w * Lh;
+    o.shear = CT._slabShear(inp.method, Vmax, d, mat, P);
     o.hmin = o.Ls * 100 / sup.div * (0.4 + mat.fy / 7000); o.hOk = t >= o.hmin - 1e-9;
     o.nSteps = Math.round(Lh * 100 / inp.T);
     o.riseOk = inp.R <= 20 && inp.T >= 22 && 2 * inp.R + inp.T >= 58 && 2 * inp.R + inp.T <= 66;
@@ -2196,7 +2209,7 @@ dialog legend{padding:0 6px;color:var(--ink2)}
     for (var j0 = 0; j0 < ny; j0++) for (var i0 = 0; i0 < nx; i0++) for (var j1 = j0; j1 < ny; j1++) for (var i1 = i0; i1 < nx; i1++) if (full(i0, i1, j0, j1)) rects.push([i0, i1, j0, j1]);
     rects = rects.filter(function (r) { return !rects.some(function (q) { return q !== r && q[0] <= r[0] && q[1] >= r[1] && q[2] <= r[2] && q[3] >= r[3] && (q[0] < r[0] || q[1] > r[1] || q[2] < r[2] || q[3] > r[3]); }); });
     var e = o.eave || 0, tn = Math.tan(o.slope * D2R), cs = Math.cos(o.slope * D2R);
-    var R = rects.map(function (r) { var x0 = X[r[0]] - e, x1 = X[r[1] + 1] + e, y0 = Y[r[2]] - e, y1 = Y[r[3] + 1] + e; return { x0: x0, x1: x1, y0: y0, y1: y1, gx: (x1 - x0) >= (y1 - y0) }; });
+    var R = rects.map(function (r) { var x0 = X[r[0]] - e, x1 = X[r[1] + 1] + e, y0 = Y[r[2]] - e, y1 = Y[r[3] + 1] + e; return { x0: x0, x1: x1, y0: y0, y1: y1, gx: o.ridge === 'x' ? true : o.ridge === 'y' ? false : (x1 - x0) >= (y1 - y0) }; });
     function at(x, y) {        /* returns {h, key, side} upper envelope */
       var best = null;
       R.forEach(function (r) {
@@ -2248,11 +2261,25 @@ dialog legend{padding:0 6px;color:var(--ink2)}
   CT.gridModel = gridModel;
 })(typeof window !== 'undefined' ? window : globalThis);
 
-/* ===================== 3D STRUCTURAL MODEL: load path analysis ===================== */
+/* ===================== 3D STRUCTURAL MODEL: load path analysis (multi-floor) ===================== */
 (function (root) {
   'use strict';
   var CT = root.CT;
   var LLRED = [0, 0, 0, 10, 20, 30, 40, 50];   /* % reduction by position below roof (กฎกระทรวง 2566 ข้อ 13) */
+  /* per-edge distribution of a rectangular panel a (x-size) × b (y-size), type 'two'|'one'
+     returns for edge 'x' (edges parallel to x, length a) and 'y' (length b): kM (moment-equivalent width), kV (force-equivalent width), fn(x) true intensity per unit area load */
+  function panelEdges(a, b, oneWay) {
+    var S = Math.min(a, b), L = Math.max(a, b), type = oneWay || S / L < 0.5 ? 'one' : 'two', out = {};
+    [['x', a], ['y', b]].forEach(function (e) {
+      var len = e[1], edge = len >= L - 1e-9 && (S !== L || e[0] === 'x') ? 'long' : 'short';
+      if (S === L) edge = 'long';
+      if (type === 'one') { var lg = e[0] === 'x' ? a >= b : b > a; out[e[0]] = { kM: lg ? S / 2 : 0, kV: lg ? S / 2 : 0, fn: (function (v) { return function () { return v; }; })(lg ? S / 2 : 0) }; return; }
+      var tr = CT.slabTrib('two', S, L, edge), kv = CT.slabTribV('two', S, L, edge);
+      out[e[0]] = { kM: tr.k, kV: kv, fn: CT.slabShape('two', S, L, edge, len) };
+    });
+    out.type = type; return out;
+  }
+  function stairDL(st) { var R = st.R || 17.5, T = st.T || 25, t = st.t || 15, cs = T / Math.sqrt(R * R + T * T); return t / 100 * 2400 / cs + R / 200 * 2400 + (st.finish == null ? 100 : st.finish); }
   function bimAnalyze(m, mat, P, method) {
     P = P || CT.DEFAULTS;
     var xs = m.xs, ys = m.ys, nx = xs.length, ny = ys.length, X = [0], Y = [0], i, j, k;
@@ -2261,88 +2288,168 @@ dialog legend{padding:0 6px;color:var(--ink2)}
     m.cells.forEach(function (c) { if (occ[c[1]] && c[0] < nx) occ[c[1]][c[0]] = true; });
     var O = function (ii, jj) { return jj >= 0 && jj < ny && ii >= 0 && ii < nx && occ[jj][ii]; };
     var nS = m.storeys.length, Z = [0]; m.storeys.forEach(function (h) { Z.push(Z[Z.length - 1] + h); });
+    var floors = m.floors || []; for (k = 0; k < nS; k++) if (!floors[k]) floors[k] = { walls: m.walls || {}, off: [], slabs: {}, sec: [], stairs: [] };
     var sdm = method === 'SDM', fD = sdm ? P.sdm.loadD : 1, fL = sdm ? P.sdm.loadL : 1;
     var bw = m.beam.b, bh = m.beam.h, Ec = 15100 * Math.sqrt(mat.fc), Ib = bw * Math.pow(bh, 3) / 12, swB = bw * bh / 1e4 * 2400;
-    /* walls: key -> unit kg/m² ; 'x:j:i' along x on line j between i,i+1 ; 'y:i:j' along y on line i between j,j+1 */
-    var walls = m.walls || {};
-    /* roof */
-    var roofGeo = null, roofD = 0, roofL = 0, perim = 0;
+    var pc = m.pc || { w: 220 }, bathX = m.bath ? m.bath.extra : 100;
     var segPresent = function (dir, line, s) { return dir === 'x' ? (O(s, line - 1) || O(s, line)) : (O(line - 1, s) || O(line, s)); };
     var isPerim = function (dir, line, s) { return dir === 'x' ? (O(s, line - 1) !== O(s, line)) : (O(line - 1, s) !== O(line, s)); };
-    for (j = 0; j <= ny; j++) for (i = 0; i < nx; i++) if (isPerim('x', j, i)) perim += xs[i];
+    var perim = 0; for (j = 0; j <= ny; j++) for (i = 0; i < nx; i++) if (isPerim('x', j, i)) perim += xs[i];
     for (i = 0; i <= nx; i++) for (j = 0; j < ny; j++) if (isPerim('y', i, j)) perim += ys[j];
     var planArea = 0; for (j = 0; j < ny; j++) for (i = 0; i < nx; i++) if (occ[j][i]) planArea += xs[i] * ys[j];
+    var roofGeo = null, roofD = 0, roofL = 0;
     if (m.roof.type !== 'flat') {
-      var gm = CT.gridModel({ xs: xs, ys: ys, cells: m.cells, eave: m.roof.eave, slope: m.roof.slope, type: m.roof.type });
-      var rs = CT.roofSystem({ shape: m.roof.type, geom: gm.geom, mat: m.roof.mat, slope: m.roof.slope, eave: m.roof.eave, system: m.roof.system || 'rafter', rafterSp: 1, postSp: 4, spacing: 3, ll: m.roof.ll, wind: 60, ceiling: m.roof.ceiling || 0 }, P);
-      roofGeo = { gm: gm, rs: rs };
-      roofL = m.roof.ll * gm.geom.plan; roofD = (rs.wPlan - m.roof.ll) * gm.geom.plan;
+      var gm = CT.gridModel({ xs: xs, ys: ys, cells: m.cells, eave: m.roof.eave, slope: m.roof.slope, type: m.roof.type, ridge: m.roof.dir });
+      var rs = CT.roofSystem({ shape: m.roof.type, geom: gm.geom, mat: m.roof.mat, slope: m.roof.slope, eave: m.roof.eave, system: m.roof.system || 'rafter', rafterSp: m.roof.rafterSp || 1, postSp: m.roof.postSp || 4, spacing: m.roof.spacing || 3, ll: m.roof.ll, wind: 60, ceiling: m.roof.ceiling || 0 }, P);
+      roofGeo = { gm: gm, rs: rs }; roofL = m.roof.ll * gm.geom.plan; roofD = (rs.wPlan - m.roof.ll) * gm.geom.plan;
     }
-    /* level loads on beams */
-    var levels = [];
+    var voids = {}; /* level -> cell keys made void by stairs below */
+    floors.forEach(function (fl, k2) { (fl.stairs || []).forEach(function (st) { var lv = k2 + 1; (voids[lv] = voids[lv] || {})[st.i + ',' + st.j] = 1; }); });
+    var levels = [], secAll = [], stairAll = [], tot = { D: 0, L: 0 };
+    var segs = {};          /* level -> key -> load record */
+    function seg(lv, key) { var L1 = segs[lv] = segs[lv] || {}; return L1[key] = L1[key] || { D: 0, L: 0, DV: 0, LV: 0, uni: [], shapes: [], pts: [], parts: [] }; }
+    function addUni(lv, key, D, L, src) { var g = seg(lv, key); g.D += D; g.L += L; g.DV += D; g.LV += L; g.uni.push({ D: D, L: L, src: src }); g.parts.push({ src: src, D: D, L: L }); }
     for (k = 0; k <= nS; k++) {
-      var hasSlab = (k > 0 && k < nS) || (k === nS && m.roof.type === 'flat') || (k === 0 && m.groundSlab);
+      var fl = k < nS ? floors[k] : { slabs: m.roofSlabs || {}, sec: [], off: [], walls: {} };
+      var hasSlabLvl = (k > 0 && k < nS) || (k === nS && m.roof.type === 'flat') || (k === 0 && m.groundSlab);
       var slabT = k === nS ? (m.roof.t || m.slab.t) : m.slab.t, fin = k === nS ? (m.roof.finish != null ? m.roof.finish : m.slab.finish) : m.slab.finish, ll = k === nS ? (m.roof.type === 'flat' ? m.roof.llFlat : 0) : m.slab.ll;
-      var wallH = k < nS ? Math.max(0, m.storeys[k] - bh / 100) : 0;     /* wall of storey above sits on this level */
+      var wallH = k < nS ? Math.max(0, m.storeys[k] - bh / 100) : 0;
+      /* beam self weight & grid walls & roof */
+      ['x', 'y'].forEach(function (dir) { var nL = dir === 'x' ? ny + 1 : nx + 1, nSg = dir === 'x' ? nx : ny;
+        for (var line = 0; line < nL; line++) for (var s = 0; s < nSg; s++) { if (!segPresent(dir, line, s)) continue; var key = dir + ':' + line + ':' + s, len = dir === 'x' ? xs[s] : ys[s];
+          addUni(k, key, swB, 0, 'beam'); tot.D += swB * len;
+          var wk = (fl.walls || {})[key]; if (wk && wallH > 0) { addUni(k, key, wk * wallH, 0, 'wall'); tot.D += wk * wallH * len; }
+          if (k === nS && roofGeo && isPerim(dir, line, s)) { addUni(k, key, roofD / perim, roofL / perim, 'roof'); tot.D += roofD / perim * len; tot.L += roofL / perim * len; } } });
+      /* secondary beams in this level */
+      var secByCell = {}; (fl.sec || []).forEach(function (sb) { if (!O(sb.i, sb.j)) return; var c = sb.i + ',' + sb.j; if (!secByCell[c]) secByCell[c] = sb; });
+      /* off-grid walls: split into on-sec-beam, on-grid-line, or slab panel loads */
+      var panelExtra = {}, secWall = {};
+      (fl.off || []).forEach(function (w) {
+        var L0 = Math.hypot(w.x2 - w.x1, w.y2 - w.y1); if (!(L0 > 0) || !(wallH > 0)) return; var q = w.unit * wallH, n = 60;
+        for (var t = 0; t < n; t++) { var px = w.x1 + (w.x2 - w.x1) * (t + 0.5) / n, py = w.y1 + (w.y2 - w.y1) * (t + 0.5) / n, dl = L0 / n;
+          var ci = -1, cj = -1; for (var a = 0; a < nx; a++) if (px >= X[a] - 1e-9 && px <= X[a + 1] + 1e-9) { ci = a; break; } for (var b2 = 0; b2 < ny; b2++) if (py >= Y[b2] - 1e-9 && py <= Y[b2 + 1] + 1e-9) { cj = b2; break; }
+          if (ci < 0 || cj < 0 || !O(ci, cj)) continue;
+          var onX = Y.some(function (yy) { return Math.abs(py - yy) < 0.03; }) && Math.abs(w.y2 - w.y1) < 0.03, onY = X.some(function (xx) { return Math.abs(px - xx) < 0.03; }) && Math.abs(w.x2 - w.x1) < 0.03;
+          if (onX) { var lineY = Y.findIndex(function (yy) { return Math.abs(py - yy) < 0.03; }), kx = 'x:' + lineY + ':' + ci; addUni(k, kx, q * dl / xs[ci], 0, 'wall'); tot.D += q * dl; continue; }
+          if (onY) { var lineX = X.findIndex(function (xx) { return Math.abs(px - xx) < 0.03; }), ky = 'y:' + lineX + ':' + cj; addUni(k, ky, q * dl / ys[cj], 0, 'wall'); tot.D += q * dl; continue; }
+          var sb2 = secByCell[ci + ',' + cj];
+          if (sb2 && ((sb2.dir === 'x' && Math.abs(py - (Y[cj] + sb2.pos)) < 0.03 && Math.abs(w.y2 - w.y1) < 0.03) || (sb2.dir === 'y' && Math.abs(px - (X[ci] + sb2.pos)) < 0.03 && Math.abs(w.x2 - w.x1) < 0.03))) { secWall[ci + ',' + cj] = (secWall[ci + ',' + cj] || 0) + q * dl; continue; }
+          var sub = sb2 ? (sb2.dir === 'x' ? (py < Y[cj] + sb2.pos ? 0 : 1) : (px < X[ci] + sb2.pos ? 0 : 1)) : 0, pk = ci + ',' + cj + ':' + sub;
+          panelExtra[pk] = (panelExtra[pk] || 0) + q * dl;
+        }
+      });
+      /* stairs landing on this level (from storey below: top end) and starting at this level (bottom end) */
+      var stairEdges = [];
+      if (k < nS) (fl.stairs || []).forEach(function (st) { stairAll.push(Object.assign({ lv: k }, st)); });
+      floors.forEach(function (fl2, kk) { (fl2.stairs || []).forEach(function (st) {
+        if (!O(st.i, st.j)) return; var A2 = xs[st.i] * ys[st.j], DL = stairDL(st) * A2, LL = (st.ll != null ? st.ll : m.slab.ll) * A2, bot = kk, top = kk + 1;
+        var ex = st.dir === 'y' ? ['x', st.j, st.i] : ['y', st.i, st.j], exFar = st.dir === 'y' ? ['x', st.j + 1, st.i] : ['y', st.i + 1, st.j];
+        var all4 = [['x', st.j, st.i], ['x', st.j + 1, st.i], ['y', st.i, st.j], ['y', st.i + 1, st.j]], share = [];
+        if (st.type === 'landing') share = [[bot, ex, 0.25], [top, ex, 0.25], [bot, exFar, 0.5]];
+        else if (st.type === 'L') share = [[bot, ex, 0.5], [top, st.dir === 'y' ? ['y', st.i + 1, st.j] : ['x', st.j + 1, st.i], 0.5]];
+        else if (st.type === 'spiral') { all4.forEach(function (e) { share.push([bot, e, 0.125]); share.push([top, e, 0.125]); }); }
+        else share = [[bot, ex, 0.5], [top, exFar, 0.5]];
+        share.forEach(function (sh) { if (sh[0] !== k) return; var e = sh[1], key = e.join(':'), len = e[0] === 'x' ? xs[e[2]] : ys[e[2]];
+          addUni(k, key, DL * sh[2] / len, LL * sh[2] / len, 'stair'); tot.D += DL * sh[2]; tot.L += LL * sh[2]; });
+      }); });
+      /* slab panels */
+      if (hasSlabLvl) for (j = 0; j < ny; j++) for (i = 0; i < nx; i++) {
+        if (!occ[j][i]) continue; var ck = i + ',' + j, typ = (fl.slabs || {})[ck] || 'cast';
+        if ((voids[k] || {})[ck]) typ = 'void';
+        if (typ === 'void') continue;
+        var wd = typ === 'pc' ? pc.w + fin : slabT / 100 * 2400 + fin + (typ === 'bath' ? bathX : 0), oneWay = typ === 'pc';
+        var sb3 = secByCell[ck], panels;
+        if (!sb3) panels = [{ x0: X[i], y0: Y[j], a: xs[i], b: ys[j], sub: 0 }];
+        else if (sb3.dir === 'x') panels = [{ x0: X[i], y0: Y[j], a: xs[i], b: sb3.pos, sub: 0 }, { x0: X[i], y0: Y[j] + sb3.pos, a: xs[i], b: ys[j] - sb3.pos, sub: 1 }];
+        else panels = [{ x0: X[i], y0: Y[j], a: sb3.pos, b: ys[j], sub: 0 }, { x0: X[i] + sb3.pos, y0: Y[j], a: xs[i] - sb3.pos, b: ys[j], sub: 1 }];
+        var secRec = sb3 ? { sb: sb3, lv: k, i: i, j: j, L: sb3.dir === 'x' ? xs[i] : ys[j], D: swB, L2: 0, DV: swB, LV: 0, wall: (secWall[ck] || 0) } : null;
+        if (secRec) { secRec.D += secRec.wall / secRec.L; secRec.DV += secRec.wall / secRec.L; tot.D += swB * secRec.L + secRec.wall; }
+        panels.forEach(function (pn) {
+          var ex2 = (panelExtra[ck + ':' + pn.sub] || 0) / (pn.a * pn.b), wD = wd + ex2, E = panelEdges(pn.a, pn.b, oneWay);
+          tot.D += wD * pn.a * pn.b; tot.L += ll * pn.a * pn.b;
+          /* x-edges (bottom y0, top y0+b) */
+          [[pn.y0, 'b'], [pn.y0 + pn.b, 't']].forEach(function (ed) {
+            var onGrid = Y.findIndex(function (yy) { return Math.abs(yy - ed[0]) < 1e-9; });
+            if (onGrid >= 0) { var g = seg(k, 'x:' + onGrid + ':' + i); g.D += wD * E.x.kM; g.L += ll * E.x.kM; g.DV += wD * E.x.kV; g.LV += ll * E.x.kV; g.shapes.push({ fn: E.x.fn, qD: wD, qL: ll, from: 0, to: xs[i], off: 0 }); g.parts.push({ src: 'slab', D: wD * E.x.kM, L: ll * E.x.kM }); }
+            else if (secRec) { secRec.D += wD * E.x.kM; secRec.L2 += ll * E.x.kM; secRec.DV += wD * E.x.kV; secRec.LV += ll * E.x.kV; }
+          });
+          [[pn.x0, 'l'], [pn.x0 + pn.a, 'r']].forEach(function (ed) {
+            var onGrid = X.findIndex(function (xx) { return Math.abs(xx - ed[0]) < 1e-9; });
+            if (onGrid >= 0) { var g = seg(k, 'y:' + onGrid + ':' + j), full = Math.abs(pn.b - ys[j]) < 1e-9;
+              if (full) { g.D += wD * E.y.kM; g.L += ll * E.y.kM; g.DV += wD * E.y.kV; g.LV += ll * E.y.kV; g.shapes.push({ fn: E.y.fn, qD: wD, qL: ll, from: 0, to: ys[j], off: 0 }); g.parts.push({ src: 'slab', D: wD * E.y.kM, L: ll * E.y.kM }); }
+              else { var from = pn.y0 - Y[j]; g.shapes.push({ fn: E.y.fn, qD: wD, qL: ll, from: from, to: from + pn.b, off: from, partial: true }); }
+            } else if (secRec) { secRec.D += wD * E.y.kM; secRec.L2 += ll * E.y.kM; secRec.DV += wD * E.y.kV; secRec.LV += ll * E.y.kV; }
+          });
+          if (secRec && sb3.dir === 'x') { /* partial x-panels: handled above (full widths) */ }
+          if (secRec && sb3.dir === 'y') { /* x-edges partial */
+            [[pn.y0, 'b'], [pn.y0 + pn.b, 't']].forEach(function (ed) { var onGrid = Y.findIndex(function (yy) { return Math.abs(yy - ed[0]) < 1e-9; }); if (onGrid < 0) return; var g = seg(k, 'x:' + onGrid + ':' + i);
+              /* undo full-length accumulation for partial width panels */
+              g.D -= wD * E.x.kM; g.L -= ll * E.x.kM; g.DV -= wD * E.x.kV; g.LV -= ll * E.x.kV; g.shapes.pop(); g.parts.pop();
+              var from = pn.x0 - X[i]; g.shapes.push({ fn: E.x.fn, qD: wD, qL: ll, from: from, to: from + pn.a, off: from, partial: true }); });
+          }
+        });
+        if (secRec) {
+          /* reactions of simple secondary beam -> point loads on host segments at its ends */
+          var RD = secRec.DV * secRec.L / 2, RL = secRec.LV * secRec.L / 2;
+          if (sb3.dir === 'x') { seg(k, 'y:' + i + ':' + j).pts.push({ a: sb3.pos, PD: RD, PL: RL }); seg(k, 'y:' + (i + 1) + ':' + j).pts.push({ a: sb3.pos, PD: RD, PL: RL }); }
+          else { seg(k, 'x:' + j + ':' + i).pts.push({ a: sb3.pos, PD: RD, PL: RL }); seg(k, 'x:' + (j + 1) + ':' + i).pts.push({ a: sb3.pos, PD: RD, PL: RL }); }
+          secAll.push(secRec);
+        }
+      }
+      /* partial shapes -> discretized point loads for path method */
+      Object.keys(segs[k] || {}).forEach(function (key) { var g = segs[k][key]; g.ptsPath = g.pts.slice();
+        g.shapes.forEach(function (sh) { if (!sh.partial) return; var n = 12, h = (sh.to - sh.from) / n; for (var q = 0; q < n; q++) { var xq = sh.from + (q + 0.5) * h, v = sh.fn(xq - sh.off) * h; g.ptsPath.push({ a: xq, PD: sh.qD * v, PL: sh.qL * v }); } }); });
+      /* runs */
       var runs = [];
       ['x', 'y'].forEach(function (dir) {
         var nLines = dir === 'x' ? ny + 1 : nx + 1, nSeg = dir === 'x' ? nx : ny;
-        for (var line = 0; line < nLines; line++) {
-          var cur = null;
-          for (var s = 0; s <= nSeg; s++) {
-            var pres = s < nSeg && segPresent(dir, line, s);
-            if (pres) {
-              var len = dir === 'x' ? xs[s] : ys[s], D = swB, L = 0, DV = swB, LV = 0, parts = [];
-              if (hasSlab) [line - 1, line].forEach(function (c2) {
-                var ci = dir === 'x' ? s : c2, cj = dir === 'x' ? c2 : s; if (!O(ci, cj)) return;
-                var a = xs[ci], b = ys[cj], Sx = Math.min(a, b), Lx = Math.max(a, b), type = Sx / Lx >= 0.5 ? 'two' : 'one', edgeLen = dir === 'x' ? a : b;
-                var edge = edgeLen >= Lx - 1e-9 ? 'long' : 'short', tr = CT.slabTrib(type, Sx, Lx, edge), kv = CT.slabTribV(type, Sx, Lx, edge), wd = slabT / 100 * 2400 + fin;
-                D += wd * tr.k; L += ll * tr.k; DV += wd * kv; LV += ll * kv; parts.push({ src: 'slab', D: wd * tr.k, L: ll * tr.k });
-              });
-              var wk = walls[dir + ':' + line + ':' + s]; if (wk && wallH > 0) { var dW = wk * wallH; D += dW; DV += dW; parts.push({ src: 'wall', D: dW, L: 0 }); }
-              if (k === nS && roofGeo && isPerim(dir, line, s)) { var rD = roofD / perim, rL = roofL / perim; D += rD; L += rL; DV += rD; LV += rL; parts.push({ src: 'roof', D: rD, L: rL }); }
+        for (var line = 0; line < nLines; line++) { var cur = null;
+          for (var s = 0; s <= nSeg; s++) { var pres = s < nSeg && segPresent(dir, line, s);
+            if (pres) { var key = dir + ':' + line + ':' + s, g = seg(k, key), len = dir === 'x' ? xs[s] : ys[s];
               if (!cur) { cur = { dir: dir, line: line, s0: s, spans: [], loads: [] }; runs.push(cur); }
-              cur.spans.push(len); cur.loads.push({ D: D, L: L, DV: DV, LV: LV, parts: parts });
-            } else cur = null;
-          }
-        }
-      });
+              cur.spans.push(len); cur.loads.push({ D: g.D, L: g.L, DV: g.DV, LV: g.LV, parts: g.parts, pts: g.ptsPath || [], seg: g, key: key });
+            } else cur = null; } } });
       runs.forEach(function (r) {
         var o = { spans: r.spans, E: Ec, I: Ib, A: bw * bh, left: 'pin', right: 'pin' };
-        r.env = CT.contBeam(Object.assign({}, o, { loads: r.loads.map(function (l) { return { D: l.D, L: l.L }; }), fD: fD, fL: fL, pattern: true })).env;
-        var rd = CT.contBeam(Object.assign({}, o, { loads: r.loads.map(function (l) { return { D: l.DV, L: 0 }; }), fD: 1, fL: 0, pattern: false }));
-        var rl = CT.contBeam(Object.assign({}, o, { loads: r.loads.map(function (l) { return { D: 0, L: l.LV }; }), fD: 0, fL: 1, pattern: false }));
+        r.env = CT.contBeam(Object.assign({}, o, { loads: r.loads.map(function (l) { return { D: l.D, L: l.L, pts: l.pts }; }), fD: fD, fL: fL, pattern: true })).env;
+        var rd = CT.contBeam(Object.assign({}, o, { loads: r.loads.map(function (l) { return { D: l.DV, L: 0, pts: l.pts.map(function (p) { return { a: p.a, PD: p.PD, PL: 0 }; }) }; }), fD: 1, fL: 0, pattern: false }));
+        var rl = CT.contBeam(Object.assign({}, o, { loads: r.loads.map(function (l) { return { D: 0, L: l.LV, pts: l.pts.map(function (p) { return { a: p.a, PD: 0, PL: p.PL }; }) }; }), fD: 0, fL: 1, pattern: false }));
         r.RD = rd.base.R.filter(function (_, q) { return q % 3 === 1; }); r.RL = rl.base.R.filter(function (_, q) { return q % 3 === 1; });
         r.nodes = r.spans.map(function (_, q) { return r.dir === 'x' ? [r.s0 + q, r.line] : [r.line, r.s0 + q]; }).concat([r.dir === 'x' ? [r.s0 + r.spans.length, r.line] : [r.line, r.s0 + r.spans.length]]);
       });
-      levels.push({ k: k, z: Z[k], hasSlab: hasSlab, runs: runs });
+      levels.push({ k: k, z: Z[k], hasSlab: hasSlabLvl, runs: runs, slabs: fl.slabs || {}, voids: voids[k] || {} });
     }
-    /* node reactions per level */
+    /* secondary beam design forces (simple span) */
+    secAll.forEach(function (sr) { var wM = fD * sr.D + fL * sr.L2, wV = fD * sr.DV + fL * sr.LV; sr.Mu = wM * sr.L * sr.L / 8; sr.Vu = wV * sr.L / 2; });
     var nodes = {};
     for (j = 0; j <= ny; j++) for (i = 0; i <= nx; i++) if (O(i - 1, j - 1) || O(i, j - 1) || O(i - 1, j) || O(i, j)) nodes[i + ',' + j] = { i: i, j: j, x: X[i], y: Y[j], RD: new Array(nS + 1).fill(0), RL: new Array(nS + 1).fill(0) };
     levels.forEach(function (lv) { lv.runs.forEach(function (r) { r.nodes.forEach(function (nd, q) { var N = nodes[nd[0] + ',' + nd[1]]; if (N) { N.RD[lv.k] += r.RD[q]; N.RL[lv.k] += r.RL[q]; } }); }); });
     var cb = m.col.b, ch = m.col.h, cols = [];
     Object.keys(nodes).forEach(function (key) {
-      var N = nodes[key], D = 0, L = 0, Lred = 0;
-      for (var st = nS; st >= 1; st--) {      /* column of storey st carries levels st..nS */
-        D += N.RD[st] + (st < nS ? cb * ch / 1e4 * m.storeys[st] * 2.4 * 1000 : 0);
-        L += N.RL[st];
+      var N = nodes[key], D = 0, L = 0;
+      for (var st = nS; st >= 1; st--) {
+        D += N.RD[st] + (st < nS ? cb * ch / 1e4 * m.storeys[st] * 2.4 * 1000 : 0); L += N.RL[st];
         var Lr = 0; for (var lv2 = st; lv2 <= nS; lv2++) { var pos = nS - lv2; Lr += N.RL[lv2] * (1 - (m.llReduce ? (LLRED[Math.min(pos, 7)] || 0) : 0) / 100); }
-        var selfC = cb * ch / 1e4 * m.storeys[st - 1] * 2.4 * 1000;
-        cols.push({ node: N, st: st, D: D + selfC, L: L, Lr: Lr, Lu: m.storeys[st - 1] - bh / 100 });
+        cols.push({ node: N, st: st, D: D + cb * ch / 1e4 * m.storeys[st - 1] * 2.4 * 1000, L: L, Lr: Lr, Lu: m.storeys[st - 1] - bh / 100 });
       }
       var top1 = cols.filter(function (c2) { return c2.node === N && c2.st === 1; })[0];
       N.fdnD = (top1 ? top1.D : 0) + N.RD[0]; N.fdnL = (top1 ? top1.Lr : 0) + N.RL[0];
+      tot.D += cb * ch / 1e4 * 2400 * Z[nS];
     });
-    return { X: X, Y: Y, Z: Z, occ: occ, levels: levels, nodes: nodes, cols: cols, roof: roofGeo, perim: perim, planArea: planArea, fD: fD, fL: fL, nS: nS };
+    return { X: X, Y: Y, Z: Z, occ: occ, levels: levels, nodes: nodes, cols: cols, roof: roofGeo, perim: perim, planArea: planArea, fD: fD, fL: fL, nS: nS, sec: secAll, stairs: stairAll, segs: segs, floors: floors, tot: tot };
   }
   function bimDesign(A, m, mat, P, method) {
-    var res = { beams: [], cols: [], fdns: [] };
+    var res = { beams: [], cols: [], fdns: [], secs: [] };
     A.levels.forEach(function (lv) { lv.runs.forEach(function (r) { r.spans.forEach(function (L, q) {
       var e = r.env[q], inp = { b: m.beam.b, h: m.beam.h, cover: 3, stirrup: 'RB9', bar: 'DB16', method: method, loadMode: 'direct', support: r.spans.length === 1 ? 'simple' : 'bothCont', L: L,
         Mp: Math.max(0, e.Mpos) / 1000, Mn: Math.max(0, -Math.min(e.MnegL, e.MnegR)) / 1000, V: e.V / 1000, dl: 0, ll: 0, selfWeight: false };
       var d = CT.designBeam(inp, mat, P); if (!d.ok && m.beam.bar2) { inp.bar = m.beam.bar2; d = CT.designBeam(inp, mat, P); }
       res.beams.push({ lv: lv.k, r: r, q: q, inp: inp, d: d, ok: d.ok }); }); }); });
+    (A.sec || []).forEach(function (sr) {
+      var inp = { b: m.beam.b, h: m.beam.h, cover: 3, stirrup: 'RB9', bar: 'DB16', method: method, loadMode: 'direct', support: 'simple', L: sr.L, Mp: sr.Mu / 1000, Mn: 0, V: sr.Vu / 1000, dl: 0, ll: 0, selfWeight: false };
+      var d = CT.designBeam(inp, mat, P); if (!d.ok) { inp.bar = 'DB20'; d = CT.designBeam(inp, mat, P); }
+      res.secs.push({ sr: sr, inp: inp, d: d, ok: d.ok });
+    });
     A.cols.forEach(function (c) {
       var Pd = method === 'SDM' ? A.fD * c.D / 1000 + A.fL * c.Lr / 1000 : (c.D + c.Lr) / 1000;
       var inp = { b: m.col.b, h: m.col.h, cover: 3, tie: 'RB9', bar: 'DB16', auto: true, nb: 2, ns: 0, P: Pd, M: 0, My: 0, Lu: c.Lu, k: 1, braced: true, m12: 0, method: method };
@@ -2355,10 +2462,10 @@ dialog legend{padding:0 6px;color:var(--ink2)}
       var d = f.type === 'pile' ? CT.designPileCap(inp, mat, f.grade || 'SD40', P) : CT.designSpread(inp, mat, f.grade || 'SD40', P);
       res.fdns.push({ N: N, inp: inp, d: d, ok: !!(d && !d.error && d.ok) });
     });
-    res.ok = res.beams.every(function (b) { return b.ok; }) && res.cols.every(function (c) { return c.ok; }) && res.fdns.every(function (f2) { return f2.ok; });
+    res.ok = res.beams.every(function (b) { return b.ok; }) && res.cols.every(function (c) { return c.ok; }) && res.fdns.every(function (f2) { return f2.ok; }) && res.secs.every(function (x) { return x.ok; });
     return res;
   }
-  CT.bimAnalyze = bimAnalyze; CT.bimDesign = bimDesign;
+  CT.bimAnalyze = bimAnalyze; CT.bimDesign = bimDesign; CT.panelEdges = panelEdges; CT.stairDL = stairDL;
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ===================== 3D FRAME ANALYSIS (12-DOF space frame, banded Cholesky) ===================== */
@@ -2414,10 +2521,18 @@ dialog legend{padding:0 6px;color:var(--ink2)}
     /* member loads: {m, type:'dist', fn:function(x)->kg/m , dir:[gx,gy,gz] global unit direction (default -Z)} or {m,type:'udl',w,dir} */
     (model.memberLoads || []).forEach(function (ld) {
       var e = mem[ld.m]; if (!e) return; var L = e.L, dir = ld.dir || [0, 0, -1], dl = toLocal(e, dir);
-      var fn = ld.type === 'udl' ? function () { return ld.w; } : ld.fn, ns = 40, h = L / ns;
+      if (ld.type === 'pt') {
+        var a0 = Math.max(0, Math.min(L, ld.a)), P0 = ld.P, xi0 = a0 / L, px0 = P0 * dl[0], py0 = P0 * dl[1], pz0 = P0 * dl[2];
+        var h1 = 1 - 3 * xi0 * xi0 + 2 * xi0 * xi0 * xi0, h2 = L * (xi0 - 2 * xi0 * xi0 + xi0 * xi0 * xi0), h3 = 3 * xi0 * xi0 - 2 * xi0 * xi0 * xi0, h4 = L * (-xi0 * xi0 + xi0 * xi0 * xi0);
+        e.fef[0] -= px0 * (1 - xi0); e.fef[6] -= px0 * xi0; e.fef[1] -= py0 * h1; e.fef[5] -= py0 * h2; e.fef[7] -= py0 * h3; e.fef[11] -= py0 * h4;
+        e.fef[2] -= pz0 * h1; e.fef[4] += pz0 * h2; e.fef[8] -= pz0 * h3; e.fef[10] += pz0 * h4;
+        e.loads.push({ pt: true, a: a0, P: P0, dl: dl }); return;
+      }
+      var fn = ld.type === 'udl' ? function () { return ld.w; } : ld.fn, x0r = ld.from != null ? Math.max(0, ld.from) : 0, x1r = ld.to != null ? Math.min(L, ld.to) : L, ns = ld.type === 'udl' ? 2 : 240, h = (x1r - x0r) / ns;
+      if (!(h > 0)) return;
       /* integrate with Simpson using Hermite shape functions */
       for (var q = 0; q <= ns; q++) {
-        var x = q * h, wq = (q === 0 || q === ns) ? 1 : (q % 2 ? 4 : 2), w = fn(x) * h / 3 * wq, xi = x / L;
+        var x = x0r + q * h, wq = (q === 0 || q === ns) ? 1 : (q % 2 ? 4 : 2), w = fn(x) * h / 3 * wq, xi = x / L;
         var N1 = 1 - xi, N2 = xi, H1 = 1 - 3 * xi * xi + 2 * xi * xi * xi, H2 = L * (xi - 2 * xi * xi + xi * xi * xi), H3 = 3 * xi * xi - 2 * xi * xi * xi, H4 = L * (-xi * xi + xi * xi * xi);
         var px = w * dl[0], py = w * dl[1], pz = w * dl[2];
         /* equivalent nodal loads (local); FEF = -equivalent */
@@ -2425,7 +2540,7 @@ dialog legend{padding:0 6px;color:var(--ink2)}
         e.fef[1] -= py * H1; e.fef[5] -= py * H2; e.fef[7] -= py * H3; e.fef[11] -= py * H4;
         e.fef[2] -= pz * H1; e.fef[4] += pz * H2; e.fef[8] -= pz * H3; e.fef[10] += pz * H4;
       }
-      e.loads.push({ fn: fn, dl: dl });
+      e.loads.push({ fn: fn, dl: dl, from: x0r, to: x1r });
     });
     /* assemble banded */
     var fixed = new Array(nd).fill(false);
@@ -2466,7 +2581,7 @@ dialog legend{padding:0 6px;color:var(--ink2)}
       /* internal forces along member (local): N, Vy, Vz, T, My, Mz */
       function at(x) {
         var N = -fl[0], Vy = fl[1], Vz = fl[2], Tq = -fl[3], My = -fl[4] - fl[2] * x, Mz = -fl[5] + fl[1] * x;
-        e.loads.forEach(function (l) { var n2 = 20, h2 = x / n2; if (x <= 0) return; for (var q = 0; q <= n2; q++) { var xq = q * h2, wq = (q === 0 || q === n2) ? 1 : (q % 2 ? 4 : 2), w = l.fn(xq) * h2 / 3 * wq;
+        e.loads.forEach(function (l) { if (l.pt) { if (x > l.a) { N -= l.P * l.dl[0]; Vy += l.P * l.dl[1]; Vz += l.P * l.dl[2]; Mz += l.P * l.dl[1] * (x - l.a); My -= l.P * l.dl[2] * (x - l.a); } return; } var x0q = l.from || 0, x1q = Math.min(x, l.to != null ? l.to : x); if (x1q <= x0q) return; var n2 = 20, h2 = (x1q - x0q) / n2; for (var q = 0; q <= n2; q++) { var xq = x0q + q * h2, wq = (q === 0 || q === n2) ? 1 : (q % 2 ? 4 : 2), w = l.fn(xq) * h2 / 3 * wq;
           N -= w * l.dl[0]; Vy += w * l.dl[1]; Vz += w * l.dl[2]; Mz += w * l.dl[1] * (x - xq); My -= w * l.dl[2] * (x - xq); } });
         return { x: x, N: N, Vy: Vy, Vz: Vz, T: Tq, My: My, Mz: Mz };
       }
@@ -2511,30 +2626,23 @@ dialog legend{padding:0 6px;color:var(--ink2)}
       members.push(Object.assign({ i: idx[lv.k + ':' + a[0] + ',' + a[1]], j: idx[lv.k + ':' + c[0] + ',' + c[1]] }, beamSec)); meta.push({ type: 'beam', lv: lv.k, r: r, q: q, L: L }); beamRef.push(members.length - 1); }); }); });
     /* loads */
     var cases = { D: { ml: [], nl: [] }, L: { ml: [], nl: [] }, WX: { ml: [], nl: [] }, WY: { ml: [], nl: [] } }, tot = { D: 0, L: 0 };
-    var swB = b * h / 1e4 * 2400, X = A.X, Y = A.Y, occ = A.occ, nx = occ[0].length, ny = occ.length, O = function (i, j) { return j >= 0 && j < ny && i >= 0 && i < nx && occ[j][i]; };
     members.forEach(function (mm, k) {
       var me = meta[k];
       if (me.type === 'beam') {
-        var lv = A.levels.filter(function (l) { return l.k === me.lv; })[0], r = me.r, q = me.q, L = me.L, ld = r.loads[q];
-        cases.D.ml.push({ m: k, type: 'udl', w: swB }); tot.D += swB * L;
-        ld.parts.forEach(function (p) { if (p.src === 'wall') { cases.D.ml.push({ m: k, type: 'udl', w: p.D }); tot.D += p.D * L; } });
-        if (me.lv === A.nS && A.roof) { var pr = ld.parts.filter(function (p) { return p.src === 'roof'; })[0]; if (pr) { cases.D.ml.push({ m: k, type: 'udl', w: pr.D }); cases.L.ml.push({ m: k, type: 'udl', w: pr.L }); tot.D += pr.D * L; tot.L += pr.L * L; } }
-        if (lv.hasSlab) {
-          var nS = A.nS, slabT = me.lv === nS ? (m.roof.t || m.slab.t) : m.slab.t, fin = me.lv === nS ? (m.roof.finish != null ? m.roof.finish : m.slab.finish) : m.slab.finish, ll = me.lv === nS ? (m.roof.type === 'flat' ? m.roof.llFlat : 0) : m.slab.ll, wd = slabT / 100 * 2400 + fin;
-          var s = r.s0 + q, line = r.line;
-          [line - 1, line].forEach(function (c2) { var ci = r.dir === 'x' ? s : c2, cj = r.dir === 'x' ? c2 : s; if (!O(ci, cj)) return;
-            var a = A.X[ci + 1] - A.X[ci], bb = A.Y[cj + 1] - A.Y[cj], Sx = Math.min(a, bb), Lx = Math.max(a, bb), type = Sx / Lx >= 0.5 ? 'two' : 'one', edgeLen = r.dir === 'x' ? a : bb, edge = edgeLen >= Lx - 1e-9 ? 'long' : 'short';
-            var fn = slabShape(type, Sx, Lx, edge, edgeLen);
-            cases.D.ml.push({ m: k, type: 'dist', fn: (function (f) { return function (x) { return wd * f(x); }; })(fn) });
-            if (ll) cases.L.ml.push({ m: k, type: 'dist', fn: (function (f) { return function (x) { return ll * f(x); }; })(fn) });
-            var area = type === 'one' ? (edge === 'long' ? Sx / 2 * edgeLen : 0) : (edge === 'short' ? Sx * Sx / 4 : Sx / 4 * (2 * Lx - Sx));
-            tot.D += wd * area; tot.L += ll * area; });
-        }
+        var g = me.r.loads[me.q].seg, L = me.L, uD = 0, uL = 0;
+        g.uni.forEach(function (u) { uD += u.D; uL += u.L; });
+        if (uD) cases.D.ml.push({ m: k, type: 'udl', w: uD }); if (uL) cases.L.ml.push({ m: k, type: 'udl', w: uL }); tot.D += uD * L; tot.L += uL * L;
+        g.shapes.forEach(function (sh) {
+          var f2 = function (q) { return function (x) { return (x >= sh.from - 1e-9 && x <= sh.to + 1e-9) ? q * sh.fn(x - sh.off) : 0; }; };
+          cases.D.ml.push({ m: k, type: 'dist', fn: f2(sh.qD), from: sh.from, to: sh.to }); if (sh.qL) cases.L.ml.push({ m: k, type: 'dist', fn: f2(sh.qL), from: sh.from, to: sh.to });
+        });
+        g.pts.forEach(function (p) { if (p.PD) cases.D.ml.push({ m: k, type: 'pt', a: p.a, P: p.PD }); if (p.PL) cases.L.ml.push({ m: k, type: 'pt', a: p.a, P: p.PL }); });
       } else {
         var Hc = A.Z[me.st] - A.Z[me.st - 1], W = cb * ch / 1e4 * 2400 * Hc;
-        cases.D.nl.push({ n: mm.i, f: [0, 0, -W / 2, 0, 0, 0] }); cases.D.nl.push({ n: mm.j, f: [0, 0, -W / 2, 0, 0, 0] }); tot.D += W;
+        cases.D.nl.push({ n: mm.i, f: [0, 0, -W / 2, 0, 0, 0] }); cases.D.nl.push({ n: mm.j, f: [0, 0, -W / 2, 0, 0, 0] });
       }
     });
+    tot = { D: A.tot.D, L: A.tot.L };
     /* wind: storey forces distributed to nodes at level */
     var wx = A.X[A.X.length - 1], wy = A.Y[A.Y.length - 1], windRows = [];
     for (var k2 = 1; k2 <= A.nS; k2++) {
@@ -2623,7 +2731,7 @@ function newSlab(n){return {id:uid('s'),name:'S'+n,qty:1,coefMethod:'m2',eL1:tru
 function newFdn(n){return {id:uid('f'),name:'F'+n,qty:1,M:0,type:'spread',cx:25,cy:25,dl:30,ll:15,qa:15,Df:1.5,autoSize:true,B:2,L:2,cover:7.5,Qa:20,pileSize:22,pileShape:'square',spacing:0.75,edge:0.3,capCover:10,autoN:true,n:'4',autoT:true,t:40,bar:'DB16'}}
 function newCol(n){return {id:uid('c'),name:'C'+n,qty:1,My:0,H:3,b:25,h:25,cover:3,tie:'RB9',bar:'DB16',auto:true,nb:2,ns:0,P:40,M:1.5,Lu:3,k:1,braced:true,m12:0}}
 var MAKE={beam:newBeam,slab:newSlab,col:newCol,fdn:newFdn,stair:newStair,roof:newRoof,ped:newPed},LIST={beam:'beams',slab:'slabs',col:'cols',fdn:'fdns',stair:'stairs',roof:'roofs',ped:'peds'};
-var TITLE={beam:'ออกแบบคาน ค.ส.ล.',slab:'ออกแบบพื้น ค.ส.ล.',col:'ออกแบบเสา ค.ส.ล.',fdn:'ออกแบบฐานราก ค.ส.ล.',home:'ภาพรวมโครงการ',manual:'คู่มือการใช้งาน',stair:'ออกแบบบันได ค.ส.ล.',ped:'ออกแบบตอม่อ ค.ส.ล.',slab1:'ออกแบบพื้นทางเดียว ค.ส.ล.',slab2:'ออกแบบพื้นสองทาง ค.ส.ล.',roof:'ออกแบบโครงหลังคาเหล็ก',boq:'ถอดปริมาณงานและ BOQ',self:'ทดสอบระบบคำนวณ'},NOUN={beam:'คาน',slab:'พื้น',slab1:'พื้น',slab2:'พื้น',col:'เสา',fdn:'ฐานราก',stair:'บันได',ped:'ตอม่อ',roof:'ชิ้นส่วนหลังคา'};
+var TITLE={beam:'ออกแบบคาน ค.ส.ล.',slab:'ออกแบบพื้น ค.ส.ล.',col:'ออกแบบเสา ค.ส.ล.',fdn:'ออกแบบฐานราก ค.ส.ล.',home:'ภาพรวมโครงการ',manual:'คู่มือการใช้งาน',estimate:'ประมาณราคาค่าก่อสร้างทั้งหลัง',stair:'ออกแบบบันได ค.ส.ล.',ped:'ออกแบบตอม่อ ค.ส.ล.',slab1:'ออกแบบพื้นทางเดียว ค.ส.ล.',slab2:'ออกแบบพื้นสองทาง ค.ส.ล.',roof:'ออกแบบโครงหลังคาเหล็ก',boq:'ถอดปริมาณงานและ BOQ',self:'ทดสอบระบบคำนวณ'},NOUN={beam:'คาน',slab:'พื้น',slab1:'พื้น',slab2:'พื้น',col:'เสา',fdn:'ฐานราก',stair:'บันได',ped:'ตอม่อ',roof:'ชิ้นส่วนหลังคา'};
 var today=new Date();
 var state={project:{name:'',location:'',engineer:'',license:'',checker:'',date:today.toLocaleDateString('th-TH-u-nu-latn',{year:'numeric',month:'long',day:'numeric'})},
   method:'SDM',mat:{fc:240,grade:'SD40',stGrade:'SR24'},params:clone(CT.DEFAULTS),beams:[],slabs:[],cols:[],cur:null,curIds:{},module:'home',view:'design',scope:'one',boq:{prices:{},F:1,extra:''},tools:{}};
@@ -3405,27 +3513,28 @@ function toolSheet(id){var T=TOOLS[id],v=toolVals(id),pr=state.project,h='<div><
   return h+sigBlock(pr)+'</div>'}
 
 /* ===================== STAIRS UI ===================== */
-function newStair(n){return {id:uid('t'),name:'ST'+n,qty:1,Lh:3,width:1.2,R:17.5,T:25,t:18,cover:2,bar:'DB12',support:'simple',dl:100,ll:300}}
-function stairIn(x){return {Lh:num(x.Lh),width:num(x.width),R:num(x.R),T:num(x.T),t:num(x.t),cover:num(x.cover),bar:x.bar,support:x.support,dl:num(x.dl),ll:num(x.ll),method:state.method}}
+function newStair(n){return {id:uid('t'),name:'ST'+n,qty:1,stype:'straight',Lland:1.2,Lh:3,width:1.2,R:17.5,T:25,t:18,cover:2,bar:'DB12',support:'simple',dl:100,ll:300}}
+function stairIn(x){return {stype:x.stype||'straight',Lland:num(x.Lland),Lh:num(x.Lh),width:num(x.width),R:num(x.R),T:num(x.T),t:num(x.t),cover:num(x.cover),bar:x.bar,support:x.support,dl:num(x.dl),ll:num(x.ll),method:state.method}}
 function runStair(x){var i=stairIn(x);if(!(i.Lh>0&&i.R>0&&i.T>0&&i.t>i.cover+2&&i.cover>0&&state.mat.fc>=100))return {invalid:true};try{return CT.designStair(i,mat(),state.mat.grade,state.params)}catch(e){return {invalid:true}}}
-function formStair(x){$('#stairHint').textContent=(state.method==='SDM'?'wu = '+state.params.sdm.loadD+'DL + '+state.params.sdm.loadL+'LL':'w = DL + LL')+' · คิดเป็นแผ่นพื้นทางเดียววางเอียง น้ำหนักต่อพื้นที่ราบ ช่วงคิดตามแนวราบ'}
-function stairSVG(x,r){var i=r.input,n=Math.max(1,r.nSteps),W=320,H=230,run=i.T*n,rise=i.R*n,sc=Math.min(250/run,170/rise),x0=34,y0=H-28,s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="รูปตัดบันได"><path d="M'+x0+' '+y0;
+function formStair(x){var st=x.stype||'straight';$('#stairLandLbl').hidden=!(st==='landing'||st==='L');$('#stairLhLbl').textContent=st==='spiral'?'ระยะยื่นขั้นบันไดจากเสากลาง (รัศมี)':'ช่วงราบช่วงขั้นบันได';var sp=$('[data-mod="stair"] [data-k="support"]');if(sp)sp.closest('label').hidden=st==='spiral';$('#stairHint').textContent=(st==='spiral'?'บันไดวน: ขั้นบันไดแต่ละขั้นคิดเป็นแผ่นยื่นจากเสากลาง M = wR²/2 ต่อความกว้าง 1 ม. · ':st!=='straight'?'บันไดมีชานพัก: ช่วงขั้นบันได + ชานพักพาดเป็นช่วงเดียว น้ำหนักสองช่วงต่างกัน · ':'')+(state.method==='SDM'?'wu = '+state.params.sdm.loadD+'DL + '+state.params.sdm.loadL+'LL':'w = DL + LL')+' · คิดเป็นแผ่นพื้นทางเดียววางเอียง น้ำหนักต่อพื้นที่ราบ ช่วงคิดตามแนวราบ'}
+function stairSVG(x,r){if(r.stype==='spiral'){var R0=r.input.Lh,W0=300,H0=230,c0=Math.min(90/R0,90),sv='<svg viewBox="0 0 '+W0+' '+H0+'" role="img" aria-label="แปลนบันไดวน"><circle cx="150" cy="110" r="'+(R0*c0)+'" fill="var(--concrete)" stroke="var(--ink)"/><circle cx="150" cy="110" r="10" fill="var(--ink2)"/>';for(var k0=0;k0<12;k0++){var a0=k0/12*2*Math.PI;sv+='<line x1="150" y1="110" x2="'+(150+R0*c0*Math.cos(a0))+'" y2="'+(110+R0*c0*Math.sin(a0))+'" stroke="var(--ink2)"/>'}return sv+'<text x="150" y="224" text-anchor="middle" font-size="14" fill="var(--ink2)" font-family="var(--font)">บันไดวน รัศมี '+f(R0,2)+' ม. ขั้นยื่นจากเสากลาง</text></svg>'}var i=r.input,n=Math.max(1,r.nSteps),W=320,H=230,run=i.T*n,rise=i.R*n,sc=Math.min(250/run,170/rise),x0=34,y0=H-28,s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="รูปตัดบันได"><path d="M'+x0+' '+y0;
   for(var k=0;k<n;k++){s+=' L'+(x0+k*i.T*sc)+' '+(y0-(k+1)*i.R*sc)+' L'+(x0+(k+1)*i.T*sc)+' '+(y0-(k+1)*i.R*sc)}
   var tv=i.t/Math.cos(r.theta*Math.PI/180)*sc;s+=' L'+(x0+run*sc)+' '+(y0-rise*sc+tv)+' L'+x0+' '+(y0+tv)+' Z" fill="var(--concrete)" stroke="var(--ink)" stroke-width="1.5"/>';
+  if(r.land>0)s+='<rect x="'+(x0+run*sc)+'" y="'+(y0-rise*sc)+'" width="'+Math.min(60,r.land*100*sc)+'" height="'+(i.t*sc)+'" fill="var(--concrete)" stroke="var(--ink)"/><text x="'+(x0+run*sc+20)+'" y="'+(y0-rise*sc-6)+'" font-size="12" fill="var(--ink2)" font-family="var(--font)">ชานพัก '+f(r.land,2)+' ม.</text>';
   s+='<text x="'+(x0+run*sc/2)+'" y="'+(H-4)+'" text-anchor="middle" font-size="14" fill="var(--ink2)" font-family="var(--font)">ช่วงราบ '+f(i.Lh,2)+' ม. · '+n+' ขั้น · ลูกตั้ง '+f(i.R,1)+' ลูกนอน '+f(i.T,1)+' ซม. · '+f(r.theta,1)+'°</text>';return s+'</svg>'}
 function renderStair(){var x=cur(),r=runStair(x),box=$('#resStair'),sdm=state.method==='SDM',h='';
   if(r.invalid){box.innerHTML=errBox('ตรวจช่วง ลูกตั้ง ลูกนอน และความหนาท้องบันได');return}
   h+='<div class="verdict '+(r.ok?'ok':'bad')+'"><b>'+(r.ok?'ผ่านทุกข้อ':'มีรายการไม่ผ่าน')+'</b><p class="sumline">'+esc(x.name)+' ท้องบันไดหนา '+f(r.input.t,0)+' ซม. · '+r.items.map(function(q){return q.label.split(' (')[0].replace('เหล็กหลัก ','')+' '+(q.error?'–':barAt(x.bar,q.sUse))}).join(' · ')+'</p></div>';
-  h+='<div class="panel"><div class="rgrid"><div class="draw">'+stairSVG(x,r)+'</div><div>'+kv([['น้ำหนักบันไดเอง (ต่อพื้นที่ราบ)',f(r.sw,0)+' กก./ตร.ม.'],['DL รวม',f(r.D,0)+' กก./ตร.ม.'],['LL',f(r.L,0)+' กก./ตร.ม.'],[sdm?'wu':'w',f(r.w,0)+' กก./ตร.ม.',1],['ความหนาขั้นต่ำ (ช่วงเอียง '+f(r.Ls,2)+' ม.)',f(r.hmin,1)+' ซม. '+badge(r.hOk)],['สัดส่วนขั้นบันได 2R + T',f(2*r.input.R+r.input.T,1)+' ซม. '+badge(r.riseOk,'เหมาะสม','ควรตรวจ')]])+'</div></div></div>';
+  h+='<div class="panel"><div class="rgrid"><div class="draw">'+stairSVG(x,r)+'</div><div>'+kv([['น้ำหนักบันไดเอง (ต่อพื้นที่ราบ)',f(r.sw,0)+' กก./ตร.ม.'],['DL รวม',f(r.D,0)+' กก./ตร.ม.'],['LL',f(r.L,0)+' กก./ตร.ม.'],[sdm?'wu (ช่วงขั้นบันได)':'w (ช่วงขั้นบันได)',f(r.w,0)+' กก./ตร.ม.',1]].concat(r.land>0?[[sdm?'wu ชานพัก':'w ชานพัก',f(r.w2,0)+' กก./ตร.ม.'],['ช่วงพาดรวม / น้ำหนักเทียบเท่า',f(r.Lsp,2)+' ม. / '+f(r.weq,0)+' กก./ตร.ม.']]:[]).concat([['ความหนาขั้นต่ำ ('+(r.stype==='spiral'?'ยื่น ':'ช่วงเอียง ')+f(r.Ls,2)+' ม.)',f(r.hmin,1)+' ซม. '+badge(r.hOk)],['สัดส่วนขั้นบันได 2R + T',f(2*r.input.R+r.input.T,1)+' ซม. '+badge(r.riseOk,'เหมาะสม','ควรตรวจ')]]))+'</div></div></div>';
   h+='<div class="panel overflow"><h2>เหล็กเสริม (ต่อกว้าง 1 ม.)</h2>'+tbl(['ตำแหน่ง','M กก.·ม./ม.','As ต้องการ','ใช้'],r.items.map(function(q){return [q.label,q.Mkgm?f(q.Mkgm,0):'–',q.error?'–':f(q.AsReq),'<b>'+(q.error||barAt(x.bar,q.sUse))+'</b>']}))+'</div>';
   var s=r.shear;h+='<div class="panel">'+kv([[sdm?'Vu / φVc':'v / vc',sdm?f(s.V*1000,0)+' / '+f(s.phiVc*1000,0)+' กก./ม. '+badge(s.ok):f(s.v)+' / '+f(s.vc)+' กก./ตร.ซม. '+badge(s.ok)]])+'</div>';box.innerHTML=h}
 function sheetStair(x,first){var r=runStair(x),P=state.params,pr=state.project,sdm=state.method==='SDM',h='<div class="'+(first?'':'pb')+'"><div class="hd"><div class="t">รายการคำนวณออกแบบบันได ค.ส.ล. ('+(sdm?'SDM':'WSD')+')</div><div>โครงการ: '+esc(pr.name||'–')+'</div><div>บันได: <b>'+esc(x.name)+'</b></div><div>สถานที่: '+esc(pr.location||'–')+'</div><div>วันที่: '+esc(pr.date||'–')+'</div></div>';
   if(r.invalid)return h+'<p class="bad">ข้อมูลไม่ครบ</p></div>';var i=r.input;
-  h+='<h3>1. ข้อมูล</h3>'+ln('ช่วงราบ / กว้าง',f(i.Lh,2)+' / '+f(i.width,2)+' ม.')+ln('ลูกตั้ง R / ลูกนอน T / ท้องบันได t',f(i.R,1)+' / '+f(i.T,1)+' / '+f(i.t,0)+' ซม.')+ln('มุมเอียง θ = atan(R/T)',f(r.theta,2)+'°')+ln('การรองรับ',r.sup.name);
-  h+='<h3>2. น้ำหนักบรรทุก (ต่อพื้นที่ราบ)</h3>'+ln('น้ำหนักเอง = '+f(P.unitWt*1000,0)+' × (t/cosθ + R/2)',f(r.sw,0)+' กก./ตร.ม.')+ln('DL รวม = '+f(i.dl,0)+' + '+f(r.sw,0),f(r.D,0)+' กก./ตร.ม.')+ln('LL',f(r.L,0)+' กก./ตร.ม.')+ln(sdm?'wu = '+P.sdm.loadD+'DL + '+P.sdm.loadL+'LL':'w = DL + LL','<b>'+f(r.w,0)+' กก./ตร.ม.</b>');
+  h+='<h3>1. ข้อมูล</h3>'+ln('รูปแบบ',{straight:'บันไดตรง',landing:'บันไดมีชานพัก (กลับทาง)',L:'บันไดหักฉาก (ตัว L)',spiral:'บันไดวน ขั้นยื่นจากเสากลาง'}[r.stype])+ln(r.stype==='spiral'?'ระยะยื่นขั้น / กว้าง':'ช่วงราบขั้นบันได / กว้าง',f(i.Lh,2)+' / '+f(i.width,2)+' ม.')+(r.land>0?ln('ชานพัก (แนวราบ) / ช่วงพาดรวม',f(r.land,2)+' / '+f(r.Lsp,2)+' ม.'):'')+ln('ลูกตั้ง R / ลูกนอน T / ท้องบันได t',f(i.R,1)+' / '+f(i.T,1)+' / '+f(i.t,0)+' ซม.')+ln('มุมเอียง θ = atan(R/T)',f(r.theta,2)+'°')+ln('การรองรับ',r.sup.name);
+  h+='<h3>2. น้ำหนักบรรทุก (ต่อพื้นที่ราบ)</h3>'+ln('น้ำหนักเอง = '+f(P.unitWt*1000,0)+' × (t/cosθ + R/2)',f(r.sw,0)+' กก./ตร.ม.')+ln('DL รวม = '+f(i.dl,0)+' + '+f(r.sw,0),f(r.D,0)+' กก./ตร.ม.')+ln('LL',f(r.L,0)+' กก./ตร.ม.')+ln(sdm?'wu = '+P.sdm.loadD+'DL + '+P.sdm.loadL+'LL':'w = DL + LL','<b>'+f(r.w,0)+' กก./ตร.ม.</b>')+(r.land>0?ln('ชานพัก: DL = '+f(i.dl,0)+' + '+f(P.unitWt*1000,0)+' × t',f(r.DL2,0)+' กก./ตร.ม. → '+(sdm?'wu':'w')+' '+f(r.w2,0))+ln('น้ำหนักเทียบเท่า (M กลางช่วงเท่ากับน้ำหนักสองช่วงจริง)',f(r.weq,0)+' กก./ตร.ม.'):'');
   h+='<h3>3. ความหนาขั้นต่ำ</h3>'+ln('t ขั้นต่ำ = L เอียง/'+r.sup.div+' × (0.4 + fy/7,000), L เอียง = '+f(r.Ls,3)+' ม.',f(r.hmin,1)+' ซม. '+okTxt(r.hOk));
   h+='<h3>4. เหล็กเสริม</h3>'+ln('d = t − ระยะหุ้ม − ⌀/2',f(r.d,2)+' ซม.')+ln('As ขั้นต่ำ = '+f(r.rhoTemp,4)+' × 100 × t',f(r.AsTemp)+' ตร.ซม./ม.');
-  r.items.forEach(function(q){h+='<div style="margin-top:6px"><b>'+q.label+'</b></div>';if(q.Mkgm){h+=ln('M = '+(q.coef<0.2?'1/'+f(1/q.coef,1).replace(/\.0$/,''):f(q.coef,3))+' × w × L²',f(q.Mkgm,1)+' กก.·ม./ม.');if(q.error){h+=eq('<span class="bad">'+q.error+'</span>');return}h+=ln('As คำนวณ',f(q.AsCalc)+' ตร.ซม./ม.')}
+  r.items.forEach(function(q){h+='<div style="margin-top:6px"><b>'+q.label+'</b></div>';if(q.Mkgm){h+=ln('M = '+(q.coef<0.2?'1/'+f(1/q.coef,1).replace(/\.0$/,''):f(q.coef,3))+' × w × L²'+(r.land>0?' (w เทียบเท่า, L = '+f(r.Lsp,2)+')':''),f(q.Mkgm,1)+' กก.·ม./ม.');if(q.error){h+=eq('<span class="bad">'+q.error+'</span>');return}h+=ln('As คำนวณ',f(q.AsCalc)+' ตร.ซม./ม.')}
     h+=ln('<b>ใช้ '+barAt(i.bar,q.sUse)+'</b>',okTxt(q.ok))});
   var s=r.shear;h+='<h3>5. แรงเฉือน</h3>'+ln('V = '+f(r.sup.v,3)+' × w × L',f(s.V*1000,0)+' กก./ม.')+ln(sdm?'φVc':'v ≤ vc',sdm?f(s.phiVc*1000,0)+' กก./ม. '+okTxt(s.ok):f(s.v)+' ≤ '+f(s.vc)+' '+okTxt(s.ok));
   h+='<div class="box"><b>สรุป '+esc(x.name)+'</b> ท้องบันไดหนา '+f(i.t,0)+' ซม. — '+r.items.map(function(q){return q.label.split(' (')[0]+' '+(q.error?'–':barAt(i.bar,q.sUse))}).join(' — ')+' — ผลรวม '+okTxt(r.ok)+'</div><p class="note">หมายเหตุ: ผลคำนวณนี้ต้องตรวจสอบและรับรองโดยวิศวกรผู้มีใบอนุญาต</p>'+sigBlock(pr)+'</div>';return h}
@@ -3453,7 +3562,8 @@ function boqCollect(){
   rows.push({key:'conc',label:'คอนกรีตโครงสร้าง f\'c '+state.mat.fc+' กก./ตร.ซม. (เผื่อ '+f(bw.concWaste*100,0)+'%)',qty:tot.conc*(1+bw.concWaste),unit:'ลบ.ม.'});
   if(tot.lean)rows.push({key:'lean',label:'คอนกรีตหยาบรองพื้น หนา '+f(bw.lean*100,0)+' ซม.',qty:tot.lean,unit:'ลบ.ม.'});
   rows.push({key:'form',label:'ไม้แบบ',qty:tot.form*(1+bw.formWaste),unit:'ตร.ม.'});
-  ['RB6','RB9','DB10','DB12','DB16','DB20','DB25','DB28','DB32'].forEach(function(b){if(tot.steel[b])rows.push({key:'st_'+b,label:'เหล็กเสริม '+b+' (เผื่อ '+f(bw.steelWaste*100,0)+'%)',qty:tot.steel[b]*(1+bw.steelWaste),unit:'กก.'})});
+  var wb=bw.wasteBy||{},stTot=0;['RB6','RB9','DB10','DB12','DB16','DB20','DB25','DB28','DB32'].forEach(function(b){if(!tot.steel[b])return;var wf=wb[b]!=null?+wb[b]/100:bw.steelWaste;stTot+=tot.steel[b];rows.push({key:'st_'+b,label:'เหล็กเสริม '+b+' (เผื่อ '+f(wf*100,1)+'%)',qty:tot.steel[b]*(1+wf),unit:'กก.'})});
+  if(stTot)rows.push({key:'tiewire',label:'ลวดผูกเหล็ก ('+f(bw.tieKg!=null?bw.tieKg:20,0)+' กก. ต่อเหล็กเสริม 1 ตัน)',qty:stTot/1000*(bw.tieKg!=null?+bw.tieKg:20),unit:'กก.'});
   var rsv=state.tools&&state.tools.roofsys;if(rsv&&rsv.boq!=='0'){var rs=toolRun('roofsys');if(rs&&!rs.error){
     rows.push({key:'roofing_'+rs.mat.id,label:'มุงหลังคา '+rs.mat.name+(rs.qty.pieces?' ('+rs.qty.pieces+' แผ่น)':''),qty:rs.qty.areaW,unit:'ตร.ม.'});
     if(rs.qty.caps)rows.push({key:'roofcap_'+rs.mat.id,label:'ครอบสัน/ครอบตะเฆ่',qty:rs.qty.caps,unit:'ตัว'});
@@ -3469,12 +3579,14 @@ function boqCollect(){
   if(tot.exc){rows.push({key:'exc',label:'งานขุดดินฐานราก (เผื่อขอบข้างละ '+f(bw.digOver,2)+' ม.)',qty:tot.exc,unit:'ลบ.ม.'});rows.push({key:'fill',label:'งานถมดินกลับ',qty:tot.fill,unit:'ลบ.ม.'})}
   CT.rows(state.boq.extra).forEach(function(r,k){var p=r.join(' ').split(/\s*[,;\t]\s*/);if(p.length<3)p=r;var qty=+p[1];if(!isFinite(qty))return;rows.push({key:'x'+k,label:p[0],qty:qty,unit:p[2]||'',extra:true,m:+p[3]||0,l:+p[4]||0})});
   return {list:list,rows:rows,notes:notes,tot:tot}}
-function boqPrice(r){if(r.extra)return {m:r.m,l:r.l};var p=state.boq.prices[r.key]||{};return {m:+p.m||0,l:+p.l||0}}
+function boqPrice(r){if(r.extra)return {m:r.m,l:r.l};var p=state.boq.prices[r.key]||priceLib()['boq:'+r.key]||{};return {m:+p.m||0,l:+p.l||0}}
 function boqTotals(rows){var d=0;rows.forEach(function(r){var p=boqPrice(r);d+=r.qty*(p.m+p.l)});var F=num(state.boq.F)||1;return {direct:d,F:F,grand:d*F}}
 function renderBoq(){
   state.boq=state.boq||{prices:{},F:1,extra:''};var c=boqCollect(),box=$('#vTool'),h='';
   h+='<div class="panel"><h2>ปริมาณงานจากชิ้นส่วนที่ออกแบบ</h2>'+tbl(['ชนิด','ชื่อ','จำนวน','คอนกรีต (ลบ.ม.)','ไม้แบบ (ตร.ม.)','เหล็ก (กก.)'],c.list.map(function(e){var st=e.q.roofKg||0;for(var k in e.q.steel)st+=e.q.steel[k];return [e.type,esc(e.name),e.count,f(e.q.conc,3),f(e.q.form,2),f(st,1)]}))+
     (c.notes.length?'<p class="warn">ข้ามรายการ: '+c.notes.map(esc).join(' · ')+'</p>':'')+'<p class="hint">ปริมาณยังไม่รวมเปอร์เซ็นต์เผื่อ · ตั้งจำนวนชิ้นได้ในช่อง "จำนวน (สำหรับ BOQ)" ของแต่ละชิ้นส่วน · คิดระยะทาบ/ฝังยึด '+state.params.boq.ext+'⌀ และงอขอ '+state.params.boq.hook+'⌀</p></div>';
+  var bw0=state.params.boq;bw0.wasteBy=bw0.wasteBy||{};h+='<div class="panel overflow"><h2>เปอร์เซ็นต์เผื่อเหล็กเสริมแต่ละขนาด และลวดผูกเหล็ก</h2><div class="fields f3">'+['RB6','RB9','DB10','DB12','DB16','DB20','DB25','DB28','DB32'].map(function(b){return '<label class="f">'+b+' <span class="unit">%</span><input type="number" step="0.5" data-wb="'+b+'" value="'+(bw0.wasteBy[b]!=null?bw0.wasteBy[b]:f(bw0.steelWaste*100,1))+'"></label>'}).join('')+
+    '<label class="f">ลวดผูกเหล็ก <span class="unit">กก. ต่อเหล็ก 1 ตัน</span><input type="number" step="1" id="tieKg" value="'+(bw0.tieKg!=null?bw0.tieKg:20)+'"></label></div><p class="hint">ค่าตั้งต้นใช้ % เผื่อเหล็กรวมในหน้าตั้งค่า แก้แยกแต่ละขนาดได้ตามการตัดจริงของโครงการ · ลวดผูกเหล็กค่าที่ใช้ทั่วไปประมาณ 15–20 กก. ต่อตัน</p></div>';
   h+='<div class="panel overflow"><h2>บัญชีแสดงปริมาณวัสดุและราคา</h2><table class="res grid" id="boqT"><tr><td><b>ลำดับ</b></td><td><b>รายการ</b></td><td><b>ปริมาณ</b></td><td><b>หน่วย</b></td><td><b>ค่าวัสดุ/หน่วย</b></td><td><b>ค่าแรง/หน่วย</b></td><td><b>รวม (บาท)</b></td></tr>';
   c.rows.forEach(function(r,i){var p=boqPrice(r);h+='<tr><td>'+(i+1)+'</td><td>'+esc(r.label)+'</td><td>'+f(r.qty,2)+'</td><td>'+esc(r.unit)+'</td>'+(r.extra?'<td>'+f(p.m)+'</td><td>'+f(p.l)+'</td>':'<td><input class="pin" type="number" step="any" inputmode="decimal" data-pk="'+r.key+'" data-pf="m" value="'+(p.m||'')+'"></td><td><input class="pin" type="number" step="any" inputmode="decimal" data-pk="'+r.key+'" data-pf="l" value="'+(p.l||'')+'"></td>')+'<td data-rt="'+i+'">'+f(r.qty*(p.m+p.l))+'</td></tr>'});
   h+='</table><div class="fields" style="margin-top:10px"><label class="f">Factor F <span class="unit">ค่าจากตาราง Factor F ของโครงการ</span><input type="number" step="any" inputmode="decimal" id="boqF" value="'+esc(state.boq.F)+'"></label><div id="boqSum" class="sumline" style="align-self:end"></div></div>';
@@ -3482,9 +3594,11 @@ function renderBoq(){
   h+='<p class="hint">ใส่ราคาต่อหน่วยตามราคาวัสดุและค่าแรงของพื้นที่ ราคาที่กรอกจะถูกบันทึกไว้ใช้ครั้งต่อไป</p></div>';
   box.innerHTML=h;
   function upd(){c.rows.forEach(function(r,i){var p=boqPrice(r),el=$('[data-rt="'+i+'"]');if(el)el.textContent=f(r.qty*(p.m+p.l))});var t=boqTotals(c.rows);$('#boqSum').innerHTML='ค่างานต้นทุน '+f(t.direct)+' บาท × F '+f(t.F,4)+' = <b>'+f(t.grand)+' บาท</b>'}
-  $$('.pin',box).forEach(function(el){el.addEventListener('input',function(){var k=el.dataset.pk;state.boq.prices[k]=state.boq.prices[k]||{};state.boq.prices[k][el.dataset.pf]=el.value;save();upd()})});
+  $$('.pin',box).forEach(function(el){el.addEventListener('input',function(){var k=el.dataset.pk;state.boq.prices[k]=state.boq.prices[k]||{};state.boq.prices[k][el.dataset.pf]=el.value;priceSet('boq:'+k,el.dataset.pf,+el.value||0);save();upd()})});
+  var laterB=function(){setTimeout(function(){if(state.module==='boq'&&state.view==='design')renderBoq()},0)};$$('[data-wb]',box).forEach(function(el){el.addEventListener('change',function(){state.params.boq.wasteBy[el.dataset.wb]=+el.value;save();laterB()})});
+  var tk=$('#tieKg');if(tk)tk.addEventListener('change',function(){state.params.boq.tieKg=+this.value;save();laterB()});
   $('#boqF').addEventListener('input',function(){state.boq.F=this.value;save();upd()});
-  $('#boqExtra').addEventListener('change',function(){state.boq.extra=this.value;save();renderBoq()});
+  $('#boqExtra').addEventListener('change',function(){state.boq.extra=this.value;save();setTimeout(function(){if(state.module==='boq')renderBoq()},0)});
   upd();
 }
 function sheetBoq(){var c=boqCollect(),t=boqTotals(c.rows),pr=state.project,h='<div><div class="hd"><div class="t">บัญชีแสดงปริมาณวัสดุและราคา (งานโครงสร้าง ค.ส.ล.)</div><div>โครงการ: '+esc(pr.name||'–')+'</div><div>วันที่: '+esc(pr.date||'–')+'</div><div>สถานที่: '+esc(pr.location||'–')+'</div><div></div></div>';
@@ -3565,6 +3679,9 @@ function selfTests(){var P=CT.DEFAULTS,m={fc:240,fy:4000,fyt:2400},pi=Math.PI,T=
   add('วิเคราะห์ 3 มิติ','คานยื่น 3 มิติ: ระยะแอ่น PL³/3EI (มม.)',-c3.U[8]*1000,500*64/(3*2e5*1e4*1e5*1e-8)*1000,1e-9,'สูตรมาตรฐาน');
   var t3=CT.frame3d({nodes:[{x:0,y:0,z:0},{x:6,y:0,z:0}],members:[{i:0,j:1,E:2e5,A:1e3,Iy:1e5,Iz:1e5,J:1e5}],supports:[{n:0,fix:fx},{n:1,fix:fx}],memberLoads:[{m:0,type:'dist',fn:function(x){return 1000*x/6}}]});
   add('วิเคราะห์ 3 มิติ','น้ำหนักสามเหลี่ยม: FEM ปลายมาก = wL²/20 (กก.·ม.)',Math.abs(t3.members[0].pts[20].My),1000*36/20,1e-4,'ตารางโมเมนต์ยึดแน่น');
+  var mm2={xs:[4,4],ys:[4],cells:[[0,0],[1,0]],storeys:[3,3],slab:{t:12,finish:150,ll:200},pc:{w:220},bath:{extra:100},beam:{b:25,h:50},col:{b:25,h:25},roof:{type:'flat',t:12,finish:150,llFlat:200,ll:50},fdn:{type:'spread',qa:15,Df:1.5},llReduce:false,
+    floors:[{walls:{'x:0:0':180},off:[{x1:1,y1:2,x2:3,y2:2,unit:90}],slabs:{},sec:[],stairs:[{i:1,j:0,type:'straight',dir:'x'}]},{walls:{},off:[],slabs:{'0,0':'bath'},sec:[{dir:'y',i:0,j:0,pos:2}],stairs:[]}]};
+  var BA2=CT.bimAnalyze(mm2,m,P,'WSD');add('แบบจำลอง 3 มิติ','หลายชั้น: ผลรวมแรงปฏิกิริยา = น้ำหนักรวม (ผนังนอกกริด คานซอย บันได ห้องน้ำ)',Object.keys(BA2.nodes).reduce(function(a,k){return a+BA2.nodes[k].fdnD},0),BA2.tot.D,1e-9,'สมดุลน้ำหนักทั้งอาคาร');
   add('BOQ','น้ำหนักเหล็ก DB12 (กก./ม.)',CT.wpm('DB12'),0.888,2e-3,'ตารางมาตรฐาน 0.888');
   add('BOQ','น้ำหนักเหล็ก DB25 (กก./ม.)',CT.wpm('DB25'),3.853,2e-3,'ตารางมาตรฐาน 3.853');
   return T}
@@ -4011,9 +4128,11 @@ var RM_PRESETS={rect:{xs:'4, 4, 4',ys:'4, 4',cells:'0,0;1,0;2,0;0,1;1,1;2,1'},L:
 function rmParse(v){var xs=String(v.xs).split(/[,\s]+/).filter(Boolean).map(Number),ys=String(v.ys).split(/[,\s]+/).filter(Boolean).map(Number),cells=String(v.cells||'').split(';').filter(Boolean).map(function(c){return c.split(',').map(Number)});return {xs:xs,ys:ys,cells:cells}}
 function gridLab(i){return String.fromCharCode(65+i)}
 TOOLS.roofmodel={title:'แบบจำลองหลังคาและกริดไลน์เสา',fields:[
-  {k:'xs',l:'ระยะกริดแนวนอน (A, B, C …)',u:'ม. คั่นด้วยจุลภาค',t:'s',d:RM_PRESETS.L.xs},{k:'ys',l:'ระยะกริดแนวตั้ง (1, 2, 3 …)',u:'ม.',t:'s',d:RM_PRESETS.L.ys},
-  {k:'cells',l:'ช่องที่เป็นตัวอาคาร (คลิกในผังด้านขวาเพื่อเลือก)',u:'',t:'s',d:RM_PRESETS.L.cells},
+  {k:'src',l:'ข้อมูลอาคารและหลังคา',t:'sel',o:[['bim','ใช้จากแบบจำลองโครงสร้าง 3 มิติ (เชื่อมอัตโนมัติ)'],['own','กำหนดเองในหน้านี้']],d:'own'},
+  {k:'xs',l:'ระยะกริดแนวนอน (A, B, C …)',u:'ม. คั่นด้วยจุลภาค',t:'s',d:RM_PRESETS.L.xs,show:function(v){return v.src!=='bim'}},{k:'ys',l:'ระยะกริดแนวตั้ง (1, 2, 3 …)',u:'ม.',t:'s',d:RM_PRESETS.L.ys,show:function(v){return v.src!=='bim'}},
+  {k:'cells',l:'ช่องที่เป็นตัวอาคาร (คลิกในผังด้านขวาเพื่อเลือก)',u:'',t:'s',d:RM_PRESETS.L.cells,show:function(v){return v.src!=='bim'}},
   {k:'type',l:'ทรงหลังคา',t:'sel',o:[['hip','ปั้นหยา (ลาดทุกด้าน)'],['gable','จั่ว (สันตามแนวยาวของแต่ละปีก)']],d:'hip'},
+  {k:'ridge',l:'แนวสันหลังคาจั่ว',t:'sel',o:[['auto','ตามด้านยาวของแต่ละปีก'],['x','ขนานแกน X'],['y','ขนานแกน Y']],d:'auto',show:function(v){return v.type==='gable'}},
   {k:'mat',l:'วัสดุมุงหลังคา',t:'sel',o:CT.ROOFMAT.filter(function(m){return m.sup!=='slab'}).map(function(m){return [m.id,m.name+' ('+m.w+' กก./ตร.ม.)']}),d:'concTile'},
   {k:'slope',l:'ความชัน',u:'องศา',t:'n',d:30},{k:'eave',l:'ชายคายื่น',u:'ม.',t:'n',d:1},{k:'H',l:'ความสูงถึงระดับหลังคา (อะเส)',u:'ม.',t:'n',d:3},
   {k:'system',l:'ระบบโครงหลังคา',t:'sel',o:[['rafter','จันทัน + อกไก่ + อะเส (+ สะพาน)'],['truss','โครงถัก + แป']],d:'rafter'},
@@ -4021,17 +4140,18 @@ TOOLS.roofmodel={title:'แบบจำลองหลังคาและก�
   {k:'spacing',l:'ระยะห่างโครงถัก',u:'ม.',t:'n',d:3,show:function(v){return v.system==='truss'}},
   {k:'ll',l:'น้ำหนักจรหลังคา',u:'กก./ตร.ม.',t:'n',d:50},{k:'wind',l:'แรงลม',u:'กก./ตร.ม.',t:'n',d:60},{k:'ceiling',l:'ฝ้าแขวน',u:'กก./ตร.ม.',t:'n',d:0},
   {k:'boq',l:'นำเข้า BOQ',t:'sel',o:[['1','ใช่'],['0','ไม่']],d:'0'}],
-  calc:function(v){var g=rmParse(v);if(!g.xs.length||!g.ys.length||g.xs.concat(g.ys).some(function(x){return !(x>0)}))return {error:'ใส่ระยะกริดเป็นตัวเลขมากกว่า 0'};
+  calc:function(v0){var v=v0,bv=state.tools&&state.tools.bim;if(v0.src==='bim'&&bv){var gb=bimParse(bv);v=Object.assign({},v0,{xs:bv.xs,ys:bv.ys,cells:bv.cells,type:bv.roofType==='flat'?'hip':bv.roofType,mat:bv.roofMat||v0.mat,slope:bv.slope,eave:bv.eave,ridge:bv.roofDir||'auto',H:gb.storeys.reduce(function(a,b){return a+b},0),system:bv.roofSys||v0.system,rafterSp:bv.roofSys==='truss'?v0.rafterSp:(bv.roofSp||v0.rafterSp),spacing:bv.roofSys==='truss'?(bv.roofSp||v0.spacing):v0.spacing,ll:bv.roofLL||v0.ll})}
+    var res=(function(v){var g=rmParse(v);if(!g.xs.length||!g.ys.length||g.xs.concat(g.ys).some(function(x){return !(x>0)}))return {error:'ใส่ระยะกริดเป็นตัวเลขมากกว่า 0'};
     if(g.xs.length>10||g.ys.length>10)return {error:'รองรับกริดไม่เกิน 10 × 10 ช่อง'};if(!g.cells.length)return {error:'เลือกช่องที่เป็นตัวอาคารอย่างน้อย 1 ช่อง'};
     if(!(+v.slope>0&&+v.slope<70))return {error:'ความชันต้องอยู่ระหว่าง 0–70°'};
-    var M=CT.gridModel({xs:g.xs,ys:g.ys,cells:g.cells,eave:+v.eave||0,slope:+v.slope,type:v.type});if(!M.rects.length)return {error:'ไม่พบตัวอาคาร'};
+    var M=CT.gridModel({xs:g.xs,ys:g.ys,cells:g.cells,eave:+v.eave||0,slope:+v.slope,type:v.type,ridge:v.ridge});if(!M.rects.length)return {error:'ไม่พบตัวอาคาร'};
     var sys=CT.roofSystem({shape:v.type==='gable'?'gable':'hip',geom:M.geom,mat:v.mat,slope:+v.slope,eave:+v.eave||0,system:v.system,rafterSp:+v.rafterSp||1,postSp:+v.postSp||4,spacing:+v.spacing||3,ll:+v.ll,wind:+v.wind,ceiling:+v.ceiling,waste:0.05},state.params);
-    return {M:M,sys:sys,g:g}},
-  html:function(r,v){if(r.error)return errBox(r.error)+rmGridHTML(v);var M=r.M,G=M.geom,S=r.sys,m=S.mat,h='';
+    return {M:M,sys:sys,g:g}})(v);res.vv=v;res.linked=v0.src==='bim'&&!!bv;return res},
+  html:function(r,v0){var v=r.vv||v0;if(r.error)return errBox(r.error)+rmGridHTML(v);var M=r.M,G=M.geom,S=r.sys,m=S.mat,h=r.linked?'<p class="hint" style="margin-top:0">เชื่อมกับเมนูแบบจำลองโครงสร้าง 3 มิติ: กริด ตัวอาคาร ทรง วัสดุ ความชัน ชายคา และแนวสันมาจากแบบจำลอง แก้ไขที่เมนูแบบจำลองโครงสร้าง</p>':'';
     h+='<div class="verdict '+(S.ok?'ok':'bad')+'"><b>'+(v.type==='gable'?'หลังคาจั่ว':'หลังคาปั้นหยา')+' · '+esc(m.name)+'</b><p>พื้นที่หลังคา '+f(G.area,2)+' ตร.ม. · เสา '+M.cols.length+' ต้น · เหล็กโครงหลังคา '+f(S.steelKg,0)+' กก.</p></div>';
     S.warn.forEach(function(w){h+='<p class="warn">'+w+'</p>'});
     h+='<div class="panel"><h2>แบบจำลองหลังคา 3 มิติ <span style="flex:1"></span><button class="btn ghost" onclick="__ctRot(-45)" aria-label="หมุนซ้าย">⟲</button><button class="btn ghost" onclick="__ctRot(45)" aria-label="หมุนขวา">⟳</button></h2>'+roof3D(M,v)+'</div>';
-    h+=rmGridHTML(v,M);
+    h+=r.linked?'':rmGridHTML(v,M);
     h+='<div class="panel"><div class="rgrid"><div><h2>ขนาดและความยาว</h2>'+kv([['พื้นที่แปลนรวมชายคา',f(G.plan,2)+' ตร.ม.'],['พื้นที่อาคาร (ในแนวเสา)',f(G.planIn,2)+' ตร.ม.'],['พื้นที่หลังคาจริง',f(G.area,2)+' ตร.ม.',1],['สันหลังคา (อกไก่)',f(G.ridge,2)+' ม.'],['ตะเฆ่สัน',f(G.hips,2)+' ม.'],['ตะเฆ่ราง',f(G.valleys,2)+' ม.'],['เชิงชาย',f(G.eaves,2)+' ม.'],G.verges>0.05?['ปั้นลม',f(G.verges,2)+' ม.']:null,['ระยะราบจันทันยาวสุด',f(G.run,2)+' ม.']].filter(Boolean))+'</div>'+
       '<div><h2>วัสดุมุงและน้ำหนัก</h2>'+kv([['พื้นที่เผื่อ 5%',f(S.qty.areaW,2)+' ตร.ม.'],S.qty.pieces?['จำนวนแผ่น','<b>'+f(S.qty.pieces,0)+' แผ่น</b>',1]:['หน่วยสั่งซื้อ','ตร.ม.'],S.qty.caps?['ครอบสัน/ครอบตะเฆ่',f(S.qty.caps,0)+' ตัว']:null,['น้ำหนักวัสดุมุง',f(S.qty.roofingKg,0)+' กก.'],['น้ำหนักหลังคาบนพื้นที่ราบ',f(S.wPlan,1)+' กก./ตร.ม.']].filter(Boolean))+'</div></div>'+
       '<p class="hint">ความยาวสัน ตะเฆ่ คำนวณจากแบบจำลองด้วยกริดละเอียด (คลาดเคลื่อนไม่เกินราว 1%) · พื้นที่หลังคาและเชิงชายคำนวณแบบตรง</p></div>';
@@ -4073,7 +4193,7 @@ function roof3D(M,v){var ang=(+v.ang||35)*Math.PI/180,ca=Math.cos(ang),sa=Math.s
 
 /* ===================== DASHBOARD ===================== */
 var GROUPOF={roofsys:'ออกแบบโครงสร้าง · หลังคา',roofmodel:'ออกแบบโครงสร้าง · หลังคา',roof:'ออกแบบโครงสร้าง · หลังคา',slab1:'ออกแบบโครงสร้าง · พื้น',slab2:'ออกแบบโครงสร้าง · พื้น',stair:'ออกแบบโครงสร้าง · พื้น',beam:'ออกแบบโครงสร้าง · คาน',col:'ออกแบบโครงสร้าง · เสา',ped:'ออกแบบโครงสร้าง · ตอม่อ',fdn:'ออกแบบโครงสร้าง · ฐานราก',
-  bim:'แบบจำลองอาคาร',cbeam:'วิเคราะห์โครงสร้าง',frame:'วิเคราะห์โครงสร้าง',loadtab:'ข้อมูลอ้างอิง',steel:'ข้อมูลอ้างอิง',rebar:'ข้อมูลอ้างอิง',boq:'ปริมาณงาน',trav:'สำรวจและวางผัง',level:'สำรวจและวางผัง',conv:'สำรวจและวางผัง',setout:'สำรวจและวางผัง',curve:'สำรวจและวางผัง',earth:'สำรวจและวางผัง',mix:'เครื่องมืออื่น',hyd:'เครื่องมืออื่น',units:'เครื่องมืออื่น',self:'ระบบ',manual:'ระบบ',home:'Civil Toolkit'};
+  bim:'แบบจำลองอาคาร',cbeam:'วิเคราะห์โครงสร้าง',frame:'วิเคราะห์โครงสร้าง',loadtab:'ข้อมูลอ้างอิง',steel:'ข้อมูลอ้างอิง',rebar:'ข้อมูลอ้างอิง',boq:'ปริมาณงาน',trav:'สำรวจและวางผัง',level:'สำรวจและวางผัง',conv:'สำรวจและวางผัง',setout:'สำรวจและวางผัง',curve:'สำรวจและวางผัง',earth:'สำรวจและวางผัง',mix:'เครื่องมืออื่น',hyd:'เครื่องมืออื่น',units:'เครื่องมืออื่น',self:'ระบบ',manual:'ระบบ',estimate:'ปริมาณงาน',home:'Civil Toolkit'};
 function renderHome(){var pr=state.project,sdm=state.method==='SDM',h='';
   var types=[['roof','ชิ้นส่วนโครงหลังคา','roofs',runRoof],['slab1','พื้นทางเดียว','slabs1',null],['slab2','พื้นสองทาง','slabs2',null],['stair','บันได','stairs',runStair],['beam','คาน','beams',run],['col','เสา','cols',runCol],['ped','ตอม่อ','peds',runPed],['fdn','ฐานราก','fdns',runFdn]];
   h+='<div class="panel"><div class="rgrid"><div><h2>'+esc(pr.name||'โครงการยังไม่ได้ตั้งชื่อ')+'</h2>'+kv([['สถานที่',esc(pr.location||'–')],['ผู้คำนวณ',esc(pr.engineer||'–')+(pr.license?' (กว. '+esc(pr.license)+')':'')],['วิธีออกแบบ ค.ส.ล.',sdm?'วิธีกำลัง (SDM) 1.4D + 1.7L':'วิธีหน่วยแรงใช้งาน (WSD)'],['วัสดุ',"f'c "+state.mat.fc+' กก./ตร.ซม. · '+state.mat.grade+' · ปลอก '+state.mat.stGrade]])+'<button class="btn" onclick="document.getElementById(\'btnProject\').click()">แก้ไขข้อมูลโครงการ</button></div>';
@@ -4085,27 +4205,45 @@ function renderHome(){var pr=state.project,sdm=state.method==='SDM',h='';
     var ok=0,bad=0;L.forEach(function(x){var r=runAny(base(t[0]),x);if(r.invalid||!r.ok)bad++;else ok++});
     return '<button class="card" onclick="__ctGo(\''+t[0]+'\')"><span class="t">'+t[1]+'</span><span class="n">'+L.length+'</span><span class="s">'+(L.length?'<span class="tag ok">ผ่าน '+ok+'</span> '+(bad?'<span class="tag bad">ไม่ผ่าน '+bad+'</span>':''):'ยังไม่มีรายการ')+'</span></button>'}).join('')+'</div>';
   h+='<div class="panel" style="margin-top:14px"><h2>ขั้นตอนการทำงานที่แนะนำ <span style="flex:1"></span><button class="btn" onclick="__ctGo(\'manual\')">เปิดคู่มือการใช้งาน</button></h2><ol style="margin:0;padding-left:1.4em;line-height:1.9"><li>ตั้งข้อมูลโครงการ วิธีออกแบบ และวัสดุ</li><li>สร้างแบบจำลองโครงสร้าง 3 มิติจากกริดหรือแบบ PDF เพื่อหาน้ำหนักทุกชิ้นส่วนตามลำดับการถ่ายน้ำหนัก</li><li>หลังคา: เลือกทรง วัสดุมุง กำหนดกริดเสา แล้วออกแบบโครงหลังคา</li><li>พื้น → บันได → คาน (ใช้รายการน้ำหนักจากพื้นและผนัง) → เสา → ตอม่อ → ฐานราก</li><li>ตรวจคานต่อเนื่องหรือโครงข้อแข็งในเมนูวิเคราะห์โครงสร้าง แล้วส่งค่ากลับไปออกแบบ</li><li>สรุปปริมาณงานและราคาในเมนู BOQ แล้วพิมพ์รายการคำนวณ</li></ol></div>';
-  $('#vTool').innerHTML=h}
+  $('#vTool').innerHTML=projPanel()+h}
 window.__ctGo=function(m){state.module=m;save();renderAll();window.scrollTo(0,0)};
 
-/* ===================== 3D STRUCTURAL MODEL (BIM-lite) ===================== */
-function bimParse(v){var sp=function(t){return String(t).split(/[,\s]+/).filter(Boolean).map(Number)};var w={};try{w=JSON.parse(v.walls||'{}')}catch(e){}
-  return {xs:sp(v.xs),ys:sp(v.ys),cells:String(v.cells||'').split(';').filter(Boolean).map(function(c){return c.split(',').map(Number)}),storeys:sp(v.storeys),walls:w}}
-function bimModel(v){var g=bimParse(v);return {xs:g.xs,ys:g.ys,cells:g.cells,storeys:g.storeys,walls:g.walls,slab:{t:+v.slabT,finish:+v.finish,ll:+v.ll},beam:{b:+v.beamB,h:+v.beamH,bar2:'DB20'},col:{b:+v.colB,h:+v.colH},
-  roof:{type:v.roofType,mat:v.roofMat,slope:+v.slope,eave:+v.eave,ll:+v.roofLL,llFlat:+v.flatLL,t:+v.slabT,finish:+v.finish},fdn:{type:v.fdnType,qa:+v.qa,Df:+v.Df,Qa:+v.Qa,pileSize:+v.pileSize,grade:state.mat.grade},llReduce:v.llReduce==='1',groundSlab:v.groundSlab==='1'}}
+/* ===================== 3D STRUCTURAL MODEL (multi-floor) ===================== */
+var SLABTYPES=[['cast','พื้นหล่อในที่'],['pc','แผ่นพื้นสำเร็จรูป'],['bath','พื้นห้องน้ำ (หล่อในที่ ลดระดับ)'],['void','ช่องเปิด / ไม่มีพื้น']];
+var SLABCOL={cast:'var(--concrete)',pc:'#E7EEF7',bath:'#DDF0EA',void:'#FBEDEC'};
+var STAIRTYPES=[['straight','บันไดตรง'],['landing','บันไดมีชานพัก (กลับทาง)'],['L','บันไดหักฉาก (ตัว L)'],['spiral','บันไดวน']];
+function spNums(t){return String(t||'').split(/[,\s]+/).filter(Boolean).map(Number)}
+function bimParse(v){var g={xs:spNums(v.xs),ys:spNums(v.ys),cells:String(v.cells||'').split(';').filter(Boolean).map(function(c){return c.split(',').map(Number)}),storeys:spNums(v.storeys)};
+  var fl=[];try{fl=JSON.parse(v.floors||'[]')}catch(e){fl=[]}
+  if(!fl.length){var w={};try{w=JSON.parse(v.walls||'{}')}catch(e){};if(!v.walls)w=perimWalls(g,180);for(var k=0;k<Math.max(1,g.storeys.length);k++)fl.push({walls:JSON.parse(JSON.stringify(w)),off:[],slabs:{},sec:[],stairs:[],doors:'',windows:'',sanitary:''})}
+  while(fl.length<g.storeys.length){var last=fl[fl.length-1]||{walls:{}};fl.push({walls:JSON.parse(JSON.stringify(last.walls||{})),off:[],slabs:{},sec:[],stairs:[],doors:'',windows:'',sanitary:''})}
+  fl.forEach(function(f2){['off','sec','stairs'].forEach(function(k2){f2[k2]=f2[k2]||[]});f2.walls=f2.walls||{};f2.slabs=f2.slabs||{}});
+  g.floors=fl.slice(0,Math.max(1,g.storeys.length));var rs={};try{rs=JSON.parse(v.roofSlabs||'{}')}catch(e){}g.roofSlabs=rs;return g}
+function bimSaveFloors(v,g){v.floors=JSON.stringify(g.floors);v.roofSlabs=JSON.stringify(g.roofSlabs||{});save()}
+function bimModel(v){var g=bimParse(v);return {xs:g.xs,ys:g.ys,cells:g.cells,storeys:g.storeys,floors:g.floors,roofSlabs:g.roofSlabs,slab:{t:+v.slabT,finish:+v.finish,ll:+v.ll},pc:{w:+v.pcW||220},bath:{extra:+v.bathX||100},beam:{b:+v.beamB,h:+v.beamH,bar2:'DB20'},col:{b:+v.colB,h:+v.colH},
+  roof:{type:v.roofType,mat:v.roofMat,slope:+v.slope,eave:+v.eave,ll:+v.roofLL,llFlat:+v.flatLL,t:+v.slabT,finish:+v.finish,dir:v.roofDir||'auto',system:v.roofSys||'rafter',rafterSp:v.roofSys==='truss'?1:(+v.roofSp||1),spacing:v.roofSys==='truss'?(+v.roofSp||3):3,postSp:4},fdn:{type:v.fdnType,qa:+v.qa,Df:+v.Df,Qa:+v.Qa,pileSize:+v.pileSize,grade:state.mat.grade},llReduce:v.llReduce==='1',groundSlab:v.groundSlab==='1'}}
 function perimWalls(g,unit){var nx=g.xs.length,ny=g.ys.length,occ={},w={};g.cells.forEach(function(c){occ[c[0]+','+c[1]]=1});var O=function(i,j){return !!occ[i+','+j]};
   for(var j=0;j<=ny;j++)for(var i=0;i<nx;i++)if(O(i,j-1)!==O(i,j))w['x:'+j+':'+i]=unit;for(i=0;i<=nx;i++)for(j=0;j<ny;j++)if(O(i-1,j)!==O(i,j))w['y:'+i+':'+j]=unit;return w}
+var bimPending=null;
 TOOLS.bim={title:'แบบจำลองโครงสร้าง 3 มิติ',fields:[
   {k:'xs',l:'ระยะกริด A, B, C …',u:'ม.',t:'s',d:'4, 4, 4'},{k:'ys',l:'ระยะกริด 1, 2, 3 …',u:'ม.',t:'s',d:'4, 5'},
-  {k:'cells',l:'ช่องที่เป็นตัวอาคาร (แก้ในผังด้านขวา)',t:'s',d:'0,0;1,0;2,0;0,1;1,1'},
-  {k:'storeys',l:'ความสูงแต่ละชั้น (ชั้น 1, 2, …)',u:'ม.',t:'s',d:'3.5, 3.2'},
-  {k:'edit',l:'โหมดแก้ไขผัง',t:'sel',o:[['cells','เลือกช่องตัวอาคาร'],['walls','วาง/ลบผนังบนแนวกริด']],d:'cells'},
-  {k:'wallUnit',l:'ผนังที่จะวาง',t:'sel',o:[],d:'180'},
-  {k:'slabT',l:'พื้น ค.ส.ล. หนา',u:'ซม.',t:'n',d:12},{k:'finish',l:'วัสดุปูผิว ฝ้า ระบบ',u:'กก./ตร.ม.',t:'n',d:150},{k:'ll',l:'น้ำหนักจรพื้น',u:'กก./ตร.ม. (บ้านพักอาศัย 200)',t:'n',d:200},
-  {k:'beamB',l:'คาน กว้าง',u:'ซม.',t:'n',d:25},{k:'beamH',l:'คาน ลึก',u:'ซม.',t:'n',d:50},{k:'colB',l:'เสา b',u:'ซม.',t:'n',d:25},{k:'colH',l:'เสา h',u:'ซม.',t:'n',d:25},
+  {k:'cells',l:'ช่องที่เป็นตัวอาคาร (แก้ในผัง)',t:'s',d:'0,0;1,0;2,0;0,1;1,1'},
+  {k:'storeys',l:'ความสูงแต่ละชั้น',u:'ม.',t:'s',d:'3.5, 3.2',show:function(){return false}},
+  {k:'edit',l:'เครื่องมือในผัง',t:'sel',o:[['cells','เลือกช่องตัวอาคาร'],['walls','ผนังตามแนวกริด'],['off','ผนังนอกแนวกริด (คลิก 2 จุด)'],['sec','คานซอย'],['slab','ชนิดแผ่นพื้น'],['stair','ช่องบันได'],['pick','ดูผลวิเคราะห์ชิ้นส่วน']],d:'cells',show:function(){return false}},
+  {k:'wallUnit',l:'ชนิดผนัง',t:'sel',o:[],d:'180',show:function(){return false}},
+  {k:'secDir',l:'แนวคานซอย',t:'sel',o:[['x','ขนานแกน X (แนว A–B)'],['y','ขนานแกน Y (แนว 1–2)']],d:'x',show:function(){return false}},
+  {k:'slabPick',l:'ชนิดแผ่นพื้นที่จะกำหนด',t:'sel',o:SLABTYPES,d:'cast',show:function(){return false}},
+  {k:'stairType',l:'รูปแบบบันได',t:'sel',o:STAIRTYPES,d:'straight',show:function(){return false}},
+  {k:'stairDir',l:'ทิศทางขึ้นบันได',t:'sel',o:[['x','ตามแกน X'],['y','ตามแกน Y']],d:'x',show:function(){return false}},
+  {k:'slabT',l:'พื้นหล่อในที่ หนา',u:'ซม.',t:'n',d:12},{k:'finish',l:'วัสดุปูผิว ฝ้า ระบบ',u:'กก./ตร.ม.',t:'n',d:150},{k:'ll',l:'น้ำหนักจรพื้น',u:'กก./ตร.ม. (บ้านพักอาศัย 200)',t:'n',d:200},
+  {k:'pcW',l:'แผ่นพื้นสำเร็จรูปรวมคอนกรีตทับหน้า',u:'กก./ตร.ม. (ตามผู้ผลิต)',t:'n',d:220},{k:'bathX',l:'น้ำหนักเพิ่มพื้นห้องน้ำ',u:'กก./ตร.ม. (กันซึม ปูนลดระดับ กระเบื้อง)',t:'n',d:100},
+  {k:'beamB',l:'คาน กว้าง',u:'ซม.',t:'n',d:25},{k:'beamH',l:'คาน ลึก',u:'ซม.',t:'n',d:50},{k:'colB',l:'เสา b (แนว X)',u:'ซม.',t:'n',d:25},{k:'colH',l:'เสา h (แนว Y)',u:'ซม.',t:'n',d:25},
   {k:'roofType',l:'หลังคา',t:'sel',o:[['hip','ปั้นหยา'],['gable','จั่ว'],['flat','ดาดฟ้า / พื้นหลังคา ค.ส.ล.']],d:'hip'},
+  {k:'roofDir',l:'แนวสันหลังคาจั่ว',t:'sel',o:[['auto','ตามด้านยาวของแต่ละปีก'],['x','ขนานแกน X'],['y','ขนานแกน Y']],d:'auto',show:function(v){return v.roofType==='gable'}},
   {k:'roofMat',l:'วัสดุมุงหลังคา',t:'sel',o:CT.ROOFMAT.filter(function(m){return m.sup!=='slab'}).map(function(m){return [m.id,m.name]}),d:'concTile',show:function(v){return v.roofType!=='flat'}},
   {k:'slope',l:'ความชันหลังคา',u:'องศา',t:'n',d:30,show:function(v){return v.roofType!=='flat'}},{k:'eave',l:'ชายคา',u:'ม.',t:'n',d:1,show:function(v){return v.roofType!=='flat'}},
+  {k:'roofSys',l:'ระบบโครงหลังคา',t:'sel',o:[['rafter','จันทัน + อกไก่ + อะเส (+ สะพาน)'],['truss','โครงถัก + แป']],d:'rafter',show:function(v){return v.roofType!=='flat'}},
+  {k:'roofSp',l:'ระยะห่างจันทัน / โครงถัก',u:'ม.',t:'n',d:1,show:function(v){return v.roofType!=='flat'}},
   {k:'roofLL',l:'น้ำหนักจรหลังคา',u:'กก./ตร.ม.',t:'n',d:50,show:function(v){return v.roofType!=='flat'}},{k:'flatLL',l:'น้ำหนักจรดาดฟ้า',u:'กก./ตร.ม.',t:'n',d:200,show:function(v){return v.roofType==='flat'}},
   {k:'anal',l:'วิธีวิเคราะห์',t:'sel',o:[['3d','โครงข้อแข็ง 3 มิติ (แรงดิ่ง + แรงลม)'],['path','ถ่ายน้ำหนักตามลำดับ (แรงดิ่ง)']],d:'3d'},
   {k:'exposure',l:'สภาพภูมิประเทศ (แรงลม)',t:'sel',o:[['urban','เมือง / ชานเมือง'],['open','โล่ง / ชายฝั่งทะเล']],d:'urban',show:function(v){return v.anal!=='path'}},
@@ -4116,75 +4254,172 @@ TOOLS.bim={title:'แบบจำลองโครงสร้าง 3 มิ�
   {k:'fdnType',l:'ฐานราก',t:'sel',o:[['spread','ฐานแผ่'],['pile','ฐานเสาเข็ม']],d:'spread'},
   {k:'qa',l:'qa ดิน',u:'ตัน/ตร.ม.',t:'n',d:15,show:function(v){return v.fdnType!=='pile'}},{k:'Df',l:'ความลึกฐาน Df',u:'ม.',t:'n',d:1.5,show:function(v){return v.fdnType!=='pile'}},
   {k:'Qa',l:'น้ำหนักปลอดภัยเข็ม',u:'ตัน/ต้น',t:'n',d:20,show:function(v){return v.fdnType==='pile'}},{k:'pileSize',l:'ขนาดเข็ม',u:'ซม.',t:'n',d:22,show:function(v){return v.fdnType==='pile'}}],
-  calc:function(v){if(!v.walls){var g0=bimParse(v);v.walls=JSON.stringify(perimWalls(g0,180))}var m=bimModel(v);
+  calc:function(v){var g=bimParse(v);if(!v.floors)bimSaveFloors(v,g);var m=bimModel(v);
     if(!m.xs.length||!m.ys.length||m.xs.concat(m.ys,m.storeys).some(function(x){return !(x>0)}))return {error:'ใส่ระยะกริดและความสูงชั้นเป็นตัวเลขมากกว่า 0'};
     if(m.xs.length>8||m.ys.length>8||m.storeys.length>6)return {error:'รองรับกริดไม่เกิน 8 × 8 และไม่เกิน 6 ชั้น'};if(!m.cells.length)return {error:'เลือกช่องตัวอาคารอย่างน้อย 1 ช่อง'};
     if(!(m.beam.b>0&&m.beam.h>0&&m.col.b>0&&m.col.h>0&&m.slab.t>0))return {error:'ใส่ขนาดคาน เสา และพื้น'};
     try{var A=CT.bimAnalyze(m,mat(),state.params,state.method),Dp=CT.bimDesign(A,m,mat(),state.params,state.method);
       if(v.anal==='path')return {A:A,D:Dp,m:m};
       var Fr=CT.bimFrame(A,m,mat(),state.params,state.method,{exposure:v.exposure,publicBldg:v.pub==='1'});if(Fr.error)return {error:Fr.error};
-      var D=CT.bimDesign3d(A,Fr,m,mat(),state.params,state.method,Dp);return {A:A,D:D,m:m,Fr:Fr,lim:+v.driftLim||400}}catch(e){return {error:'วิเคราะห์ไม่ได้: '+e.message}}},
-  html:function(r,v){var h='';h+=bimPdfPanel(v);if(r.error)return errBox(r.error)+bimPlanHTML(v,null)+h;var A=r.A,D=r.D,sdm=state.method==='SDM';
-    var nb=D.beams.length,nbo=D.beams.filter(function(x){return x.ok}).length,nc=D.cols.length,nco=D.cols.filter(function(x){return x.ok}).length,nf=D.fdns.length,nfo=D.fdns.filter(function(x){return x.ok}).length;
-    var totD=Object.keys(A.nodes).reduce(function(a,k){return a+A.nodes[k].fdnD},0),totL=Object.keys(A.nodes).reduce(function(a,k){return a+A.nodes[k].fdnL},0);
-    var top='<div class="verdict '+(D.ok?'ok':'bad')+'"><b>'+(D.ok?'ทุกชิ้นส่วนผ่าน':'มีชิ้นส่วนไม่ผ่าน')+'</b><p>'+(r.Fr?'โครงข้อแข็ง 3 มิติ · ':'ถ่ายน้ำหนักตามลำดับ · ')+'คาน '+nbo+'/'+nb+' · เสา '+nco+'/'+nc+' · ฐานราก '+nfo+'/'+nf+' ผ่าน · น้ำหนักลงฐานรากรวม DL '+f(totD/1000,1)+' / LL '+f(totL/1000,1)+' ตัน · '+(sdm?'SDM 1.4D + 1.7L':'WSD D + L')+'</p></div>';
-    h=top+'<div class="panel"><h2>แบบจำลอง 3 มิติ <span style="flex:1"></span><select id="bimView" aria-label="การแสดงผล" style="font:inherit;border:1px solid var(--line);border-radius:6px;padding:2px 6px"><option value="all">ทั้งหมด</option><option value="frame">โครงคาน-เสา</option><option value="status">ผลตรวจสอบ</option><option value="deform">การเสียรูปจากแรงลมทิศ X</option></select><button class="btn ghost" onclick="__ctBimRot(-45)" aria-label="หมุนซ้าย">⟲</button><button class="btn ghost" onclick="__ctBimRot(45)" aria-label="หมุนขวา">⟳</button></h2>'+bim3D(r,v)+'</div>'+bimPlanHTML(v,r)+h;
-    h+='<div class="panel overflow"><h2>การถ่ายน้ำหนัก (ตามลำดับ พื้น → คาน → เสา → ฐานราก)</h2>'+tbl(['ระดับ','พื้น','คาน (แนว)','น้ำหนักบนคานรวม DL / LL (ตัน)'],A.levels.map(function(lv){var d=0,l=0;lv.runs.forEach(function(rn){rn.loads.forEach(function(ld,q){d+=ld.DV*rn.spans[q];l+=ld.LV*rn.spans[q]})});return [lv.k===0?'คานคอดิน':lv.k===A.nS?'ระดับหลังคา':'พื้นชั้น '+(lv.k+1),lv.hasSlab?'มี':'–',lv.runs.length,f(d/1000,2)+' / '+f(l/1000,2)]}))+'<p class="hint">พื้นสองทางกระจายแรงลงคานด้วยพื้นที่รับน้ำหนักจริง (S/4, S/4·(2 − m)) สำหรับแรงปฏิกิริยา และใช้น้ำหนักเทียบเท่าโมเมนต์ (S/3, S/3·(3 − m²)/2) สำหรับออกแบบคาน · คานแต่ละแนววิเคราะห์เป็นคานต่อเนื่องพร้อมจัดน้ำหนักจรสลับช่วง · หลังคาถ่ายลงคานรอบนอกระดับหลังคา</p></div>';
-    if(r.Fr){var Fr=r.Fr,eqRows=[['น้ำหนักคงที่ D (กก.)','D'],['น้ำหนักจร L (กก.)','L'],['แรงลมทิศ X (กก.)','WX'],['แรงลมทิศ Y (กก.)','WY']].map(function(q){var e=Fr.eq[q[1]];return [q[0],f(e.app,0),f(e.R,0),badge(Math.abs(e.app-e.R)<=1e-6*Math.max(1,Math.abs(e.app)),'สมดุล','ไม่สมดุล')]});
-      var dOk=Fr.drift.every(function(d){return d.ratio>=r.lim});
-      h+='<div class="panel overflow"><h2>ผลวิเคราะห์โครงข้อแข็ง 3 มิติ</h2><p class="hint" style="margin-top:0">'+Fr.nodes.length+' จุดต่อ · '+Fr.members.length+' ชิ้นส่วน · '+Fr.res.D.nf+' องศาอิสระ · ฐานเสายึดแน่น · สติฟเนสแตกร้าว: คาน 0.35Ig เสา 0.70Ig แรงบิด 0.15J · กรณีรวมน้ำหนัก '+Fr.combos.length+' กรณีตามกฎกระทรวง 2566</p>'+
-        tbl(['ตรวจสมดุลแรง','น้ำหนัก/แรงที่ใส่','ผลรวมแรงปฏิกิริยา','ผล'],eqRows)+
-        tbl(['ชั้น','ระดับ (ม.)','หน่วยแรงลม (กก./ตร.ม.)','ความสูงรับลม (ม.)','แรงลมทิศ X (กก.)','แรงลมทิศ Y (กก.)'],Fr.wind.map(function(w){return [w.k===A.nS?'หลังคา':'ชั้น '+(w.k+1),f(w.z,2),f(w.q,0),f(w.trib,2),f(w.Fx,0),f(w.Fy,0)]}))+
-        tbl(['ชั้น','ทิศ','ระยะเซ (มม.)','h/ระยะเซ','เกณฑ์ h/'+r.lim],Fr.drift.map(function(d){return [d.k,d.dir==='WX'?'X':'Y',f(d.d*1000,2),isFinite(d.ratio)?f(d.ratio,0):'–',badge(d.ratio>=r.lim)]}))+
-        '<p class="hint">แรงลมใช้หน่วยแรงตามตาราง 1/2 ของกฎกระทรวง 2566 คูณพื้นที่รับลมของแต่ละชั้น กระจายให้ทุกจุดต่อในชั้นนั้น · ระยะเซคิดจากแรงลมใช้งาน (ไม่คูณตัวคูณ) · '+(dOk?'ระยะเซผ่านเกณฑ์':'<b>ระยะเซเกินเกณฑ์ ควรเพิ่มขนาดเสาหรือคาน</b>')+'</p>'+
-        '<p class="hint">กรณีรวมน้ำหนัก: '+Fr.combos.map(function(c){return c[0]}).join(' · ')+' · คานใช้ค่ามากกว่าระหว่างผลโครงข้อแข็ง 3 มิติกับผลจัดวางน้ำหนักจรสลับช่วงจากวิธีถ่ายน้ำหนัก</p></div>'}
-    var lvName=function(k){return k===0?'GB':k===A.nS?'RB':(k+1)+'F'},lineName=function(rn){return rn.dir==='x'?'แนว '+(rn.line+1):'แนว '+gridLab(rn.line)},spanName=function(rn,q){return rn.dir==='x'?gridLab(rn.s0+q)+'–'+gridLab(rn.s0+q+1):(rn.s0+q+1)+'–'+(rn.s0+q+2)};
-    h+='<div class="panel overflow"><h2>คาน ('+nb+' ช่วง)</h2>'+tbl(['ระดับ','แนว','ช่วง','ยาว','Mu+ / Mu− (ตัน·ม.)','Vu (ตัน)','เหล็กล่าง / บน','ปลอก','ผล'],D.beams.map(function(x){var d=x.d;return [lvName(x.lv),lineName(x.r),spanName(x.r,x.q),f(x.inp.L,2),f(x.inp.Mp,2)+' / '+f(x.inp.Mn,2),f(x.inp.V,2),(d.pos&&!d.pos.error?d.pos.nBar+'-'+x.inp.bar:'–')+' / '+(d.neg&&!d.neg.error?d.neg.nBar+'-'+x.inp.bar:'2-'+x.inp.bar),d.shear&&!d.shear.error?x.inp.stirrup+'@'+spacingTxt(d.shear.sUse):'–',badge(x.ok)]}))+'</div>';
-    if(r.Fr)h+='<div class="panel overflow"><h2>เสา ('+nc+' ต้น-ชั้น) จากโครงข้อแข็ง 3 มิติ</h2>'+tbl(['เสา','ชั้น','กรณีวิกฤต','P (ตัน)','Mx / My (ตัน·ม.)','เหล็กยืน','อัตราส่วน','ผล'],D.cols.map(function(x){var d=x.d,i=d.input,g=x.gov;return [gridLab(x.c.node.i)+'-'+(x.c.node.j+1),x.c.st,esc(g.name),f(g.P/1000,2),f(g.Mx/1000,2)+' / '+f(g.Myb/1000,2),(2*i.nb+2*i.ns)+'-'+i.bar,f(d.ratio,3),badge(x.ok)]}),'wrap')+'<p class="hint">ตรวจทุกกรณีรวมน้ำหนักที่ปลายบนและล่างของเสา ใช้แรงดัดสองทาง (Bresler) รวมโมเมนต์ขั้นต่ำ · Mx ดัดในทิศ h, My ดัดในทิศ b</p></div>';
-    else h+='<div class="panel overflow"><h2>เสา ('+nc+' ต้น-ชั้น)</h2>'+tbl(['เสา','ชั้น','DL / LL (ตัน)','P ออกแบบ (ตัน)','เหล็กยืน','อัตราส่วน','ผล'],D.cols.map(function(x){var d=x.d,i=d.input;return [gridLab(x.c.node.i)+'-'+(x.c.node.j+1),x.c.st,f(x.c.D/1000,2)+' / '+f(x.c.Lr/1000,2),f(x.Pd,2),(2*i.nb+2*i.ns)+'-'+i.bar,f(d.ratio,3),badge(x.ok)]}))+'<p class="hint">วิธีถ่ายน้ำหนัก: เสาตรวจแรงอัดร่วมกับโมเมนต์ขั้นต่ำ (แรงดิ่งเท่านั้น) · เลือก "โครงข้อแข็ง 3 มิติ" เพื่อรวมโมเมนต์จากโครงและแรงลม</p></div>';
-    h+='<div class="panel overflow"><h2>ฐานราก ('+nf+' ฐาน)</h2>'+tbl(['ตำแหน่ง','DL / LL (ตัน)','ขนาด','หนา','ผล'],D.fdns.map(function(x){var d=x.d;return [gridLab(x.N.i)+'-'+(x.N.j+1)+(x.uplift?' <span class="tag bad">แรงถอนจากลม</span>':''),f(x.N.fdnD/1000,2)+' / '+f(x.N.fdnL/1000,2),d.error?'–':(d.type==='pile'?f(d.Lx,2)+'×'+f(d.Ly,2)+' ม. เข็ม '+d.n+' ต้น':f(d.L,2)+'×'+f(d.B,2)+' ม.'),d.error?'–':f(d.t,0)+' ซม.',badge(x.ok)]}))+'</div>';
-    h+='<div class="panel"><button class="btn primary" onclick="__ctBimExport()">ส่งชิ้นส่วนทั้งหมดไปเมนูออกแบบ (คาน เสา ฐานราก) เพื่อพิมพ์รายการคำนวณ</button><p class="hint">คานส่งแบบกรอกโมเมนต์เอง เสาและฐานรากส่งพร้อมน้ำหนัก ชื่อชิ้นส่วนตั้งตามกริด เช่น B2F-1(A–B), C1-A1, F-A1</p></div>';
-    return h}};
+      var D=CT.bimDesign3d(A,Fr,m,mat(),state.params,state.method,Dp);D.secs=Dp.secs;D.ok=D.ok&&Dp.secs.every(function(x){return x.ok});return {A:A,D:D,m:m,Fr:Fr,lim:+v.driftLim||400}}catch(e){return {error:'วิเคราะห์ไม่ได้: '+e.message}}},
+  html:function(r,v){return bimHTML(r,v)}};
+function bimStoreyPanel(v,g){var rows=g.storeys.map(function(h,k){return '<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><b style="min-width:4em">ชั้น '+(k+1)+'</b><label class="f" style="flex:1;margin:0">ความสูง <span class="unit">ม.</span><input type="number" step="0.05" min="2" value="'+h+'" onchange="__ctBimH('+k+',this.value)"></label></div>'}).reverse().join('');
+  return '<div class="panel"><h2>จำนวนชั้นของอาคาร: '+g.storeys.length+' ชั้น <span style="flex:1"></span><button class="btn primary" onclick="__ctBimAddFloor()">+ เพิ่มชั้น</button><button class="btn ghost" onclick="__ctBimDelFloor()"'+(g.storeys.length<2?' disabled':'')+'>− ลบชั้นบนสุด</button></h2>'+rows+'<p class="hint">ชั้นที่เพิ่มใหม่คัดลอกผนังจากชั้นบนสุดเดิม · รองรับสูงสุด 6 ชั้น · แก้แปลนแต่ละชั้นได้ที่แท็บเหนือผัง</p></div>'}
+window.__ctBimH=function(k,val){var v=toolVals('bim'),g=bimParse(v);g.storeys[k]=Math.max(2,+val||3);v.storeys=g.storeys.join(', ');save();setTimeout(function(){if(state.module==='bim')renderTool('bim')},0)};
+window.__ctBimAddFloor=function(){var v=toolVals('bim'),g=bimParse(v);if(g.storeys.length>=6){alert('รองรับสูงสุด 6 ชั้น');return}g.storeys.push(g.storeys[g.storeys.length-1]||3);var last=g.floors[g.floors.length-1];g.floors.push({walls:JSON.parse(JSON.stringify(last.walls||{})),off:JSON.parse(JSON.stringify(last.off||[])),slabs:{},sec:[],stairs:[],doors:'',windows:'',sanitary:''});v.storeys=g.storeys.join(', ');v.fl=String(g.storeys.length-1);bimSaveFloors(v,g);renderTool('bim')};
+window.__ctBimDelFloor=function(){var v=toolVals('bim'),g=bimParse(v);if(g.storeys.length<2)return;if(!confirm('ลบชั้น '+g.storeys.length+' (ผนัง พื้น บันได ของชั้นนี้จะหายไป)?'))return;g.storeys.pop();g.floors.pop();v.storeys=g.storeys.join(', ');v.fl='0';bimSaveFloors(v,g);renderTool('bim')};
+function bimToolbar(v){var mode=v.edit||'cells',B=function(k,l){return '<button aria-pressed="'+(mode===k)+'" onclick="__ctBimTool(\''+k+'\')">'+l+'</button>'},sel=function(k,opts,val){return '<select onchange="__ctBimOpt(\''+k+'\',this.value)" style="font:inherit;border:1px solid var(--line);border-radius:6px;padding:3px 6px;background:var(--sheet)">'+opts.map(function(o){return '<option value="'+esc(o[0])+'"'+(String(o[0])===String(val)?' selected':'')+'>'+esc(o[1])+'</option>'}).join('')+'</select>'};
+  var h='<div class="seg wrap" role="group" aria-label="เครื่องมือวาด" style="margin-bottom:6px">'+B('cells','ตัวอาคาร')+B('walls','ผนังตามกริด')+B('off','ผนังนอกกริด')+B('sec','คานซอย')+B('slab','ชนิดพื้น')+B('stair','บันได')+B('pick','ดูผลวิเคราะห์')+'</div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px">';
+  if(mode==='walls'||mode==='off')h+='ชนิดผนัง '+sel('wallUnit',allWalls().map(function(w){return [String(w[1]),w[0]+' — '+w[1]]}),v.wallUnit||'180');
+  if(mode==='sec')h+='แนวคานซอย '+sel('secDir',[['x','ขนานแกน X'],['y','ขนานแกน Y']],v.secDir||'x');
+  if(mode==='slab')h+='ชนิดแผ่นพื้น '+sel('slabPick',SLABTYPES,v.slabPick||'cast');
+  if(mode==='stair')h+='รูปแบบ '+sel('stairType',STAIRTYPES,v.stairType||'straight')+' ทิศขึ้น '+sel('stairDir',[['x','ตามแกน X →'],['y','ตามแกน Y ↑']],v.stairDir||'x');
+  return h+'</div>'}
+window.__ctBimTool=function(k){var v=toolVals('bim');v.edit=k;bimPending=null;save();renderTool('bim')};
+window.__ctBimOpt=function(k,val){var v=toolVals('bim');v[k]=val;save()};
+function bimFloorTabs(v,g){var cur=v.fl==null?'0':String(v.fl),h='<div class="seg wrap" role="group" aria-label="แปลนชั้น" style="margin-bottom:8px">';
+  g.storeys.forEach(function(_,k){h+='<button aria-pressed="'+(cur===String(k))+'" onclick="__ctBimFloor(\''+k+'\')">ชั้น '+(k+1)+'</button>'});
+  h+='<button aria-pressed="'+(cur==='R')+'" onclick="__ctBimFloor(\'R\')">หลังคา</button></div>';return h}
 function bimPlanHTML(v,r){var g=bimParse(v),X=[0],Y=[0];g.xs.forEach(function(d){X.push(X[X.length-1]+(d>0?d:0))});g.ys.forEach(function(d){Y.push(Y[Y.length-1]+(d>0?d:0))});
-  var W=440,H=300,pad=36,tx=X[X.length-1]||1,ty=Y[Y.length-1]||1,sc=Math.min((W-2*pad)/tx,(H-2*pad)/ty),sel={};g.cells.forEach(function(c){sel[c[0]+','+c[1]]=1});
-  var Xs=function(x){return pad+x*sc},Ys=function(y){return H-pad-y*sc},wm=v.edit==='walls',s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;max-width:560px;display:block;margin:auto" role="img" aria-label="ผังอาคาร">';
-  for(var j=0;j<g.ys.length;j++)for(var i=0;i<g.xs.length;i++)s+='<rect x="'+Xs(X[i])+'" y="'+Ys(Y[j+1])+'" width="'+g.xs[i]*sc+'" height="'+g.ys[j]*sc+'" fill="'+(sel[i+','+j]?'var(--concrete)':'transparent')+'" stroke="var(--line)"'+(wm?'':' style="cursor:pointer" onclick="__ctBimCell('+i+','+j+')"')+'/>';
-  X.forEach(function(x,i){s+='<line x1="'+Xs(x)+'" y1="'+(pad-12)+'" x2="'+Xs(x)+'" y2="'+(H-pad+6)+'" stroke="var(--muted)" stroke-dasharray="6 3 1 3"/><circle cx="'+Xs(x)+'" cy="'+(pad-20)+'" r="9" fill="var(--sheet)" stroke="var(--ink2)"/><text x="'+Xs(x)+'" y="'+(pad-16)+'" text-anchor="middle" font-size="12" font-family="var(--font)" fill="var(--ink)">'+gridLab(i)+'</text>'});
-  Y.forEach(function(y,j){s+='<line x1="'+(pad-6)+'" y1="'+Ys(y)+'" x2="'+(W-pad+12)+'" y2="'+Ys(y)+'" stroke="var(--muted)" stroke-dasharray="6 3 1 3"/><circle cx="'+(W-pad+20)+'" cy="'+Ys(y)+'" r="9" fill="var(--sheet)" stroke="var(--ink2)"/><text x="'+(W-pad+20)+'" y="'+(Ys(y)+4)+'" text-anchor="middle" font-size="12" font-family="var(--font)" fill="var(--ink)">'+(j+1)+'</text>'});
-  for(j=0;j<=g.ys.length;j++)for(i=0;i<g.xs.length;i++){var k='x:'+j+':'+i,on=g.walls[k];s+='<line x1="'+Xs(X[i])+'" y1="'+Ys(Y[j])+'" x2="'+Xs(X[i+1])+'" y2="'+Ys(Y[j])+'" stroke="'+(on?'var(--fail)':'transparent')+'" stroke-width="'+(on?5:12)+'"'+(wm?' style="cursor:pointer" onclick="__ctBimWall(\''+k+'\')"':'')+'/>'}
-  for(i=0;i<=g.xs.length;i++)for(j=0;j<g.ys.length;j++){k='y:'+i+':'+j;on=g.walls[k];s+='<line x1="'+Xs(X[i])+'" y1="'+Ys(Y[j])+'" x2="'+Xs(X[i])+'" y2="'+Ys(Y[j+1])+'" stroke="'+(on?'var(--fail)':'transparent')+'" stroke-width="'+(on?5:12)+'"'+(wm?' style="cursor:pointer" onclick="__ctBimWall(\''+k+'\')"':'')+'/>'}
-  if(r&&!r.error)Object.keys(r.A.nodes).forEach(function(key){var N=r.A.nodes[key],ok=r.D.cols.filter(function(c){return c.c.node===N}).every(function(c){return c.ok});s+='<rect x="'+(Xs(N.x)-5)+'" y="'+(Ys(N.y)-5)+'" width="10" height="10" fill="'+(ok?'var(--ink)':'var(--fail)')+'"/>'});
-  s+='</svg>';
-  return '<div class="panel"><h2>ผังกริด ผนัง และเสา</h2><p class="hint" style="margin-top:0">'+(wm?'โหมดผนัง: คลิกแนวกริดเพื่อวาง/ลบผนัง (เส้นแดง)':'โหมดตัวอาคาร: คลิกช่องเพื่อเพิ่ม/ลบ')+' · เปลี่ยนโหมดได้ที่ "โหมดแก้ไขผัง"</p>'+s+'<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:6px"><button class="btn" onclick="__ctBimPerim()">ใส่ผนังรอบนอกทั้งหมด</button><button class="btn ghost" onclick="__ctBimClearWalls()">ลบผนังทั้งหมด</button></div></div>'}
-window.__ctBimCell=function(i,j){var v=toolVals('bim'),g=bimParse(v),k=g.cells.findIndex(function(c){return c[0]===i&&c[1]===j});if(k>=0)g.cells.splice(k,1);else g.cells.push([i,j]);v.cells=g.cells.map(function(c){return c.join(',')}).join(';');save();renderTool('bim')};
-window.__ctBimWall=function(key){var v=toolVals('bim'),g=bimParse(v);if(g.walls[key])delete g.walls[key];else g.walls[key]=+v.wallUnit||180;v.walls=JSON.stringify(g.walls);save();renderTool('bim')};
-window.__ctBimPerim=function(){var v=toolVals('bim'),g=bimParse(v),p=perimWalls(g,+v.wallUnit||180);Object.assign(g.walls,p);v.walls=JSON.stringify(g.walls);save();renderTool('bim')};
-window.__ctBimClearWalls=function(){var v=toolVals('bim');v.walls='{}';save();renderTool('bim')};
-window.__ctBimRot=function(d){var v=toolVals('bim');v.ang=((+v.ang||35)+d+360)%360;save();toolResult('bim')};
-window.__ctBimExport=function(){var r=toolRun('bim');if(r.error)return;var D=r.D,A=r.A,n=D.beams.length+D.cols.length+D.fdns.length;if(!confirm('สร้างชิ้นส่วน '+n+' รายการในเมนูคาน เสา และฐานราก?'))return;
-  var lvName=function(k){return k===0?'GB':k===A.nS?'RB':(k+1)+'F'};
-  D.beams.forEach(function(x){var nb=newBeam(0),rn=x.r,q=x.q;Object.assign(nb,{name:'B'+lvName(x.lv)+'-'+(rn.dir==='x'?(rn.line+1)+'('+gridLab(rn.s0+q)+'–'+gridLab(rn.s0+q+1)+')':gridLab(rn.line)+'('+(rn.s0+q+1)+'–'+(rn.s0+q+2)+')'),loadMode:'direct',b:x.inp.b,h:x.inp.h,bar:x.inp.bar,L:x.inp.L,support:x.inp.support,Mp:x.inp.Mp,Mn:x.inp.Mn,V:x.inp.V});state.beams.push(nb)});
-  D.cols.forEach(function(x){var nc=newCol(0),i=x.d.input;Object.assign(nc,{name:'C'+x.c.st+'-'+gridLab(x.c.node.i)+(x.c.node.j+1),b:i.b,h:i.h,bar:i.bar,auto:true,P:Math.round(x.Pd*100)/100,M:x.gov?Math.round(x.gov.Mx/10)/100:0,My:x.gov?Math.round(x.gov.Myb/10)/100:0,Lu:Math.round(x.c.Lu*100)/100,H:Math.round(x.c.Lu*100)/100+r.m.beam.h/100});state.cols.push(nc)});
-  D.fdns.forEach(function(x){var nf=newFdn(0);Object.assign(nf,{name:'F-'+gridLab(x.N.i)+(x.N.j+1),type:r.m.fdn.type,cx:r.m.col.b,cy:r.m.col.h,dl:Math.round(x.N.fdnD/10)/100,ll:Math.round(x.N.fdnL/10)/100,qa:r.m.fdn.qa,Df:r.m.fdn.Df,Qa:r.m.fdn.Qa,pileSize:r.m.fdn.pileSize});state.fdns.push(nf)});
-  save();alert('สร้างแล้ว: คาน '+D.beams.length+' · เสา '+D.cols.length+' · ฐานราก '+D.fdns.length+' รายการ');state.module='home';renderAll()};
-function bim3D(r,v){var A=r.A,D=r.D,m=r.m,mode=($('#bimView')||{}).value||v.view||'all',ang=(+v.ang||35)*Math.PI/180,ca=Math.cos(ang),sa=Math.sin(ang),el=0.5,W=660,H=420,X=A.X,Y=A.Y,Z=A.Z;
-  var P=function(x,y,z){return [x*ca-y*sa,(x*sa+y*ca)*el-z]},dep=function(x,y,z){return x*sa+y*ca+z*0.01},items=[];
-  var stat=function(ok){return ok?'#1F7A4D':'#B42318'};
-  /* slabs */
-  if(mode!=='frame')A.levels.forEach(function(lv){if(!lv.hasSlab)return;for(var j=0;j<A.occ.length;j++)for(var i=0;i<A.occ[0].length;i++)if(A.occ[j][i]){var z=lv.z;items.push({d:dep((X[i]+X[i+1])/2,(Y[j]+Y[j+1])/2,z)-0.5,poly:[P(X[i],Y[j],z),P(X[i+1],Y[j],z),P(X[i+1],Y[j+1],z),P(X[i],Y[j+1],z)],fill:'rgba(160,170,180,.35)',stroke:'rgba(120,130,140,.5)'})}});
+  var fl=v.fl==null?'0':String(v.fl),roofPlan=fl==='R',fi=roofPlan?-1:Math.min(+fl,g.floors.length-1),F2=roofPlan?{walls:{},off:[],slabs:g.roofSlabs,sec:[],stairs:[]}:g.floors[fi];
+  var W=560,H=380,pad=48,tx=X[X.length-1]||1,ty=Y[Y.length-1]||1,sc=Math.min((W-2*pad)/tx,(H-2*pad)/ty),sel={};g.cells.forEach(function(c){sel[c[0]+','+c[1]]=1});
+  var Xs=function(x){return pad+x*sc},Ys=function(y){return H-pad-y*sc},T=function(t,x,y,o){return '<text x="'+x+'" y="'+y+'" text-anchor="middle" font-size="'+(o||12)+'" font-family="var(--font)" fill="var(--ink2)">'+t+'</text>'};
+  var s='<svg id="bimPlan" viewBox="0 0 '+W+' '+H+'" data-pad="'+pad+'" data-sc="'+sc+'" data-h="'+H+'" style="width:100%;max-width:640px;display:block;margin:auto;cursor:crosshair;touch-action:manipulation" role="img" aria-label="แปลนชั้น">';
+  var below=!roofPlan&&fi>0?g.floors[fi-1]:null;
+  for(var j=0;j<g.ys.length;j++)for(var i=0;i<g.xs.length;i++){var k=i+','+j,on=sel[k],st=(F2.slabs||{})[k]||'cast',isVoid=below&&(below.stairs||[]).some(function(x){return x.i===i&&x.j===j});
+    if(roofPlan&&v.roofType!=='flat')st='cast';s+='<rect x="'+Xs(X[i])+'" y="'+Ys(Y[j+1])+'" width="'+g.xs[i]*sc+'" height="'+g.ys[j]*sc+'" fill="'+(on?(isVoid?SLABCOL.void:SLABCOL[st]||SLABCOL.cast):'transparent')+'" stroke="var(--line)"/>';
+    if(on&&(st!=='cast'||isVoid)&&!(roofPlan&&v.roofType!=='flat'))s+=T(isVoid?'ช่องบันได':{pc:'พื้นสำเร็จ',bath:'ห้องน้ำ',void:'ช่องเปิด'}[st]||'',Xs(X[i]+g.xs[i]/2),Ys(Y[j]+g.ys[j]/2)+14,11)}
+  /* grid lines, bubbles and dimensions */
+  X.forEach(function(x,i){s+='<line x1="'+Xs(x)+'" y1="'+(pad-14)+'" x2="'+Xs(x)+'" y2="'+(H-pad+8)+'" stroke="var(--muted)" stroke-dasharray="6 3 1 3"/><circle cx="'+Xs(x)+'" cy="'+(pad-24)+'" r="9" fill="var(--sheet)" stroke="var(--ink2)"/>'+T(gridLab(i),Xs(x),pad-20)});
+  Y.forEach(function(y,j){s+='<line x1="'+(pad-8)+'" y1="'+Ys(y)+'" x2="'+(W-pad+14)+'" y2="'+Ys(y)+'" stroke="var(--muted)" stroke-dasharray="6 3 1 3"/><circle cx="'+(W-pad+24)+'" cy="'+Ys(y)+'" r="9" fill="var(--sheet)" stroke="var(--ink2)"/>'+T(j+1,W-pad+24,Ys(y)+4)});
+  g.xs.forEach(function(d,i){s+='<line x1="'+Xs(X[i])+'" y1="'+(H-pad+20)+'" x2="'+Xs(X[i+1])+'" y2="'+(H-pad+20)+'" stroke="var(--ink2)" marker-start="url(#tk)" marker-end="url(#tk)"/>'+T(f(d,2),Xs((X[i]+X[i+1])/2),H-pad+16,11)});
+  g.ys.forEach(function(d,j){s+='<line x1="'+(pad-30)+'" y1="'+Ys(Y[j])+'" x2="'+(pad-30)+'" y2="'+Ys(Y[j+1])+'" stroke="var(--ink2)"/><text transform="translate('+(pad-34)+','+Ys((Y[j]+Y[j+1])/2)+') rotate(-90)" text-anchor="middle" font-size="11" font-family="var(--font)" fill="var(--ink2)">'+f(d,2)+'</text>'});
+  s+=T('รวม '+f(tx,2)+' × '+f(ty,2)+' ม.',W/2,H-6,11);
   /* walls */
-  if(mode==='all')for(var k=0;k<A.nS;k++)Object.keys(m.walls).forEach(function(key){var p=key.split(':'),line=+p[1],s=+p[2],x0,y0,x1,y1;if(p[0]==='x'){x0=X[s];x1=X[s+1];y0=y1=Y[line]}else{y0=Y[s];y1=Y[s+1];x0=x1=X[line]}
-    var z0=Z[k],z1=Z[k+1]-m.beam.h/100;items.push({d:dep((x0+x1)/2,(y0+y1)/2,(z0+z1)/2)-0.3,poly:[P(x0,y0,z0),P(x1,y1,z0),P(x1,y1,z1),P(x0,y0,z1)],fill:'rgba(232,226,214,.92)',stroke:'rgba(160,150,135,.9)'})});
-  /* beams */
-  D.beams.forEach(function(x){var rn=x.r,q=x.q,a=rn.nodes[q],b=rn.nodes[q+1],z=Z[x.lv],col=mode==='status'?stat(x.ok):'#14243A';items.push({d:dep((X[a[0]]+X[b[0]])/2,(Y[a[1]]+Y[b[1]])/2,z),line:[P(X[a[0]],Y[a[1]],z),P(X[b[0]],Y[b[1]],z)],stroke:col,w:4})});
-  /* columns */
-  D.cols.forEach(function(x){var N=x.c.node,z0=Z[x.c.st-1],z1=Z[x.c.st],col=mode==='status'?stat(x.ok):'#3C4D61';items.push({d:dep(N.x,N.y,(z0+z1)/2)+0.05,line:[P(N.x,N.y,z0),P(N.x,N.y,z1)],stroke:col,w:5})});
+  Object.keys(F2.walls||{}).forEach(function(key){var p=key.split(':'),line=+p[1],q=+p[2];if(p[0]==='x')s+='<line x1="'+Xs(X[q])+'" y1="'+Ys(Y[line])+'" x2="'+Xs(X[q+1])+'" y2="'+Ys(Y[line])+'" stroke="var(--fail)" stroke-width="5"/>';else s+='<line x1="'+Xs(X[line])+'" y1="'+Ys(Y[q])+'" x2="'+Xs(X[line])+'" y2="'+Ys(Y[q+1])+'" stroke="var(--fail)" stroke-width="5"/>'});
+  (F2.off||[]).forEach(function(w){s+='<line x1="'+Xs(w.x1)+'" y1="'+Ys(w.y1)+'" x2="'+Xs(w.x2)+'" y2="'+Ys(w.y2)+'" stroke="#C2410C" stroke-width="4" stroke-dasharray="7 2"/>'});
+  (F2.sec||[]).forEach(function(b){var x1,y1,x2,y2;if(b.dir==='x'){x1=X[b.i];x2=X[b.i+1];y1=y2=Y[b.j]+b.pos}else{y1=Y[b.j];y2=Y[b.j+1];x1=x2=X[b.i]+b.pos}s+='<line x1="'+Xs(x1)+'" y1="'+Ys(y1)+'" x2="'+Xs(x2)+'" y2="'+Ys(y2)+'" stroke="#1F5FA8" stroke-width="3"/>'});
+  (F2.stairs||[]).forEach(function(st){var x0=X[st.i],y0=Y[st.j],a=g.xs[st.i],b=g.ys[st.j];s+='<rect x="'+(Xs(x0)+4)+'" y="'+(Ys(y0+b)+4)+'" width="'+(a*sc-8)+'" height="'+(b*sc-8)+'" fill="none" stroke="var(--ink)" stroke-width="1.5"/>';
+    if(st.type==='spiral')s+='<circle cx="'+Xs(x0+a/2)+'" cy="'+Ys(y0+b/2)+'" r="'+(Math.min(a,b)*sc/2-8)+'" fill="none" stroke="var(--ink)"/>';
+    else{var n=10;for(var q=1;q<n;q++){if(st.dir==='y')s+='<line x1="'+(Xs(x0)+4)+'" y1="'+Ys(y0+b*q/n)+'" x2="'+(Xs(x0+(st.type==='straight'?a:a/2))-4)+'" y2="'+Ys(y0+b*q/n)+'" stroke="var(--ink2)"/>';else s+='<line x1="'+Xs(x0+a*q/n)+'" y1="'+(Ys(y0)-4)+'" x2="'+Xs(x0+a*q/n)+'" y2="'+(Ys(y0+(st.type==='straight'?b:b/2))+4)+'" stroke="var(--ink2)"/>'}}
+    s+=T('ขึ้น '+(st.dir==='y'?'↑':'→'),Xs(x0+a/2),Ys(y0+b/2)+4,13)});
+  if(r&&!r.error)Object.keys(r.A.nodes).forEach(function(key){var N=r.A.nodes[key],st=roofPlan?r.A.nS:fi+1,cs=r.D.cols.filter(function(c){return c.c.node===N&&c.c.st===st}),ok=cs.every(function(c){return c.ok});if(roofPlan)return;s+='<rect x="'+(Xs(N.x)-5)+'" y="'+(Ys(N.y)-5)+'" width="10" height="10" fill="'+(ok?'var(--ink)':'var(--fail)')+'"/>'});
+  if(bimPending)s+='<circle cx="'+Xs(bimPending.x)+'" cy="'+Ys(bimPending.y)+'" r="5" fill="#C2410C"/>';
+  s+='<defs><marker id="tk" markerWidth="6" markerHeight="6" refX="3" refY="3"><path d="M0 6 L6 0" stroke="var(--ink2)"/></marker></defs></svg>';
+  var tip={cells:'คลิกช่องเพื่อเพิ่ม/ลบส่วนของอาคาร (ใช้กับทุกชั้น)',walls:'คลิกแนวกริดเพื่อวาง/ลบผนังของชั้นนี้ (เส้นแดง)',off:'คลิกจุดเริ่มและจุดปลายของผนัง (จับระยะ 5 ซม. และแนวกริด) · คลิกที่ผนังเดิมเพื่อลบ (เส้นประส้ม)',sec:'คลิกในช่องเพื่อวางคานซอยที่ตำแหน่งนั้น คลิกซ้ำที่คานเพื่อลบ (เส้นน้ำเงิน)',slab:'คลิกช่องเพื่อกำหนดชนิดแผ่นพื้นของชั้นนี้',stair:'คลิกช่องเพื่อวาง/ลบบันได ชั้นถัดไปจะเป็นช่องบันไดอัตโนมัติ',pick:'คลิกคาน เสา หรือคานซอยเพื่อดูผลวิเคราะห์'}[v.edit||'cells'];
+  return '<div class="panel"><h2>แปลนและเครื่องมือวาด</h2>'+bimFloorTabs(v,g)+bimToolbar(v)+'<p class="hint" style="margin-top:0">'+tip+'</p>'+s+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:6px">'+(roofPlan?'':'<button class="btn" onclick="__ctBimPerim()">ใส่ผนังรอบนอกชั้นนี้</button><button class="btn" onclick="__ctBimCopyBelow()">คัดลอกผนังจากชั้นล่าง</button><button class="btn ghost" onclick="__ctBimClearWalls()">ลบผนังชั้นนี้</button>')+'</div>'+(roofPlan?'':bimFloorLists(v,g,fi))+'</div>'}
+function bimFloorLists(v,g,fi){var F2=g.floors[fi],ta=function(k,l,ph){return '<label class="f">'+l+'<textarea rows="3" data-flk="'+k+'" placeholder="'+ph+'" style="border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:6px 8px;font:inherit">'+esc(F2[k]||'')+'</textarea></label>'};
+  setTimeout(function(){$$('[data-flk]').forEach(function(el){el.onchange=function(){var vv=toolVals('bim'),gg=bimParse(vv);gg.floors[fi][el.dataset.flk]=el.value;bimSaveFloors(vv,gg);if(state.module==='estimate')renderAll()}})},0);
+  return '<div class="fields f3" style="margin-top:10px">'+ta('doors','ประตูชั้น '+(fi+1)+': ชนิด, กว้าง, สูง, จำนวน','บานเปิดไม้, 0.9, 2.0, 4')+ta('windows','หน้าต่างชั้น '+(fi+1)+': ชนิด, กว้าง, สูง, จำนวน','บานเลื่อนอลูมิเนียม, 1.2, 1.1, 3')+ta('sanitary','สุขภัณฑ์ชั้น '+(fi+1)+': รายการ, จำนวน','ชักโครก, 2')+'</div><p class="hint">ใช้หักพื้นที่ผนังและประมาณราคาในเมนู "ประมาณราคาทั้งหลัง"</p>'}
+function bimSnap(x){return Math.round(x/0.05)*0.05}
+window.__ctBimFloor=function(k){var v=toolVals('bim');v.fl=k;bimPending=null;save();renderTool('bim')};
+window.__ctBimClickXY=function(x,y){var v=toolVals('bim'),g=bimParse(v),X=[0],Y=[0];g.xs.forEach(function(d){X.push(X[X.length-1]+d)});g.ys.forEach(function(d){Y.push(Y[Y.length-1]+d)});
+  var fl=v.fl==null?'0':String(v.fl),roofPlan=fl==='R',fi=roofPlan?-1:Math.min(+fl,g.floors.length-1),F2=roofPlan?{slabs:g.roofSlabs}:g.floors[fi],mode=v.edit||'cells';
+  var ci=-1,cj=-1;for(var a=0;a<g.xs.length;a++)if(x>=X[a]&&x<=X[a+1])ci=a;for(var b=0;b<g.ys.length;b++)if(y>=Y[b]&&y<=Y[b+1])cj=b;
+  var inside=ci>=0&&cj>=0,ck=ci+','+cj,occ=g.cells.some(function(c){return c[0]===ci&&c[1]===cj});
+  var nearSeg=function(){var best=null,bd=0.35;for(var jj=0;jj<Y.length;jj++)for(var ii=0;ii<g.xs.length;ii++)if(x>=X[ii]&&x<=X[ii+1]){var d=Math.abs(y-Y[jj]);if(d<bd){bd=d;best='x:'+jj+':'+ii}}
+    for(ii=0;ii<X.length;ii++)for(jj=0;jj<g.ys.length;jj++)if(y>=Y[jj]&&y<=Y[jj+1]){d=Math.abs(x-X[ii]);if(d<bd){bd=d;best='y:'+ii+':'+jj}}return best};
+  if(mode==='cells'){if(!inside)return;var k=g.cells.findIndex(function(c){return c[0]===ci&&c[1]===cj});if(k>=0)g.cells.splice(k,1);else g.cells.push([ci,cj]);v.cells=g.cells.map(function(c){return c.join(',')}).join(';')}
+  else if(mode==='walls'&&!roofPlan){var key=nearSeg();if(!key)return;if(F2.walls[key])delete F2.walls[key];else F2.walls[key]=+v.wallUnit||180}
+  else if(mode==='off'&&!roofPlan){var sx=bimSnap(x),sy=bimSnap(y);X.forEach(function(xx){if(Math.abs(sx-xx)<0.15)sx=xx});Y.forEach(function(yy){if(Math.abs(sy-yy)<0.15)sy=yy});
+    var hit=F2.off.findIndex(function(w){var L=Math.hypot(w.x2-w.x1,w.y2-w.y1),t=((x-w.x1)*(w.x2-w.x1)+(y-w.y1)*(w.y2-w.y1))/(L*L);if(t<0||t>1)return false;return Math.hypot(w.x1+t*(w.x2-w.x1)-x,w.y1+t*(w.y2-w.y1)-y)<0.15});
+    if(hit>=0&&!bimPending){F2.off.splice(hit,1)}else if(!bimPending){bimPending={x:sx,y:sy};renderTool('bim');return}else{if(Math.hypot(sx-bimPending.x,sy-bimPending.y)>0.1)F2.off.push({x1:bimPending.x,y1:bimPending.y,x2:sx,y2:sy,unit:+v.wallUnit||180});bimPending=null}}
+  else if(mode==='sec'&&!roofPlan){if(!inside||!occ)return;var dir=v.secDir||'x',ex=F2.sec.findIndex(function(sb){return sb.i===ci&&sb.j===cj});
+    if(ex>=0){F2.sec.splice(ex,1)}else{var pos=dir==='x'?bimSnap(y-Y[cj]):bimSnap(x-X[ci]),lim=dir==='x'?g.ys[cj]:g.xs[ci];pos=Math.max(0.3,Math.min(lim-0.3,pos));F2.sec.push({dir:dir,i:ci,j:cj,pos:pos})}}
+  else if(mode==='slab'){if(!inside||!occ)return;var t=v.slabPick||'cast';if(t==='cast')delete F2.slabs[ck];else F2.slabs[ck]=t;if(roofPlan)g.roofSlabs=F2.slabs}
+  else if(mode==='stair'&&!roofPlan){if(!inside||!occ)return;var es=F2.stairs.findIndex(function(st){return st.i===ci&&st.j===cj});if(es>=0)F2.stairs.splice(es,1);else F2.stairs.push({i:ci,j:cj,type:v.stairType||'straight',dir:v.stairDir||'x'})}
+  else if(mode==='pick'){var pk=null;var r=toolRun('bim');if(r.error)return;var lvl=roofPlan?r.A.nS:fi;
+    var node=null,bd2=0.4;Object.keys(r.A.nodes).forEach(function(kk){var N=r.A.nodes[kk],d=Math.hypot(N.x-x,N.y-y);if(d<bd2){bd2=d;node=kk}});
+    if(node&&!roofPlan)pk={t:'c',key:node,st:fi+1};else{var sbh=(r.D.secs||[]).filter(function(sx2){return sx2.sr.lv===lvl&&sx2.sr.i===ci&&sx2.sr.j===cj})[0];
+      if(sbh&&(sbh.sr.sb.dir==='x'?Math.abs(y-(Y[cj]+sbh.sr.sb.pos))<0.3:Math.abs(x-(X[ci]+sbh.sr.sb.pos))<0.3))pk={t:'s',lv:lvl,i:ci,j:cj};else{var key2=nearSeg();if(key2)pk={t:'b',lv:lvl,key:key2}}}
+    v.pick=JSON.stringify(pk);save();toolResult('bim');var el=document.getElementById('bimPickPanel');if(el)el.scrollIntoView({block:'nearest'});return}
+  bimSaveFloors(v,g);renderTool('bim')};
+function bimPlanBind(){var svg=document.getElementById('bimPlan');if(!svg||svg._b)return;svg._b=1;svg.addEventListener('click',function(e){var pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;var p=pt.matrixTransform(svg.getScreenCTM().inverse()),pad=+svg.dataset.pad,sc=+svg.dataset.sc,H=+svg.dataset.h;__ctBimClickXY((p.x-pad)/sc,(H-pad-p.y)/sc)})}
+window.__ctBimPerim=function(){var v=toolVals('bim'),g=bimParse(v),fi=Math.min(+(v.fl||0),g.floors.length-1);Object.assign(g.floors[fi].walls,perimWalls(g,+v.wallUnit||180));bimSaveFloors(v,g);renderTool('bim')};
+window.__ctBimCopyBelow=function(){var v=toolVals('bim'),g=bimParse(v),fi=Math.min(+(v.fl||0),g.floors.length-1);if(fi<1)return;g.floors[fi].walls=JSON.parse(JSON.stringify(g.floors[fi-1].walls));g.floors[fi].off=JSON.parse(JSON.stringify(g.floors[fi-1].off||[]));bimSaveFloors(v,g);renderTool('bim')};
+window.__ctBimClearWalls=function(){var v=toolVals('bim'),g=bimParse(v),fi=Math.min(+(v.fl||0),g.floors.length-1);g.floors[fi].walls={};g.floors[fi].off=[];bimSaveFloors(v,g);renderTool('bim')};
+window.__ctBimRot=function(d){var v=toolVals('bim');v.ang=((+v.ang||35)+d+360)%360;save();toolResult('bim')};
+window.__ctBimPick=function(t,a,b){var v=toolVals('bim');v.pick=JSON.stringify(t==='c'?{t:'c',key:a,st:b}:t==='b'?{t:'b',lv:a,key:b}:{t:'s',lv:a,i:b[0],j:b[1]});save();toolResult('bim');var el=document.getElementById('bimPickPanel');if(el)el.scrollIntoView({block:'nearest'})};
+function bimRoofPanel(r){var A=r.A;if(!A.roof)return '<div class="panel"><h2>หลังคา: ดาดฟ้า ค.ส.ล.</h2><p class="hint" style="margin-top:0">พื้นหลังคาออกแบบเป็นแผ่นพื้นในระดับหลังคา (กำหนดชนิดได้ที่แท็บ "หลังคา" เหนือผัง) และส่งไปเมนูพื้นเมื่อกดส่งชิ้นส่วน</p></div>';
+  var rs=A.roof.rs,G=A.roof.gm.geom;
+  return '<div class="panel overflow"><h2>หลังคาและโครงหลังคา (เชื่อมกับเมนูหลังคา)</h2>'+kv([['พื้นที่หลังคา',f(G.area,2)+' ตร.ม.'],['สัน / ตะเฆ่สัน / ตะเฆ่ราง',f(G.ridge,2)+' / '+f(G.hips,2)+' / '+f(G.valleys,2)+' ม.'],['วัสดุมุง',esc(rs.mat.name)+(rs.qty.pieces?' '+rs.qty.pieces+' แผ่น':'')],['น้ำหนักหลังคาบนพื้นที่ราบ',f(rs.wPlan,1)+' กก./ตร.ม.']])+
+    tbl(['ชิ้นส่วน','หน้าตัด','อัตราส่วน','ผล','ปริมาณ','เหล็ก (กก.)'],rs.members.map(function(x){return [x.role,esc(x.sec),f(x.ratio,2),badge(x.ok),x.unit?f(x.len,0)+' '+x.unit:f(x.len,1)+' ม.',f(x.kg,0)]}),'wrap')+
+    (rs.warn||[]).map(function(w){return '<p class="warn">'+w+'</p>'}).join('')+
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn" onclick="__ctBimRoofOpen()">เปิดในเมนูแบบจำลองหลังคาและกริดเสา</button><button class="btn" onclick="__ctBimRoofParts()">ส่งชิ้นส่วนหลังคาไปเมนูชิ้นส่วนโครงหลังคา</button></div><p class="hint">แรงจากหลังคาถ่ายลงคานรอบนอกระดับหลังคาในแบบจำลองแล้ว · เมนูแบบจำลองหลังคาใช้ข้อมูลเดียวกันจากแบบจำลองนี้โดยอัตโนมัติ</p></div>'}
+window.__ctBimRoofOpen=function(){var rv=toolVals('roofmodel');rv.src='bim';save();state.module='roofmodel';renderAll();window.scrollTo(0,0)};
+window.__ctBimRoofParts=function(){var r=toolRun('bim');if(r.error||!r.A.roof)return;bimRoofParts(r);save();alert('ส่งชิ้นส่วนหลังคาไปเมนูชิ้นส่วนโครงหลังคาแล้ว');state.module='roof';renderAll()};
+function bimRoofParts(r){var m=r.m,G=r.A.roof.gm.geom,rs=r.A.roof.rs,mat0=rs.mat,truss=m.roof.system==='truss';state.roofs=state.roofs.filter(function(x){return !/^R3D-/.test(x.name)});
+  var mk=function(type,extra){var x=newRoof(state.roofs.length+1);Object.assign(x,{type:type,slope:m.roof.slope,roofing:mat0.w,ll:m.roof.ll,Lr:Math.round(G.run*100)/100,overhang:m.roof.eave,kind:'CC'},extra||{});state.roofs.push(x);return x};
+  mk('purlin',{name:'R3D-'+(mat0.sup==='batten'?'ระแนง':'แป'),spacing:mat0.sp,span:truss?m.roof.spacing:m.roof.rafterSp});
+  if(truss)mk('truss',{name:'R3D-โครงถัก',span:Math.round(G.spanIn*100)/100,rise:Math.round(G.spanIn/2*Math.tan(m.roof.slope*Math.PI/180)*100)/100,trussSpacing:m.roof.spacing,panels:Math.max(2,Math.round(G.spanIn/1.5/2)*2)});
+  else{mk('ridge',{name:'R3D-อกไก่',span:4,rafterSp:m.roof.rafterSp});mk('eave',{name:'R3D-อะเส',span:4,rafterSp:m.roof.rafterSp});if(G.run/Math.cos(m.roof.slope*Math.PI/180)>3)mk('support',{name:'R3D-สะพานรับจันทัน',span:4,rafterSp:m.roof.rafterSp});mk('tie',{name:'R3D-ขื่อ',span:4,rafterSp:m.roof.rafterSp});mk('post',{name:'R3D-ดั้ง',span:4})}
+  if(G.hips>0.1)mk('hip',{name:'R3D-ตะเฆ่สัน',rafterSp:m.roof.rafterSp});if(G.valleys>0.1)mk('valley',{name:'R3D-ตะเฆ่ราง',rafterSp:m.roof.rafterSp});state.curIds.roof=state.roofs[state.roofs.length-1].id}
+function bimLvName(k,nS){return k===0?'GB':k===nS?'RB':(k+1)+'F'}
+function bimSpanName(rn,q){return rn.dir==='x'?gridLab(rn.s0+q)+'–'+gridLab(rn.s0+q+1):(rn.s0+q+1)+'–'+(rn.s0+q+2)}
+function bimLineName(rn){return rn.dir==='x'?'แนว '+(rn.line+1):'แนว '+gridLab(rn.line)}
+function bimPickPanel(r,v){var pk=null;try{pk=JSON.parse(v.pick||'null')}catch(e){}if(!pk)return '';var A=r.A,D=r.D,h='<div class="panel" id="bimPickPanel"><h2>ผลวิเคราะห์ชิ้นส่วนที่เลือก <span style="flex:1"></span><button class="btn ghost" onclick="__ctBimPick(null)">ปิด</button></h2>';
+  if(pk.t==='b'){var bm=D.beams.filter(function(x){return x.lv===pk.lv&&x.r.loads[x.q].key===pk.key})[0];if(!bm)return '';var rn=bm.r,q=bm.q,d=bm.d,L=bm.inp.L;
+    h+='<p class="sumline">คาน '+bimLvName(pk.lv,A.nS)+' '+bimLineName(rn)+' ช่วง '+bimSpanName(rn,q)+' ยาว '+f(L,2)+' ม. · '+m2b(d)+' '+badge(bm.ok)+'</p>';
+    var mx=[],mn=[],vs=[],src='';
+    if(r.Fr){var Fr=r.Fr,k=Fr.meta.findIndex(function(me){return me.type==='beam'&&me.lv===pk.lv&&me.r===rn&&me.q===q});if(k>=0){for(var p=0;p<=20;p++){var x=Fr.res.D.members[k].pts[p].x,hi=-1e18,lo=1e18,vh=0;Fr.combos.forEach(function(c){var g=function(cs,key){return Fr.res[cs].members[k].pts[p][key]},My=c[1]*g('D','My')+c[2]*g('L','My')+c[3]*g('WX','My')+c[4]*g('WY','My'),Vz=c[1]*g('D','Vz')+c[2]*g('L','Vz')+c[3]*g('WX','Vz')+c[4]*g('WY','Vz');hi=Math.max(hi,-My);lo=Math.min(lo,-My);vh=Math.max(vh,Math.abs(Vz))});mx.push({x:x,y:hi});mn.push({x:x,y:lo});vs.push({x:x,y:vh})}src='โครงข้อแข็ง 3 มิติ ('+Fr.combos.length+' กรณี)'}}
+    if(!mx.length){var e=rn.env[q];e.max.forEach(function(p2){mx.push({x:p2.x,y:p2.M})});e.min.forEach(function(p2){mn.push({x:p2.x,y:p2.M})});src='คานต่อเนื่องตามแนว พร้อมจัดน้ำหนักจรสลับช่วง'}
+    var mk=function(arr){var b=arr[0];arr.forEach(function(p2){if(Math.abs(p2.y)>Math.abs(b.y))b=p2});return [{x:b.x,y:b.y,t:kgm(b.y)}]};
+    h+=diagSVG(L,[{pts:mx,color:'var(--ink)',fill:'var(--passbg)'},{pts:mn,color:'var(--fail)',fill:'var(--failbg)'}],{flip:true,marks:mk(mx).concat(mk(mn)),supports:[0,L],title:'โมเมนต์ดัด (กก.·ม.) ค่าสูงสุด/ต่ำสุด · '+src,h:180});
+    if(vs.length)h+=diagSVG(L,[{pts:vs,color:'var(--ink2)',fill:'var(--concrete)'}],{supports:[0,L],title:'แรงเฉือนสูงสุด (กก.)',h:120});
+    h+=kv([['Mu+ / Mu− ออกแบบ',f(bm.inp.Mp,2)+' / '+f(bm.inp.Mn,2)+' ตัน·ม.'],['Vu',f(bm.inp.V,2)+' ตัน'],['เหล็กปลอก',d.shear&&!d.shear.error?bm.inp.stirrup+' @ '+spacingTxt(d.shear.sUse)+' ม.':'–']])+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn" onclick="__ctBimToCbeam('+pk.lv+',\''+pk.key+'\')">เปิดแนวคานนี้ในเมนูคานต่อเนื่อง</button></div>'}
+  else if(pk.t==='c'){var cs=D.cols.filter(function(c){return c.c.node===A.nodes[pk.key]&&c.c.st===pk.st});if(!cs.length)return '';var c=cs[0],i2=c.d.input||c.inp;
+    h+='<p class="sumline">เสา '+gridLab(c.c.node.i)+'-'+(c.c.node.j+1)+' ชั้น '+pk.st+' · '+f(i2.b,0)+'×'+f(i2.h,0)+' ซม. '+(2*i2.nb+2*i2.ns)+'-'+i2.bar+' · อัตราส่วน '+f(c.d.ratio,3)+' '+badge(c.ok)+'</p>';
+    if(c.ends)h+=tbl(['กรณี','ปลาย','P (ตัน)','Mx (ตัน·ม.)','My (ตัน·ม.)'],c.ends.slice().sort(function(a,b){return b.P-a.P}).slice(0,10).map(function(e,ix){return [esc(e.name),'',f(e.P/1000,2),f(e.Mx/1000,2),f(e.Myb/1000,2)]}),'wrap');
+    else h+=kv([['DL / LL สะสม',f(c.c.D/1000,2)+' / '+f(c.c.Lr/1000,2)+' ตัน'],['P ออกแบบ',f(c.Pd,2)+' ตัน']])}
+  else if(pk.t==='s'){var s2=(D.secs||[]).filter(function(x){return x.sr.lv===pk.lv&&x.sr.i===pk.i&&x.sr.j===pk.j})[0];if(!s2)return '';
+    h+='<p class="sumline">คานซอย '+bimLvName(pk.lv,A.nS)+' ช่อง '+gridLab(pk.i)+(pk.j+1)+' ยาว '+f(s2.sr.L,2)+' ม. · '+m2b(s2.d)+' '+badge(s2.ok)+'</p>'+kv([['Mu = wL²/8',f(s2.inp.Mp,2)+' ตัน·ม.'],['Vu',f(s2.inp.V,2)+' ตัน'],['ผนังบนคานซอย',f(s2.sr.wall,0)+' กก.']])+'<p class="hint">คานซอยวิเคราะห์เป็นคานช่วงเดี่ยว แรงปฏิกิริยาส่งเป็นแรงจุดให้คานหลักทั้งสองข้าง</p>'}
+  return h+'</div>'}
+function m2b(d){return (d.pos&&!d.pos.error?'ล่าง '+d.pos.nBar+'-'+(d.input?d.input.bar:''):'')+(d.neg&&!d.neg.error?' บน '+d.neg.nBar:'')}
+window.__ctBimToCbeam=function(lv,key){var r=toolRun('bim');if(r.error)return;var rn=null;r.A.levels[lv].runs.forEach(function(x){if(x.loads.some(function(l){return l.key===key}))rn=x});if(!rn)return;
+  var cv=toolVals('cbeam');cv.spans=rn.spans.map(function(x){return f(x,2).replace(/,/g,'')}).join(', ');cv.left='pin';cv.right='pin';cv.b=r.m.beam.b;cv.h=r.m.beam.h;cv.sw='0';cv.pattern='1';
+  cv.loads=rn.loads.map(function(l,q){return (q+1)+' '+Math.round(l.D)+' '+Math.round(l.L)}).join('\n');cv.pts=rn.loads.map(function(l,q){return l.pts.map(function(p){return (q+1)+' '+(Math.round(p.a*1000)/1000)+' '+Math.round(p.PD)+' '+Math.round(p.PL)}).join('\n')}).filter(Boolean).join('\n');
+  save();state.module='cbeam';renderAll();window.scrollTo(0,0)};
+function bimHTML(r,v){var h=bimPdfPanel(v);setTimeout(bimPlanBind,0);if(r.error)return errBox(r.error)+bimStoreyPanel(v,bimParse(v))+bimPlanHTML(v,null)+h;var A=r.A,D=r.D,sdm=state.method==='SDM';
+  var cnt=function(a){return a.filter(function(x){return x.ok}).length+'/'+a.length};var secs=D.secs||[];
+  var totD=Object.keys(A.nodes).reduce(function(a,k){return a+A.nodes[k].fdnD},0),totL=Object.keys(A.nodes).reduce(function(a,k){return a+A.nodes[k].fdnL},0);
+  var top='<div class="verdict '+(D.ok?'ok':'bad')+'"><b>'+(D.ok?'ทุกชิ้นส่วนผ่าน':'มีชิ้นส่วนไม่ผ่าน')+'</b><p>'+(r.Fr?'โครงข้อแข็ง 3 มิติ · ':'ถ่ายน้ำหนักตามลำดับ · ')+'คาน '+cnt(D.beams)+(secs.length?' · คานซอย '+cnt(secs):'')+' · เสา '+cnt(D.cols)+' · ฐานราก '+cnt(D.fdns)+' ผ่าน · น้ำหนักลงฐานรากรวม DL '+f(totD/1000,1)+' / LL '+f(totL/1000,1)+' ตัน · '+(sdm?'SDM 1.4D + 1.7L':'WSD D + L')+'</p></div>';
+  var out=top+bimStoreyPanel(v,bimParse(v))+bimPlanHTML(v,r)+'<div class="panel"><h2>แบบจำลอง 3 มิติ <span style="flex:1"></span><select id="bimView" aria-label="การแสดงผล" style="font:inherit;border:1px solid var(--line);border-radius:6px;padding:2px 6px"><option value="all">ทั้งหมด</option><option value="frame">โครงคาน-เสา</option><option value="status">ผลตรวจสอบ</option>'+(r.Fr?'<option value="deform">การเสียรูปจากแรงลมทิศ X</option>':'')+'</select><button class="btn ghost" onclick="__ctBimRot(-45)" aria-label="หมุนซ้าย">⟲</button><button class="btn ghost" onclick="__ctBimRot(45)" aria-label="หมุนขวา">⟳</button></h2>'+bim3D(r,v)+'<p class="hint" style="text-align:center">คลิกคานหรือเสาในแบบจำลองเพื่อดูผลวิเคราะห์</p></div>'+bimPickPanel(r,v)+bimRoofPanel(r)+h;
+  out+='<div class="panel overflow"><h2>การถ่ายน้ำหนัก (พื้น → คาน → เสา → ฐานราก)</h2>'+tbl(['ระดับ','แผ่นพื้น','แนวคาน','น้ำหนักลงเสาจากระดับนี้ DL / LL (ตัน)'],A.levels.map(function(lv){var d=0,l=0;lv.runs.forEach(function(rn){rn.RD.forEach(function(x){d+=x});rn.RL.forEach(function(x){l+=x})});var types={};Object.keys(lv.slabs||{}).forEach(function(k){types[lv.slabs[k]]=1});
+    return [lv.k===0?'คานคอดิน':lv.k===A.nS?'ระดับหลังคา':'พื้นชั้น '+(lv.k+1),lv.hasSlab?'มี'+(Object.keys(types).length?' ('+Object.keys(types).map(function(t){return {pc:'สำเร็จรูป',bath:'ห้องน้ำ',void:'ช่องเปิด'}[t]||''}).join(', ')+')':''):'–',lv.runs.length,f(d/1000,2)+' / '+f(l/1000,2)]}))+
+    '<p class="hint">พื้นหล่อในที่ลงคานแบบสองทาง/ทางเดียวตามสัดส่วน พื้นสำเร็จรูปพาดทางเดียวด้านสั้น พื้นห้องน้ำเพิ่มน้ำหนักตามที่กำหนด · ผนังนอกแนวกริดเฉลี่ยเป็นน้ำหนักบนแผ่นพื้นที่ผนังตั้งอยู่ (ถ้าตรงคานซอยลงคานซอย) · บันไดถ่ายน้ำหนักลงคานที่ปลายบันได · ผลรวมแรงปฏิกิริยาเท่ากับน้ำหนักรวมทุกกรณี</p></div>';
+  if(r.Fr){var Fr=r.Fr,eqRows=[['น้ำหนักคงที่ D (กก.)','D'],['น้ำหนักจร L (กก.)','L'],['แรงลมทิศ X (กก.)','WX'],['แรงลมทิศ Y (กก.)','WY']].map(function(q){var e=Fr.eq[q[1]];return [q[0],f(e.app,0),f(e.R,0),badge(Math.abs(e.app-e.R)<=1e-5*Math.max(1,Math.abs(e.app)),'สมดุล','ไม่สมดุล')]});
+    out+='<div class="panel overflow"><h2>ผลวิเคราะห์โครงข้อแข็ง 3 มิติ</h2><p class="hint" style="margin-top:0">'+Fr.nodes.length+' จุดต่อ · '+Fr.members.length+' ชิ้นส่วน · '+Fr.res.D.nf+' องศาอิสระ · ฐานเสายึดแน่น · คาน 0.35Ig เสา 0.70Ig · '+Fr.combos.length+' กรณีรวมน้ำหนัก</p>'+tbl(['ตรวจสมดุลแรง','แรงที่ใส่','ผลรวมแรงปฏิกิริยา','ผล'],eqRows)+
+      tbl(['ชั้น','ระดับ (ม.)','หน่วยแรงลม','ความสูงรับลม (ม.)','แรงลม X (กก.)','แรงลม Y (กก.)'],Fr.wind.map(function(w){return [w.k===A.nS?'หลังคา':'ชั้น '+(w.k+1),f(w.z,2),f(w.q,0),f(w.trib,2),f(w.Fx,0),f(w.Fy,0)]}))+
+      tbl(['ชั้น','ทิศ','ระยะเซ (มม.)','h/ระยะเซ','เกณฑ์ h/'+r.lim],Fr.drift.map(function(d){return [d.k,d.dir==='WX'?'X':'Y',f(d.d*1000,2),isFinite(d.ratio)?f(d.ratio,0):'–',badge(d.ratio>=r.lim)]}))+'<p class="hint">กรณีรวมน้ำหนัก: '+Fr.combos.map(function(c){return c[0]}).join(' · ')+'</p></div>'}
+  out+='<div class="panel overflow"><h2>คาน ('+D.beams.length+' ช่วง)</h2>'+tbl(['ระดับ','แนว','ช่วง','ยาว','Mu+ / Mu− (ตัน·ม.)','Vu (ตัน)','เหล็กล่าง / บน','ปลอก','ผล'],D.beams.map(function(x){var d=x.d;return ['<a href="javascript:void(0)" onclick="__ctBimPick(\'b\','+x.lv+',\''+x.r.loads[x.q].key+'\')">'+bimLvName(x.lv,A.nS)+'</a>',bimLineName(x.r),bimSpanName(x.r,x.q),f(x.inp.L,2),f(x.inp.Mp,2)+' / '+f(x.inp.Mn,2),f(x.inp.V,2),(d.pos&&!d.pos.error?d.pos.nBar+'-'+x.inp.bar:'–')+' / '+(d.neg&&!d.neg.error?d.neg.nBar+'-'+x.inp.bar:'2-'+x.inp.bar),d.shear&&!d.shear.error?x.inp.stirrup+'@'+spacingTxt(d.shear.sUse):'–',badge(x.ok)]}))+'</div>';
+  if(secs.length)out+='<div class="panel overflow"><h2>คานซอย ('+secs.length+')</h2>'+tbl(['ระดับ','ช่อง','แนว','ยาว','Mu / Vu','เหล็กล่าง','ผล'],secs.map(function(x){return [bimLvName(x.sr.lv,A.nS),gridLab(x.sr.i)+(x.sr.j+1),x.sr.sb.dir.toUpperCase(),f(x.sr.L,2),f(x.inp.Mp,2)+' / '+f(x.inp.V,2),x.d.pos&&!x.d.pos.error?x.d.pos.nBar+'-'+x.inp.bar:'–',badge(x.ok)]}))+'</div>';
+  if(r.Fr)out+='<div class="panel overflow"><h2>เสา ('+D.cols.length+' ต้น-ชั้น)</h2>'+tbl(['เสา','ชั้น','กรณีวิกฤต','P (ตัน)','Mx / My (ตัน·ม.)','เหล็กยืน','อัตราส่วน','ผล'],D.cols.map(function(x){var d=x.d,i=d.input,g=x.gov;return [gridLab(x.c.node.i)+'-'+(x.c.node.j+1),x.c.st,esc(g.name),f(g.P/1000,2),f(g.Mx/1000,2)+' / '+f(g.Myb/1000,2),(2*i.nb+2*i.ns)+'-'+i.bar,f(d.ratio,3),badge(x.ok)]}),'wrap')+'</div>';
+  else out+='<div class="panel overflow"><h2>เสา ('+D.cols.length+' ต้น-ชั้น)</h2>'+tbl(['เสา','ชั้น','DL / LL (ตัน)','P ออกแบบ (ตัน)','เหล็กยืน','อัตราส่วน','ผล'],D.cols.map(function(x){var d=x.d,i=d.input;return [gridLab(x.c.node.i)+'-'+(x.c.node.j+1),x.c.st,f(x.c.D/1000,2)+' / '+f(x.c.Lr/1000,2),f(x.Pd,2),(2*i.nb+2*i.ns)+'-'+i.bar,f(d.ratio,3),badge(x.ok)]}))+'</div>';
+  out+='<div class="panel overflow"><h2>ฐานราก ('+D.fdns.length+' ฐาน)</h2>'+tbl(['ตำแหน่ง','DL / LL (ตัน)','ขนาด','หนา','ผล'],D.fdns.map(function(x){var d=x.d;return [gridLab(x.N.i)+'-'+(x.N.j+1)+(x.uplift?' <span class="tag bad">แรงถอนจากลม</span>':''),f(x.N.fdnD/1000,2)+' / '+f(x.N.fdnL/1000,2),d.error?'–':(d.type==='pile'?f(d.Lx,2)+'×'+f(d.Ly,2)+' ม. เข็ม '+d.n+' ต้น':f(d.L,2)+'×'+f(d.B,2)+' ม.'),d.error?'–':f(d.t,0)+' ซม.',badge(x.ok)]}))+'</div>';
+  if(A.stairs.length)out+='<div class="panel overflow"><h2>บันได ('+A.stairs.length+')</h2>'+tbl(['ชั้น','ช่อง','รูปแบบ','ทิศขึ้น','น้ำหนักคงที่ (กก./ตร.ม.)'],A.stairs.map(function(st){return [st.lv+1,gridLab(st.i)+(st.j+1),(STAIRTYPES.filter(function(t){return t[0]===st.type})[0]||['',''])[1],st.dir.toUpperCase(),f(CT.stairDL(st),0)]}))+'<p class="hint">บันไดตรง: ครึ่งหนึ่งลงคานต้นบันได อีกครึ่งลงคานปลายบันไดชั้นบน · มีชานพัก: ชานพักลงคานฝั่งชานพักระดับล่าง · บันไดวน: กระจายลงคานรอบช่องทั้งสองระดับ</p></div>';
+  out+='<div class="panel"><h2>ส่งต่อไปออกแบบ</h2><p class="hint" style="margin-top:0">สร้างชิ้นส่วนในเมนูออกแบบพร้อมแรง: คาน คานซอย เสา ฐานราก แผ่นพื้นหล่อในที่ (กำหนดขอบต่อเนื่องจากช่องข้างเคียง) บันได และชุดหลังคา (ส่งไปเมนูแบบจำลองหลังคาและชิ้นส่วนโครงหลังคา)</p><button class="btn primary" onclick="__ctBimExport()">ส่งชิ้นส่วนทั้งหมดไปเมนูออกแบบ</button></div>';
+  return out}
+function bim3D(r,v){var A=r.A,D=r.D,m=r.m,mode=($('#bimView')||{}).value||v.view||'all',ang=(+v.ang||35)*Math.PI/180,ca=Math.cos(ang),sa=Math.sin(ang),el=0.5,W=660,H=440,X=A.X,Y=A.Y,Z=A.Z;
+  var P=function(x,y,z){return [x*ca-y*sa,(x*sa+y*ca)*el-z]},dep=function(x,y,z){return x*sa+y*ca+z*0.01},items=[],stat=function(ok){return ok?'#1F7A4D':'#B42318'},bh=m.beam.h/100;
+  A.levels.forEach(function(lv){if(!lv.hasSlab||mode==='frame')return;for(var j=0;j<A.occ.length;j++)for(var i=0;i<A.occ[0].length;i++)if(A.occ[j][i]){var ck=i+','+j,t=(lv.slabs||{})[ck]||'cast';if(t==='void'||lv.voids[ck])continue;var z=lv.z;
+    items.push({d:dep((X[i]+X[i+1])/2,(Y[j]+Y[j+1])/2,z)-0.5,poly:[P(X[i],Y[j],z),P(X[i+1],Y[j],z),P(X[i+1],Y[j+1],z),P(X[i],Y[j+1],z)],fill:t==='bath'?'rgba(120,190,160,.35)':t==='pc'?'rgba(140,170,210,.35)':'rgba(160,170,180,.35)',stroke:'rgba(120,130,140,.5)'})}});
+  if(mode==='all')(m.floors||[]).forEach(function(F2,k){var z0=Z[k],z1=Z[k+1]-bh;
+    var wq=function(x0,y0,x1,y1,c){items.push({d:dep((x0+x1)/2,(y0+y1)/2,(z0+z1)/2)-0.3,poly:[P(x0,y0,z0),P(x1,y1,z0),P(x1,y1,z1),P(x0,y0,z1)],fill:c,stroke:'rgba(160,150,135,.9)'})};
+    Object.keys(F2.walls||{}).forEach(function(key){var p=key.split(':'),line=+p[1],s=+p[2];if(p[0]==='x')wq(X[s],Y[line],X[s+1],Y[line],'rgba(232,226,214,.92)');else wq(X[line],Y[s],X[line],Y[s+1],'rgba(232,226,214,.92)')});
+    (F2.off||[]).forEach(function(w){wq(w.x1,w.y1,w.x2,w.y2,'rgba(245,214,190,.92)')});
+    (F2.stairs||[]).forEach(function(st){var x0=X[st.i],y0=Y[st.j],a=X[st.i+1]-x0,b=Y[st.j+1]-y0,n=10,zz0=Z[k],zz1=Z[k+1];
+      for(var q=0;q<n;q++){var z=zz0+(zz1-zz0)*(q+1)/n,fx,fy,fx2,fy2;if(st.type==='spiral'){var t1=q/n*2*Math.PI,t2=(q+1)/n*2*Math.PI,cx=x0+a/2,cy=y0+b/2,R2=Math.min(a,b)/2*0.9;items.push({d:dep(cx,cy,z),poly:[P(cx,cy,z),P(cx+R2*Math.cos(t1),cy+R2*Math.sin(t1),z),P(cx+R2*Math.cos(t2),cy+R2*Math.sin(t2),z)],fill:'#A7B0BA',stroke:'#6B7785'});continue}
+        var tq=st.type==='straight'?(q+0.5)/n:((q<n/2?q:(n-1-q))+0.5)/(n/2),side=st.type==='straight'||q<n/2?0:1;
+        if(st.dir==='x'){fx=x0+a*tq-a/n/2;fx2=fx+a/n*(st.type==='straight'?1:2);fy=y0+(st.type==='straight'?0:side*b/2);fy2=fy+(st.type==='straight'?b:b/2)}else{fy=y0+b*tq-b/n/2;fy2=fy+b/n*(st.type==='straight'?1:2);fx=x0+(st.type==='straight'?0:side*a/2);fx2=fx+(st.type==='straight'?a:a/2)}
+        items.push({d:dep((fx+fx2)/2,(fy+fy2)/2,z),poly:[P(fx,fy,z),P(fx2,fy,z),P(fx2,fy2,z),P(fx,fy2,z)],fill:'#A7B0BA',stroke:'#6B7785'})}})});
+  D.beams.forEach(function(x){var rn=x.r,q=x.q,a=rn.nodes[q],b=rn.nodes[q+1],z=Z[x.lv],col=mode==='status'?stat(x.ok):'#14243A';items.push({d:dep((X[a[0]]+X[b[0]])/2,(Y[a[1]]+Y[b[1]])/2,z),line:[P(X[a[0]],Y[a[1]],z),P(X[b[0]],Y[b[1]],z)],stroke:col,w:4,click:"__ctBimPick('b',"+x.lv+",'"+rn.loads[q].key+"')"})});
+  (D.secs||[]).forEach(function(x){var sb=x.sr.sb,z=Z[x.sr.lv],x1,y1,x2,y2;if(sb.dir==='x'){x1=X[x.sr.i];x2=X[x.sr.i+1];y1=y2=Y[x.sr.j]+sb.pos}else{y1=Y[x.sr.j];y2=Y[x.sr.j+1];x1=x2=X[x.sr.i]+sb.pos}items.push({d:dep((x1+x2)/2,(y1+y2)/2,z),line:[P(x1,y1,z),P(x2,y2,z)],stroke:mode==='status'?stat(x.ok):'#1F5FA8',w:3,click:"__ctBimPick('s',"+x.sr.lv+",["+x.sr.i+","+x.sr.j+"])"})});
+  D.cols.forEach(function(x){var N=x.c.node,z0=Z[x.c.st-1],z1=Z[x.c.st],col=mode==='status'?stat(x.ok):'#3C4D61',key=N.i+','+N.j;items.push({d:dep(N.x,N.y,(z0+z1)/2)+0.05,line:[P(N.x,N.y,z0),P(N.x,N.y,z1)],stroke:col,w:5,click:"__ctBimPick('c','"+key+"',"+x.c.st+")"})});
   if(mode==='deform'&&r.Fr){var Fr=r.Fr,U=Fr.res.WX.U,um=0;Fr.nodes.forEach(function(n,i){um=Math.max(um,Math.hypot(U[6*i],U[6*i+1]))});var ks=um?0.08*Math.max(X[X.length-1],Y[Y.length-1])/um:0;
-    Fr.members.forEach(function(mm){var a=Fr.nodes[mm.i],b2=Fr.nodes[mm.j],ua=[U[6*mm.i]*ks,U[6*mm.i+1]*ks,U[6*mm.i+2]*ks],ub=[U[6*mm.j]*ks,U[6*mm.j+1]*ks,U[6*mm.j+2]*ks];
-      items.push({d:dep((a.x+b2.x)/2,(a.y+b2.y)/2,(a.z+b2.z)/2)+0.1,line:[P(a.x+ua[0],a.y+ua[1],a.z+ua[2]),P(b2.x+ub[0],b2.y+ub[1],b2.z+ub[2])],stroke:'#F2B705',w:2.5})})}
-  /* footings */
+    Fr.members.forEach(function(mm){var a=Fr.nodes[mm.i],b2=Fr.nodes[mm.j];items.push({d:dep((a.x+b2.x)/2,(a.y+b2.y)/2,(a.z+b2.z)/2)+0.1,line:[P(a.x+U[6*mm.i]*ks,a.y+U[6*mm.i+1]*ks,a.z),P(b2.x+U[6*mm.j]*ks,b2.y+U[6*mm.j+1]*ks,b2.z)],stroke:'#F2B705',w:2.5})})}
   D.fdns.forEach(function(x){var N=x.N,hs=0.45;items.push({d:dep(N.x,N.y,-0.3),poly:[P(N.x-hs,N.y-hs,-0.3),P(N.x+hs,N.y-hs,-0.3),P(N.x+hs,N.y+hs,-0.3),P(N.x-hs,N.y+hs,-0.3)],fill:mode==='status'?stat(x.ok):'#8A97A5',stroke:'#14243A'})});
-  /* roof */
   if(mode==='all'&&A.roof){var gm=A.roof.gm,b=gm.bbox,nd=34,c=Math.max(b[2]-b[0],b[3]-b[1])/nd,zt=Z[A.nS];
     for(var jj=0;jj<nd+2;jj++)for(var ii=0;ii<nd+2;ii++){var x0=b[0]+ii*c,y0=b[1]+jj*c;if(x0>=b[2]-1e-9||y0>=b[3]-1e-9)continue;var cen=gm.at(x0+c/2,y0+c/2);if(!cen)continue;
       var hz=function(x,y){var a=gm.at(Math.min(Math.max(x,b[0]),b[2]),Math.min(Math.max(y,b[1]),b[3]));return zt-m.roof.eave*Math.tan(m.roof.slope*Math.PI/180)+(a?a.h:cen.h)};
@@ -4194,8 +4429,31 @@ function bim3D(r,v){var A=r.A,D=r.D,m=r.m,mode=($('#bimView')||{}).value||v.view
   var pts=[];items.forEach(function(it){(it.poly||it.line).forEach(function(q2){pts.push(q2)})});var mnx=Math.min.apply(null,pts.map(function(q2){return q2[0]})),mxx=Math.max.apply(null,pts.map(function(q2){return q2[0]})),mny=Math.min.apply(null,pts.map(function(q2){return q2[1]})),mxy=Math.max.apply(null,pts.map(function(q2){return q2[1]}));
   var sc=Math.min((W-30)/(mxx-mnx||1),(H-30)/(mxy-mny||1)),S=function(q2){return [((q2[0]-mnx)*sc+15).toFixed(1),((q2[1]-mny)*sc+15).toFixed(1)]};
   var s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;display:block" role="img" aria-label="แบบจำลองโครงสร้าง 3 มิติ">';
-  items.forEach(function(it){if(it.line){var a=S(it.line[0]),b2=S(it.line[1]);s+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b2[0]+'" y2="'+b2[1]+'" stroke="'+it.stroke+'" stroke-width="'+it.w+'" stroke-linecap="round"/>'}else s+='<polygon points="'+it.poly.map(function(q2){return S(q2).join(',')}).join(' ')+'" fill="'+it.fill+'" stroke="'+it.stroke+'" stroke-width="0.7"/>'});
-  return s+'</svg><p class="hint" style="text-align:center">มุมมอง '+Math.round(+v.ang||35)+'° · '+(mode==='status'?'สีเขียว = ผ่าน · สีแดง = ไม่ผ่าน':mode==='deform'?'เส้นเหลือง = รูปร่างการเสียรูปจากแรงลมทิศ X (ขยาย)':'เส้นเข้ม = คาน/เสา · แผ่นเทา = พื้น · ผนังสีครีม')+'</p>'}
+  items.forEach(function(it){if(it.line){var a=S(it.line[0]),b2=S(it.line[1]);s+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b2[0]+'" y2="'+b2[1]+'" stroke="'+it.stroke+'" stroke-width="'+it.w+'" stroke-linecap="round"'+(it.click?' style="cursor:pointer" onclick="'+it.click+'"':'')+'/>'+(it.click?'<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b2[0]+'" y2="'+b2[1]+'" stroke="transparent" stroke-width="12" style="cursor:pointer" onclick="'+it.click+'"/>':'')}else s+='<polygon points="'+it.poly.map(function(q2){return S(q2).join(',')}).join(' ')+'" fill="'+it.fill+'" stroke="'+it.stroke+'" stroke-width="0.7"/>'});
+  return s+'</svg><p class="hint" style="text-align:center">มุมมอง '+Math.round(+v.ang||35)+'° · '+(mode==='status'?'สีเขียว = ผ่าน · สีแดง = ไม่ผ่าน':mode==='deform'?'เส้นเหลือง = การเสียรูปจากแรงลมทิศ X (ขยาย)':'คาน/เสา เส้นเข้ม · คานซอย น้ำเงิน · พื้นเทา (สำเร็จรูปฟ้า ห้องน้ำเขียว) · ผนังครีม (นอกกริดส้ม) · บันไดเทาเข้ม')+'</p>'}
+window.__ctBimExport=function(){var r=toolRun('bim');if(r.error)return;var D=r.D,A=r.A,m=r.m,v=toolVals('bim'),nS=A.nS;
+  var slabsOut=[];A.levels.forEach(function(lv){if(!lv.hasSlab)return;for(var j=0;j<A.occ.length;j++)for(var i=0;i<A.occ[0].length;i++){if(!A.occ[j][i])continue;var ck=i+','+j,t=(lv.slabs||{})[ck]||'cast';if(t==='void'||t==='pc'||lv.voids[ck])continue;slabsOut.push({lv:lv,i:i,j:j,t:t})}});
+  var n=D.beams.length+(D.secs||[]).length+D.cols.length+D.fdns.length+slabsOut.length+A.stairs.length;if(!confirm('สร้างชิ้นส่วน '+n+' รายการในเมนูออกแบบ และส่งชุดหลังคาไปเมนูหลังคา?'))return;
+  var ln=function(k){return bimLvName(k,nS)};
+  D.beams.forEach(function(x){var nb=newBeam(0),rn=x.r,q=x.q;Object.assign(nb,{name:'B'+ln(x.lv)+'-'+(rn.dir==='x'?(rn.line+1)+'('+gridLab(rn.s0+q)+'–'+gridLab(rn.s0+q+1)+')':gridLab(rn.line)+'('+(rn.s0+q+1)+'–'+(rn.s0+q+2)+')'),loadMode:'direct',b:x.inp.b,h:x.inp.h,bar:x.inp.bar,L:x.inp.L,support:x.inp.support,Mp:x.inp.Mp,Mn:x.inp.Mn,V:x.inp.V});state.beams.push(nb)});
+  (D.secs||[]).forEach(function(x){var nb=newBeam(0);Object.assign(nb,{name:'BS'+ln(x.sr.lv)+'-'+gridLab(x.sr.i)+(x.sr.j+1),loadMode:'direct',b:x.inp.b,h:x.inp.h,bar:x.inp.bar,L:x.inp.L,support:'simple',Mp:x.inp.Mp,Mn:0,V:x.inp.V});state.beams.push(nb)});
+  D.cols.forEach(function(x){var nc=newCol(0),i=x.d.input||x.inp;Object.assign(nc,{name:'C'+x.c.st+'-'+gridLab(x.c.node.i)+(x.c.node.j+1),b:i.b,h:i.h,bar:i.bar,auto:true,P:Math.round(x.Pd*100)/100,M:x.gov?Math.round(x.gov.Mx/10)/100:0,My:x.gov?Math.round(x.gov.Myb/10)/100:0,Lu:Math.round(x.c.Lu*100)/100,H:Math.round(x.c.Lu*100)/100+m.beam.h/100});state.cols.push(nc)});
+  D.fdns.forEach(function(x){var nf=newFdn(0);Object.assign(nf,{name:'F-'+gridLab(x.N.i)+(x.N.j+1),type:m.fdn.type,cx:m.col.b,cy:m.col.h,dl:Math.round(x.N.fdnD/10)/100,ll:Math.round(x.N.fdnL/10)/100,qa:m.fdn.qa,Df:m.fdn.Df,Qa:m.fdn.Qa,pileSize:m.fdn.pileSize});state.fdns.push(nf)});
+  slabsOut.forEach(function(sx){var a=A.X[sx.i+1]-A.X[sx.i],b=A.Y[sx.j+1]-A.Y[sx.j],S=Math.min(a,b),L=Math.max(a,b),lv=sx.lv,has=function(ii,jj){return jj>=0&&jj<A.occ.length&&ii>=0&&ii<A.occ[0].length&&A.occ[jj][ii]&&((lv.slabs||{})[ii+','+jj]||'cast')!=='void'&&!lv.voids[ii+','+jj]};
+    var ns=newSlab(0),dl=(sx.lv.k===nS?m.roof.finish:m.slab.finish)+(sx.t==='bath'?m.bath.extra:0),ll=sx.lv.k===nS?m.roof.llFlat:m.slab.ll,xl=a>=b;
+    Object.assign(ns,{name:'S'+ln(sx.lv.k)+'-'+gridLab(sx.i)+(sx.j+1)+(sx.t==='bath'?' ห้องน้ำ':''),t:m.slab.t,dl:dl,ll:ll,S:S,L:L});
+    if(S/L>=0.5){ns.type='two';ns.eL1=xl?has(sx.i,sx.j-1):has(sx.i-1,sx.j);ns.eL2=xl?has(sx.i,sx.j+1):has(sx.i+1,sx.j);ns.eS1=xl?has(sx.i-1,sx.j):has(sx.i,sx.j-1);ns.eS2=xl?has(sx.i+1,sx.j):has(sx.i,sx.j+1)}
+    else{ns.type='one';ns.S=S;ns.L=L;var c1=xl?has(sx.i,sx.j-1):has(sx.i-1,sx.j),c2=xl?has(sx.i,sx.j+1):has(sx.i+1,sx.j);ns.support=c1&&c2?'bothCont':c1||c2?'oneCont':'simple'}
+    state.slabs.push(ns)});
+  A.stairs.forEach(function(st){var a=A.X[st.i+1]-A.X[st.i],b=A.Y[st.j+1]-A.Y[st.j],run=st.dir==='x'?a:b,wid=st.dir==='x'?b:a,nst=newStair(0),land=Math.min(1.2,run*0.35);
+    var o={name:'ST'+(st.lv+1)+'-'+gridLab(st.i)+(st.j+1),stype:st.type,ll:m.slab.ll};
+    if(st.type==='spiral')Object.assign(o,{Lh:Math.round(Math.min(a,b)/2*100)/100,width:Math.round(Math.min(a,b)/2*100)/100});
+    else if(st.type==='straight')Object.assign(o,{Lh:Math.round(run*100)/100,width:Math.round(wid*100)/100});
+    else Object.assign(o,{Lh:Math.round((run-land)*100)/100,Lland:Math.round(land*100)/100,width:Math.round(wid/2*100)/100});
+    Object.assign(nst,o);state.stairs.push(nst)});
+  if(A.roof){var rv=toolVals('roofmodel');Object.assign(rv,{xs:m.xs.join(', '),ys:m.ys.join(', '),cells:m.cells.map(function(c){return c.join(',')}).join(';'),type:m.roof.type,mat:m.roof.mat,slope:m.roof.slope,eave:m.roof.eave,H:m.storeys.reduce(function(a,b){return a+b},0),ll:m.roof.ll,ridge:m.roof.dir||'auto'});
+    rv.src='bim';bimRoofParts(r)}
+  save();alert('สร้างแล้ว: คาน '+(D.beams.length+(D.secs||[]).length)+' · เสา '+D.cols.length+' · ฐานราก '+D.fdns.length+' · พื้น '+slabsOut.length+' · บันได '+A.stairs.length+(A.roof?' · ชุดหลังคา':''));state.module='home';renderAll()};
 /* ---------- PDF / image import ---------- */
 var PDFJS_URL='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',pdfState={};
 function loadPdfJs(){var g=function(){return window.pdfjsLib||window['pdfjs-dist/build/pdf']};if(g())return Promise.resolve(g());return new Promise(function(ok,fail){var s=document.createElement('script');s.src=PDFJS_URL;s.onload=function(){var lib=g();if(!lib)return fail(new Error('โหลดตัวอ่าน PDF ไม่ได้'));try{lib.GlobalWorkerOptions.workerSrc=PDFJS_URL.replace('pdf.min.js','pdf.worker.min.js')}catch(e){}ok(lib)};s.onerror=function(){fail(new Error('โหลดตัวอ่าน PDF ไม่ได้ (ต้องต่ออินเทอร์เน็ตครั้งแรก)'))};document.head.appendChild(s)})}
@@ -4234,7 +4492,7 @@ window.__ctPdfApply=function(){var st=pdfState,vx=(st.vx||[]).slice().sort(funct
   if(known>0&&vx.length>=2)f=known/(vx[vx.length-1]-vx[0]);else if(st.isImg){st.msg='รูปภาพต้องใส่ระยะจริงกริดแรกถึงกริดสุดท้าย';bimPdfDraw();return}else f=0.352778/1000*(+$('#bimScale').value||100);
   var r2=function(x){return Math.round(x*f*100)/100},xs=[],ys=[];for(var i=1;i<vx.length;i++)xs.push(r2(vx[i]-vx[i-1]));for(i=1;i<hy.length;i++)ys.push(r2(hy[i]-hy[i-1]));
   var v=toolVals('bim');if(xs.length)v.xs=xs.join(', ');if(ys.length)v.ys=ys.join(', ');var nx=Math.max(1,xs.length),ny=Math.max(1,ys.length),cells=[];for(var j=0;j<ny;j++)for(i=0;i<nx;i++)cells.push(i+','+j);v.cells=cells.join(';');
-  v.walls=JSON.stringify(perimWalls(bimParse(v),+v.wallUnit||180));st.msg='ใช้กริดแล้ว: '+(xs.join(', ')||'–')+' / '+(ys.join(', ')||'–')+' ม. ตรวจและแก้ช่องอาคารในผังด้านล่าง';save();renderTool('bim')};
+  v.floors='';v.walls=JSON.stringify(perimWalls({xs:spNums(v.xs),ys:spNums(v.ys),cells:cells.map(function(c){return c.split(',').map(Number)})},+v.wallUnit||180));st.msg='ใช้กริดแล้ว: '+(xs.join(', ')||'–')+' / '+(ys.join(', ')||'–')+' ม. ตรวจและแก้ช่องอาคารในผังด้านล่าง';save();renderTool('bim')};
 function bimPdfDraw(){var box=$('#bimPdfView'),msg=$('#bimPdfMsg'),st=pdfState;if(msg&&st.msg)msg.textContent=st.msg;if(!box||!st.img)return;box.style.display='block';
   var W=st.w,H=st.h,toPx=function(pt,axis){if(st.isImg)return pt;return axis==='x'?pt*st.k:(st.vp.height-pt)*st.k};
   var s='<div style="position:relative;width:'+W+'px;height:'+H+'px"><img src="'+st.img+'" alt="แบบที่นำเข้า" style="display:block;width:'+W+'px;height:'+H+'px"><svg id="bimOverlay" width="'+W+'" height="'+H+'" style="position:absolute;left:0;top:0;cursor:crosshair">';
@@ -4254,21 +4512,24 @@ var MANUAL=[
 <h3>1.2 หน้าจอหลัก</h3><ul><li><b>เมนูซ้าย:</b> เรียงตามลำดับงาน แบบจำลองอาคาร → ออกแบบโครงสร้างจากบนลงล่าง (หลังคา ① → พื้น ② → คาน ③ → เสา ④ → ตอม่อ ⑤ → ฐานราก ⑥) → วิเคราะห์โครงสร้าง → ข้อมูลอ้างอิง → ปริมาณงาน → สำรวจ → เครื่องมืออื่น</li><li><b>WSD / SDM:</b> เลือกวิธีออกแบบคอนกรีตเสริมเหล็ก มีผลกับทุกเมนู SDM ใช้ 1.4D + 1.7L ตามกฎกระทรวง 2566</li><li><b>ออกแบบ / รายการคำนวณ:</b> สลับระหว่างหน้ากรอกข้อมูลกับหน้ารายการคำนวณสำหรับพิมพ์</li><li><b>ข้อมูลโครงการและการตั้งค่า:</b> ชื่อโครงการ ผู้คำนวณ ค่าตามมาตรฐาน ซิงก์ และไฟล์โครงการ</li></ul>
 <h3>1.3 วัสดุ</h3><p>กล่อง "วัสดุ" ด้านบนของเมนูออกแบบใช้ร่วมกันทั้งโครงการ ได้แก่ f'c ชั้นเหล็กเสริมหลัก และเหล็กปลอก</p>
 <h3>1.4 รายการชิ้นส่วน</h3><p>ทุกเมนูออกแบบเก็บได้หลายชิ้น (เช่น B1, B2) ใช้ปุ่ม เพิ่ม / ทำสำเนา / ลบ จุดสีหน้าชื่อบอกผล เขียว = ผ่าน แดง = ไม่ผ่าน ช่อง "จำนวน (สำหรับ BOQ)" ใช้คูณปริมาณงาน</p>
-<h3>1.5 บันทึก ซิงก์ และย้ายข้อมูล</h3><ul><li>แอปบันทึกอัตโนมัติทุกครั้งที่แก้ไข</li><li><b>ซิงก์คอมกับ iPad:</b> ตั้งค่า SyncCode.gs ตามไฟล์คู่มือใน zip แล้วใส่ลิงก์และรหัสในหน้าตั้งค่า</li><li><b>ไฟล์โครงการ:</b> ส่งออกเป็น .json แล้วนำเข้าในอีกเครื่อง (ข้อมูลในเครื่องที่นำเข้าจะถูกแทนที่)</li></ul>`],
+<h3>1.5 หลายโครงการ</h3><p>หน้า "ภาพรวมโครงการ" มีตารางโครงการทั้งหมด: สร้างใหม่ เปิด ทำสำเนา และลบ แต่ละโครงการเก็บข้อมูลแยกกันทั้งหมด ชื่อโครงการที่เปิดอยู่แสดงใต้โลโก้ด้านซ้าย (กดเพื่อกลับหน้าภาพรวม) เปลี่ยนชื่อได้ที่ "ข้อมูลโครงการและการตั้งค่า"</p><h3>1.6 บันทึก ซิงก์ และย้ายข้อมูล</h3><ul><li>แอปบันทึกอัตโนมัติทุกครั้งที่แก้ไข</li><li><b>ซิงก์คอมกับ iPad:</b> ตั้งค่า SyncCode.gs ตามไฟล์คู่มือใน zip แล้วใส่ลิงก์และรหัสในหน้าตั้งค่า</li><li><b>ไฟล์โครงการ:</b> ส่งออกเป็น .json แล้วนำเข้าในอีกเครื่อง (ข้อมูลในเครื่องที่นำเข้าจะถูกแทนที่)</li></ul>`],
 ['flow','2. ขั้นตอนการทำงานที่แนะนำ',`<ol><li>ตั้งข้อมูลโครงการ วิธีออกแบบ และวัสดุ</li><li><b>แบบจำลองโครงสร้าง 3 มิติ:</b> สร้างกริด ผนัง หลังคา (หรือนำเข้ากริดจาก PDF) แล้ววิเคราะห์ทั้งอาคาร</li><li>กด "ส่งชิ้นส่วนทั้งหมดไปเมนูออกแบบ" เพื่อได้คาน เสา ฐานรากพร้อมแรง</li><li>ออกแบบหลังคา พื้น และบันไดในเมนูของแต่ละชิ้น</li><li>ปรับขนาดหรือเหล็กในแต่ละเมนู ตรวจผล แล้วพิมพ์รายการคำนวณ</li><li>สรุปปริมาณงานและราคาในเมนู BOQ</li></ol><p>ถ้าออกแบบชิ้นส่วนเดี่ยว (ไม่ทำแบบจำลอง) ให้ทำตามลำดับ พื้น → คาน (ใช้รายการน้ำหนัก) → เสา → ตอม่อ → ฐานราก</p>`],
 ['bim','3. แบบจำลองโครงสร้าง 3 มิติ',`
-<h3>3.1 สร้างแบบจำลอง</h3><ul><li><b>กริด:</b> ใส่ระยะกริดแนว A, B, C … และ 1, 2, 3 … (ม. คั่นด้วยจุลภาค)</li><li><b>ตัวอาคาร:</b> โหมด "เลือกช่องตัวอาคาร" แล้วคลิกช่องในผัง สร้างรูป L, U หรืออื่น ๆ ได้</li><li><b>ชั้น:</b> ใส่ความสูงแต่ละชั้น เช่น 3.5, 3.2 (สูงสุด 6 ชั้น)</li><li><b>ผนัง:</b> โหมด "วาง/ลบผนัง" แล้วคลิกแนวกริด หรือกด "ใส่ผนังรอบนอกทั้งหมด" เลือกชนิดผนังจากช่อง "ผนังที่จะวาง" ผนังวางทุกชั้นตามผังเดียวกัน</li><li><b>ขนาดชิ้นส่วน:</b> พื้น คาน เสา ใช้ขนาดเดียวทั้งอาคาร</li><li><b>หลังคา:</b> ปั้นหยา จั่ว หรือดาดฟ้า</li><li><b>ฐานราก:</b> ฐานแผ่ (qa, Df) หรือฐานเสาเข็ม (น้ำหนักปลอดภัยต่อต้น)</li></ul>
+<h3>3.1 สร้างแบบจำลอง</h3><ul><li><b>จำนวนชั้น:</b> กล่อง "จำนวนชั้นของอาคาร" ใช้ปุ่ม + เพิ่มชั้น / − ลบชั้นบนสุด และแก้ความสูงแต่ละชั้น (สูงสุด 6 ชั้น)</li><li><b>แถบเครื่องมือวาดเหนือผัง:</b> ตัวอาคาร · ผนังตามกริด · ผนังนอกกริด · คานซอย · ชนิดพื้น · บันได · ดูผลวิเคราะห์ ตัวเลือกของแต่ละเครื่องมือ (ชนิดผนัง ชนิดพื้น รูปแบบและทิศบันได แนวคานซอย) อยู่ใต้แถบเครื่องมือ</li><li><b>แปลนแต่ละชั้น:</b> เลือกแท็บ ชั้น 1, ชั้น 2, … หรือหลังคา เหนือผัง ผนัง แผ่นพื้น คานซอย บันได ประตู หน้าต่าง และสุขภัณฑ์ กำหนดแยกแต่ละชั้น (ช่องตัวอาคารใช้ร่วมกันทุกชั้น) ผังแสดงระยะกริดทุกช่วงและระยะรวม</li>
+<li><b>เครื่องมือในผัง:</b> เลือกช่องตัวอาคาร · ผนังตามแนวกริด · ผนังนอกแนวกริด (คลิกจุดเริ่มและจุดปลาย จับระยะ 5 ซม. และดูดเข้าแนวกริด คลิกที่ผนังเดิมเพื่อลบ) · คานซอย (คลิกตำแหน่งในช่อง เลือกแนว X หรือ Y) · ชนิดแผ่นพื้น (หล่อในที่ สำเร็จรูป ห้องน้ำ ช่องเปิด) · ช่องบันได (ตรง มีชานพัก หักฉาก วน และทิศขึ้น) · ดูผลวิเคราะห์ชิ้นส่วน</li>
+<li><b>ปุ่มช่วย:</b> ใส่ผนังรอบนอกชั้นนี้ · คัดลอกผนังจากชั้นล่าง · ลบผนังชั้นนี้</li><li><b>กริด:</b> ใส่ระยะกริดแนว A, B, C … และ 1, 2, 3 … (ม. คั่นด้วยจุลภาค)</li><li><b>ตัวอาคาร:</b> โหมด "เลือกช่องตัวอาคาร" แล้วคลิกช่องในผัง สร้างรูป L, U หรืออื่น ๆ ได้</li><li><b>ชั้น:</b> ใส่ความสูงแต่ละชั้น เช่น 3.5, 3.2 (สูงสุด 6 ชั้น)</li><li><b>ผนัง:</b> โหมด "วาง/ลบผนัง" แล้วคลิกแนวกริด หรือกด "ใส่ผนังรอบนอกทั้งหมด" เลือกชนิดผนังจากช่อง "ผนังที่จะวาง" ผนังวางทุกชั้นตามผังเดียวกัน</li><li><b>ขนาดชิ้นส่วน:</b> พื้น คาน เสา ใช้ขนาดเดียวทั้งอาคาร</li><li><b>หลังคา:</b> ปั้นหยา จั่ว (เลือกแนวสัน: ตามด้านยาว / ขนาน X / ขนาน Y) หรือดาดฟ้า พร้อมระบบโครงหลังคา (จันทันหรือโครงถัก) กล่อง "หลังคาและโครงหลังคา" แสดงผลออกแบบโครงหลังคาในแบบจำลอง ปุ่มเปิดในเมนูแบบจำลองหลังคา (เชื่อมข้อมูลอัตโนมัติ) และปุ่มส่งชิ้นส่วนหลังคาไปเมนูชิ้นส่วนโครงหลังคา</li><li><b>การถ่ายน้ำหนักของรายการพิเศษ:</b> พื้นสำเร็จรูปพาดทางเดียวด้านสั้น · พื้นห้องน้ำเพิ่มน้ำหนักตามที่กำหนด · ผนังนอกกริดเฉลี่ยเป็นน้ำหนักบนแผ่นพื้นที่ตั้งอยู่ (ถ้าวางตรงคานซอยลงคานซอย) · คานซอยเป็นคานช่วงเดี่ยวส่งแรงจุดให้คานหลัก · บันไดถ่ายลงคานที่ปลายบันได และชั้นบนเป็นช่องบันไดอัตโนมัติ</li><li><b>ฐานราก:</b> ฐานแผ่ (qa, Df) หรือฐานเสาเข็ม (น้ำหนักปลอดภัยต่อต้น)</li></ul>
 <h3>3.2 นำเข้ากริดจากแบบ PDF หรือรูปภาพ</h3><ol><li>เลือกไฟล์ในกล่อง "สร้างกริดจากแบบ PDF หรือรูปภาพ" (PDF ใช้อินเทอร์เน็ตครั้งแรกเพื่อโหลดตัวอ่าน)</li><li>เลือกหน้าและมาตราส่วนแบบ</li><li>กด "ตรวจหากริดอัตโนมัติ" แอปอ่านตัวอักษรในวงกลมกริดจากแบบ PDF ที่ส่งออกจาก CAD</li><li>ถ้าเป็นแบบสแกนหรือรูปภาพ ให้เลือก "คลิกบนแบบเพื่อ" เพิ่มกริดแนวตั้ง/แนวนอน แล้วคลิกบนแบบ และใส่ระยะจริงกริดแรกถึงกริดสุดท้าย</li><li>กด "ใช้กริดนี้กับแบบจำลอง" แล้วแก้ช่องตัวอาคารและผนังในผัง</li></ol>
 <h3>3.3 วิธีวิเคราะห์</h3><ul><li><b>โครงข้อแข็ง 3 มิติ (แนะนำ):</b> สร้างโครงคาน-เสาทั้งอาคารอัตโนมัติ ฐานเสายึดแน่น ใช้สติฟเนสแตกร้าว (คาน 0.35Ig เสา 0.70Ig) คิดน้ำหนักคงที่ น้ำหนักจร และแรงลมทิศ X/Y ทั้งบวกและลบ รวม 9 กรณีตามกฎกระทรวง 2566 น้ำหนักพื้นลงคานเป็นรูปสามเหลี่ยม/สี่เหลี่ยมคางหมูตามจริง</li><li><b>ถ่ายน้ำหนักตามลำดับ:</b> คานแต่ละแนววิเคราะห์เป็นคานต่อเนื่องพร้อมจัดน้ำหนักจรสลับช่วง เสารับแรงสะสม (แรงดิ่งเท่านั้น)</li><li>เมื่อใช้ 3 มิติ คานใช้ค่ามากกว่าระหว่างสองวิธี เสาตรวจทุกกรณีที่ปลายบนและล่างแบบแรงดัดสองทาง</li></ul>
 <h3>3.4 แรงลม</h3><p>เลือกสภาพภูมิประเทศ (เมือง/โล่ง) แอปใช้หน่วยแรงลมตามความสูงจากตารางในกฎกระทรวง 2566 (เพิ่ม 15% สำหรับอาคารสาธารณะ ≥ 1,000 ตร.ม.) แรงลมแต่ละชั้น = หน่วยแรง × ความสูงรับลม × ความกว้างอาคาร กระจายให้ทุกจุดต่อในชั้น</p>
 <h3>3.5 อ่านผล</h3><ul><li><b>ตรวจสมดุลแรง:</b> ผลรวมแรงปฏิกิริยาต้องเท่ากับแรงที่ใส่ทุกกรณี</li><li><b>ระยะเซระหว่างชั้น:</b> จากแรงลมใช้งาน เทียบเกณฑ์ h/400 (แก้ได้)</li><li><b>มุมมอง 3 มิติ:</b> ทั้งหมด / โครงคาน-เสา / ผลตรวจสอบ (เขียว-แดง) / การเสียรูปจากแรงลม หมุนด้วยปุ่ม ⟲ ⟳</li><li><b>ตาราง:</b> คาน (Mu, Vu, เหล็ก) เสา (กรณีวิกฤต, P, Mx, My) ฐานราก (ขนาด และแรงถอนจากลม)</li></ul>
-<h3>3.6 ส่งไปออกแบบ</h3><p>กด "ส่งชิ้นส่วนทั้งหมดไปเมนูออกแบบ" แอปสร้างคานแบบกรอกโมเมนต์เอง เสาพร้อม P, Mx, My และฐานรากพร้อม DL/LL ชื่อตามกริด เช่น B2F-1(A–B), C1-A1, F-A1 (พื้นและตอม่อยังต้องออกแบบในเมนูของตัวเอง)</p>`],
+<h3>3.6 ดูผลวิเคราะห์ชิ้นส่วน</h3><p>เลือกเครื่องมือ "ดูผลวิเคราะห์ชิ้นส่วน" แล้วคลิกคาน เสา หรือคานซอยในผัง หรือคลิกเส้นคาน/เสาในแบบ 3 มิติ จะแสดงแผนภาพโมเมนต์ (ค่าสูงสุด/ต่ำสุดทุกกรณี) แรงเฉือน แรงในเสาแต่ละกรณี และปุ่ม "เปิดแนวคานนี้ในเมนูคานต่อเนื่อง" ที่ส่งช่วงและน้ำหนักทั้งแนวไปวิเคราะห์ต่อ</p><h3>3.7 ส่งไปออกแบบ</h3><p>กด "ส่งชิ้นส่วนทั้งหมดไปเมนูออกแบบ" แอปสร้าง คาน คานซอย (กรอกโมเมนต์เอง) เสา (P, Mx, My) ฐานราก (DL/LL) แผ่นพื้นหล่อในที่และห้องน้ำ (ขอบต่อเนื่องตามช่องข้างเคียง) บันได และส่งชุดหลังคาไปเมนูแบบจำลองหลังคาและชิ้นส่วนโครงหลังคา ชื่อตามกริด เช่น B2F-1(A–B), C1-A1, S2F-A1 · พื้นสำเร็จรูปและบันไดวนให้ใช้ข้อมูลผู้ผลิต/ออกแบบแยก</p>`],
 ['roof','4. หลังคา',`<ul><li><b>หลังคา: ทรง วัสดุ ปริมาณ:</b> 8 ทรงหลังคา 16 วัสดุมุง ได้พื้นที่หลังคาจริง ความยาวสัน ตะเฆ่ เชิงชาย ปั้นลม จำนวนแผ่น ครอบสัน และออกแบบโครงเหล็กทั้งระบบ (จันทันหรือโครงถัก) แจ้งเตือนเมื่อความชันต่ำกว่าที่วัสดุกำหนด</li><li><b>แบบจำลองหลังคาและกริดเสา:</b> หลังคาบนผังอิสระตามกริด (L, U, T) พร้อมแบบ 3 มิติและตารางพิกัดเสา</li><li><b>ชิ้นส่วนโครงหลังคา:</b> ออกแบบแป จันทัน โครงถัก 9 แบบ อะเส อกไก่ สะพานรับจันทัน ตะเฆ่สัน ตะเฆ่ราง ขื่อ ดั้ง/เสาตุ๊กตา ด้วยวิธี ASD</li></ul><p>น้ำหนักจรหลังคา 50 กก./ตร.ม. ตามกฎกระทรวง 2566 · ค่าวัสดุมุงที่ระบุ "ค่าโดยประมาณ" ควรตรวจกับคู่มือผู้ผลิต</p>`],
-['slab','5. พื้น และ 6. บันได',`<ul><li><b>พื้นทางเดียว:</b> คิดต่อแถบ 1 ม. เลือกลักษณะการรองรับ ได้เหล็กหลัก เหล็กกันร้าว ความหนาขั้นต่ำ และแรงเฉือน</li><li><b>พื้นสองทาง:</b> ติ๊กขอบที่ต่อเนื่องทีละด้าน เลือกวิธีที่ 2 (มาตรฐาน วสท. 5 กรณี) หรือวิธีที่ 3 (ACI 318-63 9 กรณี แยกโมเมนต์ DL/LL)</li><li><b>น้ำหนัก:</b> ใช้ช่องเลือกจากตาราง กฎกระทรวง 2566 ได้ทั้งน้ำหนักจรและวัสดุปูผิว</li><li><b>บันได:</b> ท้องเรียบพาดทางเดียว คิดน้ำหนักต่อพื้นที่ราบ ตรวจความหนาขั้นต่ำตามช่วงเอียง และสัดส่วน 2R + T</li></ul>`],
+['slab','5. พื้น และ 6. บันได',`<ul><li><b>พื้นทางเดียว:</b> คิดต่อแถบ 1 ม. เลือกลักษณะการรองรับ ได้เหล็กหลัก เหล็กกันร้าว ความหนาขั้นต่ำ และแรงเฉือน</li><li><b>พื้นสองทาง:</b> ติ๊กขอบที่ต่อเนื่องทีละด้าน เลือกวิธีที่ 2 (มาตรฐาน วสท. 5 กรณี) หรือวิธีที่ 3 (ACI 318-63 9 กรณี แยกโมเมนต์ DL/LL)</li><li><b>น้ำหนัก:</b> ใช้ช่องเลือกจากตาราง กฎกระทรวง 2566 ได้ทั้งน้ำหนักจรและวัสดุปูผิว</li><li><b>บันได:</b> เลือกรูปแบบ บันไดตรง · มีชานพัก (กลับทาง) · หักฉากตัว L (ช่วงขั้นบันได + ชานพักพาดเป็นช่วงเดียว คิดน้ำหนักสองช่วงต่างกัน) · บันไดวน (ขั้นยื่นจากเสากลาง M = wR²/2) คิดน้ำหนักต่อพื้นที่ราบ ตรวจความหนาขั้นต่ำตามช่วงเอียง และสัดส่วน 2R + T</li></ul>`],
 ['beam','7. คาน',`<h3>7.1 โหมดน้ำหนัก</h3><ul><li><b>สร้างจากรายการน้ำหนัก (แนะนำ):</b> เพิ่ม พื้น (ดึงจากพื้นในโครงการหรือกรอกเอง เลือกขอบยาว/สั้น และ 1–2 ด้าน) ผนัง (ชนิด ความสูง บุกระเบื้อง น้ำหนักอื่น ๆ หักช่องเปิด) น้ำหนักแผ่ และแรงจุด</li><li><b>กรอก DL/LL รวม:</b> หน่วย กก./ม.</li><li><b>กรอกโมเมนต์เอง:</b> Mu+, Mu−, Vu (ตัน·ม., ตัน) จากผลวิเคราะห์</li></ul><h3>7.2 ผลลัพธ์</h3><p>เหล็กล่าง/บน (จัดสองชั้นอัตโนมัติเมื่อชั้นเดียวไม่พอ) เหล็กปลอกสองโซน (L/4 จากฐานรองรับ และช่วงกลาง) ความลึกขั้นต่ำ และรูปหน้าตัด</p><p>แรงจุดคิดได้เฉพาะคานช่วงเดี่ยวและคานยื่น คานต่อเนื่องให้ใช้เมนูคานต่อเนื่องแล้วส่งค่ากลับ</p>`],
 ['col','8. เสา 9. ตอม่อ 10. ฐานราก',`<ul><li><b>เสา:</b> กรอก P, Mx, My ใช้แผนภาพปฏิสัมพันธ์ P-M หาจำนวนเหล็กอัตโนมัติ ตรวจแรงดัดสองทาง โมเมนต์ขั้นต่ำ และความชะลูด (ขยายโมเมนต์ในโครงค้ำยัน)</li><li><b>ตอม่อ:</b> รวมน้ำหนักจากเสาชั้นบน คานคอดิน และตอม่อเอง ปุ่ม "ส่งน้ำหนักไปออกแบบฐานราก"</li><li><b>ฐานราก:</b> ฐานแผ่ (หาขนาดและความหนาอัตโนมัติ รับโมเมนต์ทิศเดียว) หรือฐานเสาเข็ม 1–9 ต้น ตรวจแรงเฉือนทางเดียว เฉือนทะลุ แรงกดใต้เสา และเหล็กเสริม</li></ul>`],
 ['anal','11. วิเคราะห์โครงสร้าง',`<ul><li><b>คานต่อเนื่อง:</b> สูงสุด 8 ช่วง น้ำหนักแผ่และแรงจุด (กก./ม., กก.) จัดน้ำหนักจรสลับช่วงอัตโนมัติ ส่งค่าไปออกแบบคานทุกช่วงด้วยปุ่มเดียว</li><li><b>โครงข้อแข็ง 2 มิติ:</b> ตัวช่วยสร้างหลายช่วงหลายชั้น กรอกจุดต่อ ชิ้นส่วน จุดรองรับ น้ำหนักกรณี D/L/W ได้แผนภาพโมเมนต์และการเสียรูป</li><li><b>3 มิติทั้งอาคาร:</b> อยู่ในเมนูแบบจำลองโครงสร้าง 3 มิติ (หัวข้อ 3)</li></ul>`],
-['ref','12. ข้อมูลอ้างอิง 13. BOQ',`<ul><li><b>ตารางน้ำหนักบรรทุก:</b> น้ำหนักจรตามกฎกระทรวง 2566 ครบ 7 กลุ่มอาคาร หน่วยแรงลม การรวมน้ำหนัก ตัวคูณลดกำลัง การลดน้ำหนักจรตามชั้น และน้ำหนักวัสดุ ผนัง หลังคา พื้น เพิ่ม "วัสดุที่กำหนดเอง" ได้ (หมวด, ชื่อ, น้ำหนัก) แล้วจะไปอยู่ในช่องเลือกของผนังและพื้น</li><li><b>ตารางเหล็กรูปพรรณ / เหล็กเสริม:</b> พื้นที่ น้ำหนัก I Z r</li><li><b>BOQ:</b> รวมปริมาณคอนกรีต ไม้แบบ เหล็กตามขนาด เหล็กรูปพรรณหลังคา วัสดุมุง งานดิน ใส่ราคาวัสดุและค่าแรง Factor F และรายการเพิ่มเติม แล้วพิมพ์</li></ul>`],
+['ref','12. ข้อมูลอ้างอิง 13. BOQ',`<ul><li><b>ตารางน้ำหนักบรรทุก:</b> น้ำหนักจรตามกฎกระทรวง 2566 ครบ 7 กลุ่มอาคาร หน่วยแรงลม การรวมน้ำหนัก ตัวคูณลดกำลัง การลดน้ำหนักจรตามชั้น และน้ำหนักวัสดุ ผนัง หลังคา พื้น เพิ่ม "วัสดุที่กำหนดเอง" ได้ (หมวด, ชื่อ, น้ำหนัก) แล้วจะไปอยู่ในช่องเลือกของผนังและพื้น</li><li><b>ตารางเหล็กรูปพรรณ / เหล็กเสริม:</b> พื้นที่ น้ำหนัก I Z r</li><li><b>BOQ:</b> กำหนด % เผื่อเหล็กแยกแต่ละขนาด และลวดผูกเหล็ก (กก. ต่อเหล็ก 1 ตัน) รวมปริมาณคอนกรีต ไม้แบบ เหล็กตามขนาด เหล็กรูปพรรณหลังคา วัสดุมุง งานดิน ใส่ราคาวัสดุและค่าแรง Factor F และรายการเพิ่มเติม แล้วพิมพ์</li></ul>`],
+['est','13.1 ประมาณราคาทั้งหลัง',`<p>เมนู "ประมาณราคาทั้งหลัง" รวม <b>งานโครงสร้าง</b> จาก BOQ กับ <b>งานสถาปัตย์</b> ที่คำนวณจากแบบจำลอง 3 มิติ: ผนังแต่ละชนิด (หักประตูหน้าต่าง) ฉาบปูน ทาสี บุกระเบื้องห้องน้ำ ปูพื้น กันซึม ฝ้าเพดาน ประตู หน้าต่าง สุขภัณฑ์ (กรอกในแปลนแต่ละชั้น) และหลังคา (วัสดุมุง ครอบ โครงเหล็ก เชิงชาย รางน้ำ) ใส่ค่าวัสดุและค่าแรงต่อหน่วย Factor F และ VAT ได้ราคารวมและราคาต่อตารางเมตร ราคาที่กรอกเก็บในคลังราคากลางของเครื่อง ใช้ได้ทุกโครงการ เพิ่มรายการอื่นในช่องรายการเพิ่มเติม</p>`],
 ['print','14. รายการคำนวณและการพิมพ์',`<p>กด "รายการคำนวณ" ด้านบน เลือก "ชิ้นนี้" หรือ "ทุกชิ้น" แล้วกด "พิมพ์ / บันทึกเป็น PDF" เอกสารใช้ฟอนต์ TH SarabunPSK 16 pt มีหัวโครงการ สูตรพร้อมแทนค่าทุกบรรทัด และช่องลงนามผู้คำนวณ/ผู้ตรวจสอบ ปุ่ม "ดาวน์โหลด Word" ใช้ได้ในแอปที่ติดตั้ง</p>`],
 ['units','15. หน่วยและสัญลักษณ์',`<ul><li>ความยาว ม. / ซม. · หน่วยแรง กก./ตร.ซม. (ksc) · น้ำหนักแผ่ กก./ม. · น้ำหนักต่อพื้นที่ กก./ตร.ม. · แรง ตัน หรือ กก. · โมเมนต์ ตัน·ม. หรือ กก.·ม.</li><li>D = น้ำหนักคงที่ · L = น้ำหนักจร · W = แรงลม · Mu, Vu, Pu = แรงประลัย (SDM) · φ = ตัวคูณลดกำลัง · ρ = อัตราส่วนเหล็ก</li><li>เมนู "แปลงหน่วย" แปลง ksc ↔ MPa ↔ psi, ตัน ↔ kN</li></ul>`],
 ['std','16. มาตรฐานอ้างอิงและข้อจำกัด',`<ul><li>กฎกระทรวงกำหนดการออกแบบโครงสร้างอาคาร พ.ศ. 2566 (น้ำหนักจร แรงลม การรวมน้ำหนัก ตัวคูณลดกำลัง)</li><li>มาตรฐาน วสท. / ACI สำหรับ WSD และ SDM · AISC ASD สำหรับเหล็กรูปพรรณ · ตารางพื้นสองทางวิธีที่ 2 และ 3 (ACI 318-63) · คุณสมบัติหน้าตัดเหล็กตาม JIS</li><li><b>ยังไม่รองรับ:</b> แรงแผ่นดินไหว ผลลำดับที่สอง (P-Δ) ในโครง 3 มิติ ผังที่ไม่ตั้งฉาก ขนาดชิ้นส่วนต่างกันในแบบจำลองเดียว จุดต่อเหล็ก</li><li>ค่าตามมาตรฐานทั้งหมดแก้ได้ในหน้าตั้งค่า ผลคำนวณต้องตรวจสอบและรับรองโดยวิศวกรผู้มีใบอนุญาต</li></ul>`],
@@ -4276,23 +4537,98 @@ var MANUAL=[
 ['faq','18. คำถามที่พบบ่อย',`<ul><li><b>ปุ่มติดตั้งแอปไม่ขึ้น:</b> ใช้ Chrome/Edge บนคอม หรือ Safari บน iPad และเปิดจากลิงก์ GitHub Pages (https)</li><li><b>อัปเดตแล้วยังเห็นเวอร์ชันเก่า:</b> ปิดแอปแล้วเปิดใหม่หนึ่งครั้ง</li><li><b>ตรวจกริดจาก PDF ไม่เจอ:</b> แบบอาจเป็นภาพสแกนหรือกริดไม่ได้เขียนเป็นตัวอักษร ให้คลิกวางเส้นกริดเอง</li><li><b>ชิ้นส่วนไม่ผ่าน:</b> ดูข้อความสีแดงในผลลัพธ์ แล้วเพิ่มขนาด เปลี่ยนขนาดเหล็ก หรือเพิ่ม f'c</li><li><b>ข้อมูลหาย:</b> ข้อมูลอยู่ในเบราว์เซอร์ของแต่ละเครื่อง ควรเปิดซิงก์หรือส่งออกไฟล์โครงการเป็นระยะ</li></ul>`]];
 function manualHTML(sheet){var toc='<div class="panel"><h2>สารบัญ</h2><ol style="columns:2;margin:0;padding-left:1.3em;line-height:1.9">'+MANUAL.map(function(s){return '<li><a href="#man-'+s[0]+'" style="color:var(--ink)">'+s[1].replace(/^\d+\.\s*/,'')+'</a></li>'}).join('')+'</ol></div>';
   var body=MANUAL.map(function(s){return (sheet?'<div class="mansec">':'<div class="panel man" id="man-'+s[0]+'">')+'<h2>'+s[1]+'</h2>'+s[2]+'</div>'}).join('');
-  return (sheet?'<div><div class="hd"><div class="t">คู่มือการใช้งาน Civil Toolkit</div><div>เวอร์ชัน 2.2</div><div>กฎกระทรวง 2566</div></div>':'<div class="verdict ok"><b>คู่มือการใช้งาน</b><p>Civil Toolkit v2.2 · พิมพ์คู่มือได้จากปุ่ม "รายการคำนวณ" ด้านบน</p></div>'+toc)+body+(sheet?'</div>':'')}
+  return (sheet?'<div><div class="hd"><div class="t">คู่มือการใช้งาน Civil Toolkit</div><div>เวอร์ชัน 2.4</div><div>กฎกระทรวง 2566</div></div>':'<div class="verdict ok"><b>คู่มือการใช้งาน</b><p>Civil Toolkit v2.4 · พิมพ์คู่มือได้จากปุ่ม "รายการคำนวณ" ด้านบน</p></div>'+toc)+body+(sheet?'</div>':'')}
 function renderManual(){$('#vTool').innerHTML=manualHTML(false)}
 
+/* ===================== PRICE LIBRARY (shared by all projects) ===================== */
+var PLKEY='civil-toolkit.prices';function priceLib(){try{return JSON.parse(localStorage.getItem(PLKEY))||{}}catch(e){return {}}}
+function priceSet(key,fld,val){var L=priceLib();L[key]=L[key]||{};L[key][fld]=val;try{localStorage.setItem(PLKEY,JSON.stringify(L))}catch(e){}}
+/* ===================== WHOLE-HOUSE ESTIMATE ===================== */
+function parseList(t,n){return String(t||'').split(/\r?\n/).map(function(l){var p=l.split(/\s*[,\t]\s*/);return p}).filter(function(p){return p[0]&&p[0].trim()&&p.length>=n})}
+function wallName(u){var w=allWalls().filter(function(x){return +x[1]===+u})[0];return w?w[0]:'ผนัง '+u+' กก./ตร.ม.'}
+function archQty(){var r=toolRun('bim');if(!r||r.error)return {error:r&&r.error?r.error:'ยังไม่มีแบบจำลอง'};var A=r.A,m=r.m,X=A.X,Y=A.Y,items=[],add=function(g,key,label,qty,unit){if(qty>1e-9)items.push({g:g,key:key,label:label,qty:qty,unit:unit})};
+  var est=state.est||{},tileH=+est.tileH||2.0,wallA={},open=0,bathFloor=0,genFloor=0,ceil=0,bathTile=0,doors={},wins={},sani={};
+  m.floors.forEach(function(F2,k){var hW=Math.max(0,m.storeys[k]-m.beam.h/100),fa=0;
+    Object.keys(F2.walls||{}).forEach(function(key){var p=key.split(':'),len=p[0]==='x'?X[+p[2]+1]-X[+p[2]]:Y[+p[2]+1]-Y[+p[2]];wallA[F2.walls[key]]=(wallA[F2.walls[key]]||0)+len*hW;fa+=len*hW});
+    (F2.off||[]).forEach(function(w){var len=Math.hypot(w.x2-w.x1,w.y2-w.y1);wallA[w.unit]=(wallA[w.unit]||0)+len*hW;fa+=len*hW});
+    parseList(F2.doors,4).forEach(function(p){var n=+p[3]||0,a=(+p[1]||0)*(+p[2]||0)*n;open+=a;doors[p[0].trim()+' '+p[1]+'×'+p[2]]=(doors[p[0].trim()+' '+p[1]+'×'+p[2]]||0)+n});
+    parseList(F2.windows,4).forEach(function(p){var n=+p[3]||0,a=(+p[1]||0)*(+p[2]||0)*n;open+=a;wins[p[0].trim()+' '+p[1]+'×'+p[2]]=(wins[p[0].trim()+' '+p[1]+'×'+p[2]]||0)+n});
+    parseList(F2.sanitary,2).forEach(function(p){sani[p[0].trim()]=(sani[p[0].trim()]||0)+(+p[1]||0)});
+    var vd=k>0?(A.levels[k]||{}).voids||{}:{};
+    for(var j=0;j<A.occ.length;j++)for(var i=0;i<A.occ[0].length;i++){if(!A.occ[j][i])continue;var ck=i+','+j,t=(F2.slabs||{})[ck]||'cast';if(t==='void'||vd[ck])continue;var ar=(X[i+1]-X[i])*(Y[j+1]-Y[j]);ceil+=ar;
+      if(t==='bath'){bathFloor+=ar;bathTile+=2*((X[i+1]-X[i])+(Y[j+1]-Y[j]))*tileH}else genFloor+=ar}});
+  var totW=Object.keys(wallA).reduce(function(a,k){return a+wallA[k]},0),f0=totW>0?Math.max(0,1-open/totW):1;
+  Object.keys(wallA).forEach(function(u){add('งานผนัง','wall_'+u,wallName(u)+' (หักช่องเปิด)',wallA[u]*f0,'ตร.ม.')});
+  var plaster=2*totW*f0;add('งานฉาบปูน','plaster','ฉาบปูนผนัง 2 ด้าน',plaster,'ตร.ม.');add('งานทาสี','paint','ทาสีผนัง (หักผนังบุกระเบื้อง)',Math.max(0,plaster-bathTile),'ตร.ม.');
+  add('งานบุผนัง','bathTile','บุกระเบื้องผนังห้องน้ำ สูง '+f(tileH,2)+' ม.',bathTile,'ตร.ม.');
+  add('งานพื้น','floorGen','ปูวัสดุพื้นห้องทั่วไป',genFloor,'ตร.ม.');add('งานพื้น','floorBath','ปูกระเบื้องพื้นห้องน้ำ',bathFloor,'ตร.ม.');add('งานพื้น','wpBath','กันซึมพื้นห้องน้ำ',bathFloor,'ตร.ม.');
+  add('งานฝ้าเพดาน','ceiling','ฝ้าเพดาน',ceil,'ตร.ม.');
+  Object.keys(doors).forEach(function(k){add('งานประตู','door_'+k,'ประตู '+k+' ม.',doors[k],'ชุด')});Object.keys(wins).forEach(function(k){add('งานหน้าต่าง','win_'+k,'หน้าต่าง '+k+' ม.',wins[k],'ชุด')});
+  Object.keys(sani).forEach(function(k){add('งานสุขภัณฑ์','san_'+k,k,sani[k],'ชุด')});
+  if(A.roof){var rs=A.roof.rs,G=A.roof.gm.geom;add('งานหลังคา','r_'+rs.mat.id,'มุงหลังคา '+rs.mat.name+(rs.qty.pieces?' ('+rs.qty.pieces+' แผ่น)':''),rs.qty.areaW,'ตร.ม.');if(rs.qty.caps)add('งานหลังคา','r_cap','ครอบสัน/ครอบตะเฆ่',rs.qty.caps,'ตัว');
+    add('งานหลังคา','r_steel','โครงหลังคาเหล็กรูปพรรณ',rs.steelKg*(1+(state.params.boq.steelWaste||0.07)),'กก.');add('งานหลังคา','r_fascia','เชิงชาย',G.eaves,'ม.');if(G.verges)add('งานหลังคา','r_verge','ปั้นลม',G.verges,'ม.');add('งานหลังคา','r_gutter','รางน้ำฝน',G.eaves,'ม.')}
+  else add('งานหลังคา','r_wpflat','กันซึมดาดฟ้า',A.planArea,'ตร.ม.');
+  return {items:items,floorArea:genFloor+bathFloor,r:r}}
+function estPrice(key){var p=((state.est||{}).prices||{})[key]||priceLib()[key]||{};return {m:+p.m||0,l:+p.l||0}}
+function estCollect(){var aq=archQty(),rows=[];var c=boqCollect();c.rows.forEach(function(r){var p=boqPrice(r);rows.push({g:'งานโครงสร้าง',key:'boq:'+r.key,label:r.label,qty:r.qty,unit:r.unit,fixed:true,m:p.m,l:p.l})});
+  if(!aq.error)aq.items.forEach(function(it){var p=estPrice(it.key);rows.push(Object.assign({},it,{m:p.m,l:p.l}))});
+  parseList((state.est||{}).extra,3).forEach(function(p,k){rows.push({g:'รายการเพิ่มเติม',key:'ex'+k,label:p[0],qty:+p[1]||0,unit:p[2]||'',fixed:true,m:+p[3]||0,l:+p[4]||0})});
+  return {rows:rows,aq:aq}}
+function renderEstimate(){state.est=state.est||{prices:{},F:1,vat:'0',tileH:2,extra:''};var e=state.est,c=estCollect(),h='',groups=[],tot=0,gt={};
+  if(c.aq.error)h+='<p class="warn">งานสถาปัตย์คำนวณจากเมนูแบบจำลองโครงสร้าง 3 มิติ: '+esc(c.aq.error)+'</p>';
+  c.rows.forEach(function(r){if(groups.indexOf(r.g)<0)groups.push(r.g)});
+  h+='<div class="panel overflow"><h2>ประมาณราคาค่าก่อสร้างทั้งหลัง</h2><table class="res grid" id="estT"><tr><td><b>ลำดับ</b></td><td><b>รายการ</b></td><td><b>ปริมาณ</b></td><td><b>หน่วย</b></td><td><b>ค่าวัสดุ/หน่วย</b></td><td><b>ค่าแรง/หน่วย</b></td><td><b>รวม (บาท)</b></td></tr>';
+  var n=0;groups.forEach(function(g){var sub=0;h+='<tr><td colspan="7" style="background:var(--paper)"><b>'+esc(g)+'</b></td></tr>';
+    c.rows.filter(function(r){return r.g===g}).forEach(function(r){n++;var amt=r.qty*(r.m+r.l);sub+=amt;
+      h+='<tr><td>'+n+'</td><td>'+esc(r.label)+'</td><td>'+f(r.qty,2)+'</td><td>'+esc(r.unit)+'</td>'+(r.fixed?'<td>'+f(r.m,2)+'</td><td>'+f(r.l,2)+'</td>':'<td><input class="pin" type="number" step="any" inputmode="decimal" data-ek="'+esc(r.key)+'" data-ef="m" value="'+(r.m||'')+'"></td><td><input class="pin" type="number" step="any" inputmode="decimal" data-ek="'+esc(r.key)+'" data-ef="l" value="'+(r.l||'')+'"></td>')+'<td class="num">'+f(amt,2)+'</td></tr>'});
+    gt[g]=sub;tot+=sub;h+='<tr><td></td><td colspan="5"><b>รวม'+esc(g)+'</b></td><td class="num"><b>'+f(sub,2)+'</b></td></tr>'});
+  var F=num(e.F)||1,vat=e.vat==='1'?0.07:0,grand=tot*F*(1+vat),fa=c.aq.floorArea||0;
+  h+='</table><div class="fields f3" style="margin-top:10px"><label class="f">Factor F<input type="number" step="any" id="estF" value="'+esc(e.F)+'"></label><label class="f">ภาษีมูลค่าเพิ่ม<select id="estVat"><option value="0"'+(e.vat!=='1'?' selected':'')+'>ไม่รวม</option><option value="1"'+(e.vat==='1'?' selected':'')+'>รวม 7%</option></select></label><label class="f">ความสูงบุกระเบื้องผนังห้องน้ำ <span class="unit">ม.</span><input type="number" step="0.1" id="estTileH" value="'+esc(e.tileH)+'"></label></div>'+
+    '<div class="kpi" style="margin-top:10px"><div>ค่าก่อสร้างทางตรง<b>'+f(tot,0)+'</b>บาท</div><div>รวม Factor F'+(vat?' และ VAT':'')+'<b>'+f(grand,0)+'</b>บาท</div><div>พื้นที่ใช้สอย<b>'+f(fa,1)+'</b>ตร.ม.</div><div>ราคาต่อตารางเมตร<b>'+(fa?f(grand/fa,0):'–')+'</b>บาท/ตร.ม.</div></div>'+
+    '<label class="f full" style="margin-top:10px">รายการเพิ่มเติม: รายการ, ปริมาณ, หน่วย, ค่าวัสดุ/หน่วย, ค่าแรง/หน่วย<textarea id="estExtra" rows="4" style="border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:6px 8px;font:inherit">'+esc(e.extra||'')+'</textarea></label>'+
+    '<p class="hint">งานโครงสร้างดึงจากเมนู BOQ (ราคาแก้ที่เมนู BOQ) · งานสถาปัตย์คำนวณจากแบบจำลอง 3 มิติ: ผนังตามชนิดหักช่องเปิด ฉาบ ทาสี บุกระเบื้องห้องน้ำ พื้น ฝ้า ประตู หน้าต่าง สุขภัณฑ์ (กรอกในแปลนแต่ละชั้น) และหลังคา · ราคาที่กรอกถูกเก็บในคลังราคากลางของเครื่อง ใช้ได้ทุกโครงการ</p></div>';
+  $('#vTool').innerHTML=h;
+  $$('[data-ek]').forEach(function(el){el.oninput=function(){var k=el.dataset.ek,fd=el.dataset.ef;e.prices=e.prices||{};e.prices[k]=e.prices[k]||{};e.prices[k][fd]=+el.value||0;priceSet(k,fd,+el.value||0);save()};el.onchange=function(){setTimeout(function(){if(state.module==='estimate'&&state.view==='design')renderEstimate()},0)}});
+  var later=function(){setTimeout(function(){if(state.module==='estimate'&&state.view==='design')renderEstimate()},0)};$('#estF').onchange=function(){e.F=this.value;save();later()};$('#estVat').onchange=function(){e.vat=this.value;save();later()};$('#estTileH').onchange=function(){e.tileH=this.value;save();later()};$('#estExtra').onchange=function(){e.extra=this.value;save();later()}}
+function sheetEstimate(){var c=estCollect(),e=state.est||{},pr=state.project,h='<div><div class="hd"><div class="t">ประมาณราคาค่าก่อสร้าง</div><div>โครงการ: '+esc(pr.name||'–')+'</div><div>สถานที่: '+esc(pr.location||'–')+'</div><div>วันที่: '+esc(pr.date||'–')+'</div></div>',tot=0,groups=[];c.rows.forEach(function(r){if(groups.indexOf(r.g)<0)groups.push(r.g)});
+  h+='<table class="boqp"><tr><th>ลำดับ</th><th>รายการ</th><th>ปริมาณ</th><th>หน่วย</th><th>วัสดุ/หน่วย</th><th>แรง/หน่วย</th><th>รวม</th></tr>';var n=0;
+  groups.forEach(function(g){var sub=0;h+='<tr><td colspan="7"><b>'+esc(g)+'</b></td></tr>';c.rows.filter(function(r){return r.g===g}).forEach(function(r){n++;var a=r.qty*(r.m+r.l);sub+=a;h+='<tr><td>'+n+'</td><td>'+esc(r.label)+'</td><td>'+f(r.qty,2)+'</td><td>'+esc(r.unit)+'</td><td>'+f(r.m,2)+'</td><td>'+f(r.l,2)+'</td><td>'+f(a,2)+'</td></tr>'});tot+=sub;h+='<tr><td></td><td colspan="5"><b>รวม'+esc(g)+'</b></td><td><b>'+f(sub,2)+'</b></td></tr>'});
+  var F=num(e.F)||1,vat=e.vat==='1'?0.07:0;h+='<tr><td></td><td colspan="5"><b>รวมค่าก่อสร้างทางตรง</b></td><td><b>'+f(tot,2)+'</b></td></tr><tr><td></td><td colspan="5"><b>รวม × Factor F '+f(F,4)+(vat?' + VAT 7%':'')+'</b></td><td><b>'+f(tot*F*(1+vat),2)+'</b></td></tr></table>'+sigBlock(pr)+'</div>';return h}
+/* ===================== MULTI-PROJECT ===================== */
+var PKEY='civil-toolkit.projects',CURP='civil-toolkit.curProject';
+function projIndex(){try{return JSON.parse(localStorage.getItem(PKEY))||[]}catch(e){return []}}
+function projSaveIndex(L){try{localStorage.setItem(PKEY,JSON.stringify(L))}catch(e){}}
+function projCurId(){return localStorage.getItem(CURP)}
+(function(){var L=projIndex(),cur=projCurId();if(!L.length){cur=uid('p');L=[{id:cur,name:state.project.name||'โครงการที่ 1',updated:Date.now()}];projSaveIndex(L);try{localStorage.setItem(CURP,cur);var s=localStorage.getItem(KEY);if(s)localStorage.setItem('civil-toolkit.p.'+cur,s)}catch(e){}}
+  else if(!L.some(function(p){return p.id===cur})){try{localStorage.setItem(CURP,L[0].id)}catch(e){}}})();
+var _save0=save;save=function(){_save0();try{var id=projCurId(),L=projIndex(),p=L.filter(function(x){return x.id===id})[0];localStorage.setItem('civil-toolkit.p.'+id,JSON.stringify(state));if(p){p.name=state.project.name||p.name;p.updated=Date.now();projSaveIndex(L)}}catch(e){}};
+function projSwitch(id){save();try{var s=localStorage.getItem('civil-toolkit.p.'+id);if(s)localStorage.setItem(KEY,s);else localStorage.removeItem(KEY);localStorage.setItem(CURP,id)}catch(e){}location.reload()}
+window.__ctProjNew=function(){var nm=prompt('ชื่อโครงการใหม่','โครงการที่ '+(projIndex().length+1));if(nm==null)return;var id=uid('p'),L=projIndex();L.push({id:id,name:nm||'โครงการใหม่',updated:Date.now()});projSaveIndex(L);
+  try{localStorage.setItem('civil-toolkit.p.'+id,JSON.stringify({project:{name:nm,location:'',engineer:'',license:'',checker:'',date:state.project.date},method:state.method,mat:state.mat,params:state.params,module:'home'}))}catch(e){}projSwitch(id)};
+window.__ctProjOpen=function(id){if(id!==projCurId())projSwitch(id)};
+window.__ctProjDup=function(id){save();var L=projIndex(),src=L.filter(function(p){return p.id===id})[0];if(!src)return;var nid=uid('p'),s=localStorage.getItem('civil-toolkit.p.'+id)||'{}',o=JSON.parse(s);o.project=o.project||{};o.project.name=(src.name||'')+' (สำเนา)';
+  try{localStorage.setItem('civil-toolkit.p.'+nid,JSON.stringify(o))}catch(e){alert('พื้นที่เก็บข้อมูลเต็ม');return}L.push({id:nid,name:o.project.name,updated:Date.now()});projSaveIndex(L);renderAll()};
+window.__ctProjDel=function(id){var L=projIndex(),p=L.filter(function(x){return x.id===id})[0];if(!p||!confirm('ลบโครงการ "'+p.name+'" ถาวร?'))return;L=L.filter(function(x){return x.id!==id});try{localStorage.removeItem('civil-toolkit.p.'+id)}catch(e){}
+  if(!L.length){projSaveIndex([]);try{localStorage.removeItem(KEY);localStorage.removeItem(CURP)}catch(e){}location.reload();return}projSaveIndex(L);if(id===projCurId())projSwitch(L[0].id);else renderAll()};
+function projPanel(){var L=projIndex(),cur=projCurId();return '<div class="panel overflow"><h2>โครงการทั้งหมด ('+L.length+') <span style="flex:1"></span><button class="btn primary" onclick="__ctProjNew()">สร้างโครงการใหม่</button></h2>'+
+  tbl(['โครงการ','แก้ไขล่าสุด',''],L.slice().sort(function(a,b){return b.updated-a.updated}).map(function(p){return [(p.id===cur?'<b>● '+esc(p.name)+'</b> <span class="tag ok">กำลังใช้</span>':esc(p.name)),new Date(p.updated).toLocaleString('th-TH-u-nu-latn',{dateStyle:'medium',timeStyle:'short'}),
+    (p.id===cur?'':'<button class="btn" onclick="__ctProjOpen(\''+p.id+'\')">เปิด</button> ')+'<button class="btn ghost" onclick="__ctProjDup(\''+p.id+'\')">ทำสำเนา</button> <button class="btn ghost" onclick="__ctProjDel(\''+p.id+'\')">ลบ</button>']}),'wrap')+
+  '<p class="hint">แต่ละโครงการเก็บข้อมูลแยกกันทั้งหมด (ชิ้นส่วน แบบจำลอง BOQ ประมาณราคา) · เปลี่ยนชื่อโครงการได้ที่ "ข้อมูลโครงการและการตั้งค่า" · คลังราคาวัสดุใช้ร่วมกันทุกโครงการ · การซิงก์และไฟล์ส่งออกเป็นของโครงการที่เปิดอยู่</p></div>'}
+
 function isEl(m){return !!LIST[base(m)]}
-function renderAll(){
-  var m=state.module;if(m==='slab'){m=state.module='slab2'}if(!isEl(m)&&!TOOLS[m]&&m!=='boq'&&m!=='self'&&m!=='home'&&m!=='manual'){m=state.module='home'}
+function renderAll(){var pn=document.getElementById('projName');if(pn)pn.textContent='📁 '+(state.project.name||'โครงการไม่มีชื่อ');
+  var m=state.module;if(m==='slab'){m=state.module='slab2'}if(!isEl(m)&&!TOOLS[m]&&m!=='boq'&&m!=='self'&&m!=='home'&&m!=='manual'&&m!=='estimate'){m=state.module='home'}
   var el=isEl(m),tool=!el;
   $$('[data-method]').forEach(function(btn){btn.setAttribute('aria-pressed',btn.dataset.method===state.method)});
   $$('[data-view]').forEach(function(btn){btn.setAttribute('aria-pressed',btn.dataset.view===state.view)});
   $$('[data-scope]').forEach(function(btn){btn.setAttribute('aria-pressed',btn.dataset.scope===state.scope);if(el){if(btn.dataset.scope==='one')btn.textContent=NOUN[m]+'นี้';else btn.textContent='ทุก'+NOUN[m]}});
   $$('[data-module]').forEach(function(btn){btn.setAttribute('aria-current',btn.dataset.module===m)});
   $('#title').innerHTML='<span class="crumb">'+(GROUPOF[m]||'')+'</span>'+esc(TITLE[m]||TOOLS[m].title);
-  $('#methodSeg').hidden=tool&&m!=='boq'&&m!=='cbeam'&&m!=='frame'&&m!=='home'&&m!=='bim'||m==='manual';$('#beams').hidden=tool;$('#scopeSeg').hidden=tool;
+  $('#methodSeg').hidden=tool&&m!=='boq'&&m!=='cbeam'&&m!=='frame'&&m!=='home'&&m!=='bim'||m==='manual'||m==='estimate';$('#beams').hidden=tool;$('#scopeSeg').hidden=tool;
   $('#vDesign').hidden=state.view!=='design'||tool;$('#vTool').hidden=state.view!=='design'||!tool;$('#vSheet').hidden=state.view!=='sheet';
   if(el){if(!cur()){var nb=MAKE[base(m)](listOf(m).length+1);if(m==='slab1'){nb.type='one';nb.S=3;nb.L=4}state[LIST[base(m)]].push(nb);state.curIds[m]=nb.id;save()}renderBeams();renderForm();if(state.view==='design')renderResults();else renderSheet()}
-  else if(state.view==='design'){if(m==='boq')renderBoq();else if(m==='self')renderSelf();else if(m==='home')renderHome();else if(m==='manual')renderManual();else renderTool(m)}
-  else $('#sheet').innerHTML=m==='boq'?sheetBoq():m==='self'?sheetSelf():m==='home'?'<p>เลือกเมนูเพื่อพิมพ์รายการคำนวณ</p>':m==='manual'?manualHTML(true):toolSheet(m);
+  else if(state.view==='design'){if(m==='boq')renderBoq();else if(m==='self')renderSelf();else if(m==='home')renderHome();else if(m==='manual')renderManual();else if(m==='estimate')renderEstimate();else renderTool(m)}
+  else $('#sheet').innerHTML=m==='boq'?sheetBoq():m==='self'?sheetSelf():m==='home'?'<p>เลือกเมนูเพื่อพิมพ์รายการคำนวณ</p>':m==='manual'?manualHTML(true):m==='estimate'?sheetEstimate():toolSheet(m);
 }
 fillRoofSelects();
 try{toolRun('loadtab')}catch(e){}
