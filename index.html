@@ -214,8 +214,6 @@ dialog legend{padding:0 6px;color:var(--ink2)}
     <div class="grp">ปริมาณงาน</div>
     <button class="mod" data-module="boq"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3h10v14H5z"/><path d="M8 7h4M8 10h4M8 13h2"/></svg><span>ถอดปริมาณและ BOQ</span></button>
     <button class="mod" data-module="estimate"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 3h12v14H4z"/><path d="M7 7h6M7 10h2M11 10h2M7 13h2M11 13h2"/></svg><span>ประมาณราคาทั้งหลัง</span></button>
-    <div class="grp">แอปที่เกี่ยวข้อง</div>
-    <button class="mod" id="surveyLink" type="button"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15l4-9 7 2 3 7z"/><path d="M12 3h5v5M17 3l-6 6"/></svg><span>สำรวจและวางผัง Pro ↗</span></button>
     <div class="grp">เครื่องมืออื่น</div>
     <button class="mod" data-module="mix"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 6h10l-2 10H7z"/><path d="M8 3h4"/></svg><span>ส่วนผสมคอนกรีต</span></button>
     <button class="mod" data-module="hyd"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3c3 4 5 7 5 9a5 5 0 01-10 0c0-2 2-5 5-9z"/></svg><span>ท่อและรางระบายน้ำ</span></button>
@@ -233,6 +231,7 @@ dialog legend{padding:0 6px;color:var(--ink2)}
       <div class="seg" role="group" aria-label="มุมมอง">
         <button data-view="design">ออกแบบ</button><button data-view="sheet">รายการคำนวณ</button>
       </div>
+      <button class="btn primary" id="btnInstallTop" type="button" hidden>⬇ ติดตั้งแอป</button>
       <button class="btn" id="btnProject">ข้อมูลโครงการและการตั้งค่า</button>
       <button class="btn primary" id="btnInstall" hidden>ติดตั้งแอป</button>
       <button class="chip sync" id="syncChip" hidden></button>
@@ -3840,11 +3839,20 @@ function installEnv(){var standalone=(window.matchMedia&&window.matchMedia('(dis
 function installPanel(){var e=installEnv(),body;
   if(e.standalone)return '';
   if(!e.pwa)body='<p>หน้านี้เป็นเวอร์ชันทดลองบน claude.ai จึง<b>ติดตั้งเป็นแอปไม่ได้</b> ให้ใช้ไฟล์ <b>civil-toolkit-github-pages.zip</b> อัปโหลดทุกไฟล์ขึ้น GitHub Pages แล้วเปิดลิงก์ https://patarakorn-bas.github.io/civil-toolkit/</p>';
-  else if(e.ios)body='<ol style="margin:0;padding-left:1.3em;line-height:1.9"><li>เปิดหน้านี้ด้วย <b>Safari</b>'+(e.safari?' (ใช้อยู่แล้ว)':' — ตอนนี้ไม่ใช่ Safari ให้คัดลอกลิงก์ไปเปิดใน Safari')+'</li><li>แตะปุ่ม <b>แชร์</b> (สี่เหลี่ยมมีลูกศรชี้ขึ้น) ที่แถบด้านบนหรือล่าง</li><li>เลือก <b>เพิ่มไปยังหน้าจอโฮม</b> แล้วแตะ <b>เพิ่ม</b></li></ol>';
+  else if(e.ios)body='<button class="btn primary" onclick="__ctInstall()">⬇ วิธีติดตั้งบน iPad</button>'+'<ol style="margin:0;padding-left:1.3em;line-height:1.9"><li>เปิดหน้านี้ด้วย <b>Safari</b>'+(e.safari?' (ใช้อยู่แล้ว)':' — ตอนนี้ไม่ใช่ Safari ให้คัดลอกลิงก์ไปเปิดใน Safari')+'</li><li>แตะปุ่ม <b>แชร์</b> (สี่เหลี่ยมมีลูกศรชี้ขึ้น) ที่แถบด้านบนหรือล่าง</li><li>เลือก <b>เพิ่มไปยังหน้าจอโฮม</b> แล้วแตะ <b>เพิ่ม</b></li></ol>';
   else if(deferredInstall)body='<p>กดปุ่มด้านล่าง แอปจะถูกติดตั้งลงเครื่องนี้ มีไอคอนบนเดสก์ท็อป/เมนูเริ่ม เปิดเต็มจอ และใช้งานออฟไลน์ได้</p><button class="btn primary" onclick="__ctInstall()">ติดตั้ง Civil Toolkit ลงเครื่องนี้</button>';
-  else body='<p>ใช้ <b>Google Chrome</b> หรือ <b>Microsoft Edge</b> แล้วกดไอคอนติดตั้ง (จอคอมพิวเตอร์มีลูกศรชี้ลง) ท้ายช่องที่อยู่เว็บ หรือเมนู ⋮ → <b>ติดตั้ง Civil Toolkit</b> / แอป → <b>ติดตั้งไซต์นี้เป็นแอป</b> · ถ้าไม่เห็นตัวเลือก ให้รีเฟรชหน้าหนึ่งครั้งแล้วรอสักครู่</p>';
+  else body='<p>กดปุ่มด้านล่างเพื่อติดตั้งลงเครื่องนี้ ถ้าเบราว์เซอร์ยังไม่พร้อมติดตั้งอัตโนมัติ แอปจะบอกวิธีติดตั้งจากเมนูของเบราว์เซอร์</p><button class="btn primary" onclick="__ctInstall()">⬇ ติดตั้ง Civil Toolkit ลงเครื่องนี้</button>';
   return '<div class="panel" style="border-color:var(--mark)"><h2>ติดตั้งแอปบนเครื่องนี้</h2>'+body+'</div>'}
-window.__ctInstall=function(){if(!deferredInstall)return;deferredInstall.prompt();deferredInstall.userChoice.then(function(){deferredInstall=null;renderAll()})};
+window.__ctInstall=function(){if(deferredInstall){deferredInstall.prompt();deferredInstall.userChoice.then(function(){deferredInstall=null;renderAll()});return}installDialog()};
+function installSteps(){var e=installEnv(),ua=navigator.userAgent,edge=/Edg\//.test(ua);
+  if(!e.pwa)return '<p>หน้านี้เป็น<b>เวอร์ชันทดลองบน claude.ai</b> ซึ่งติดตั้งเป็นแอปไม่ได้</p><p>ให้อัปโหลดทุกไฟล์ใน <b>civil-toolkit-github-pages.zip</b> ขึ้น GitHub แล้วเปิด <b>https://patarakorn-bas.github.io/civil-toolkit/</b> ปุ่มนี้จะติดตั้งได้จากหน้านั้น</p>';
+  if(e.ios)return '<ol style="padding-left:1.3em;line-height:2"><li>เปิดหน้านี้ใน <b>Safari</b>'+(e.safari?'':' (ตอนนี้ไม่ใช่ Safari: คัดลอกลิงก์ไปเปิดใน Safari)')+'</li><li>แตะปุ่ม <b>แชร์</b> <span aria-hidden="true">⬆︎</span></li><li>เลื่อนลง เลือก <b>เพิ่มไปยังหน้าจอโฮม</b></li><li>แตะ <b>เพิ่ม</b> ไอคอน Civil Toolkit จะอยู่บนหน้าจอโฮม</li></ol>';
+  return '<p>เบราว์เซอร์ยังไม่แสดงหน้าต่างติดตั้งอัตโนมัติ ติดตั้งจากเมนูได้ดังนี้</p><ol style="padding-left:1.3em;line-height:2">'+(edge?'<li>กดเมนู <b>…</b> มุมขวาบน</li><li>เลือก <b>แอป</b> → <b>ติดตั้งไซต์นี้เป็นแอป</b></li>':'<li>ดูไอคอน <b>ติดตั้ง</b> (จอมีลูกศรชี้ลง) ท้ายช่องที่อยู่เว็บ แล้วกด หรือ</li><li>กดเมนู <b>⋮</b> มุมขวาบน → <b>บันทึกและแชร์</b> (Cast, save and share) → <b>ติดตั้งหน้าเว็บเป็นแอป</b> / <b>ติดตั้ง Civil Toolkit</b></li>')+'<li>กด <b>ติดตั้ง</b> แอปจะมีไอคอนบนเดสก์ท็อปและเมนูเริ่ม</li></ol><p class="hint">ถ้าเมนูขึ้นว่า "เปิดใน Civil Toolkit" แปลว่าเครื่องนี้ติดตั้งไว้แล้ว ถ้าเคยติดตั้งเวอร์ชันเก่าแล้วถอนออก ให้รีเฟรชหน้านี้ 1–2 ครั้งก่อน</p>'}
+function installDialog(){var d=document.getElementById('installDlg');if(!d){d=document.createElement('div');d.id='installDlg';d.setAttribute('role','dialog');d.setAttribute('aria-modal','true');d.setAttribute('aria-label','ติดตั้งแอป');
+    d.style.cssText='position:fixed;inset:0;z-index:50;background:rgba(20,36,58,.45);display:flex;align-items:center;justify-content:center;padding:16px';document.body.appendChild(d)}
+  d.innerHTML='<div class="panel" style="max-width:560px;width:100%;margin:0;max-height:90vh;overflow:auto"><h2>ติดตั้ง Civil Toolkit ลงเครื่องนี้ <span style="flex:1"></span><button class="btn ghost" id="installClose">ปิด</button></h2>'+installSteps()+'</div>';
+  d.hidden=false;d.onclick=function(ev){if(ev.target===d)d.hidden=true};document.getElementById('installClose').onclick=function(){d.hidden=true}}
+function installTopBtn(){var b=document.getElementById('btnInstallTop');if(!b)return;var e=installEnv();b.hidden=e.standalone;b.onclick=window.__ctInstall}
 function bindInstall(){var b=$('#btnInstall');if(!b)return;b.onclick=function(){if(!deferredInstall)return;deferredInstall.prompt();deferredInstall.userChoice.then(function(){deferredInstall=null;b.hidden=true})};
   var standalone=window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
   $('#installHelp').textContent=standalone?'เปิดใช้งานแบบแอปอยู่แล้ว':'คอมพิวเตอร์ (Chrome/Edge): กดปุ่ม "ติดตั้งแอป" ด้านบน หรือไอคอนติดตั้งในช่องที่อยู่ · iPad (Safari): กดปุ่มแชร์ แล้วเลือก "เพิ่มไปยังหน้าจอโฮม"'}
@@ -4578,7 +4586,7 @@ function bimPdfDraw(){var box=$('#bimPdfView'),msg=$('#bimPdfMsg'),st=pdfState;i
 var MANUAL=[
 ['start','1. เริ่มต้นใช้งาน',`
 <h3>1.1 ติดตั้งเป็นแอป</h3><p>วางไฟล์ใน zip บน GitHub Pages แล้วเปิดลิงก์ของคุณ</p><ul><li><b>คอมพิวเตอร์ (Chrome/Edge):</b> กดปุ่ม "ติดตั้งแอป" มุมบนขวา หรือไอคอนติดตั้งในช่องที่อยู่</li><li><b>iPad (Safari):</b> ปุ่มแชร์ → "เพิ่มไปยังหน้าจอโฮม"</li></ul><p>หลังติดตั้ง แอปเปิดเต็มจอและใช้งานออฟไลน์ได้ ข้อมูลเก็บในเครื่อง</p>
-<h3>1.2 หน้าจอหลัก</h3><ul><li><b>เมนูซ้าย:</b> เรียงตามลำดับงาน แบบจำลองอาคาร → ออกแบบโครงสร้างจากบนลงล่าง (หลังคา ① → พื้น ② → คาน ③ → เสา ④ → ตอม่อ ⑤ → ฐานราก ⑥) → วิเคราะห์โครงสร้าง → ข้อมูลอ้างอิง → ปริมาณงาน → เครื่องมืออื่น</li><li><b>งานสำรวจและวางผัง:</b> ย้ายไปเป็นแอปแยก <b>สำรวจและวางผัง Pro</b> (วงรอบและระดับปรับแก้ Least Squares, ตารางระดับแปลงที่ดิน, COGO วางผัง, TIN คอนทัวร์, ปริมาตรดิน, แปลงพิกัด UTM และโค้งถนน) · ปุ่ม "สำรวจและวางผัง Pro ↗" ในเมนูซ้ายเปิดแอปนั้น (ครั้งแรกให้วางลิงก์ของแอปหนึ่งครั้ง)</li><li><b>WSD / SDM:</b> เลือกวิธีออกแบบคอนกรีตเสริมเหล็ก มีผลกับทุกเมนู SDM ใช้ 1.4D + 1.7L ตามกฎกระทรวง 2566</li><li><b>ออกแบบ / รายการคำนวณ:</b> สลับระหว่างหน้ากรอกข้อมูลกับหน้ารายการคำนวณสำหรับพิมพ์</li><li><b>ข้อมูลโครงการและการตั้งค่า:</b> ชื่อโครงการ ผู้คำนวณ ค่าตามมาตรฐาน ซิงก์ และไฟล์โครงการ</li></ul>
+<h3>1.2 หน้าจอหลัก</h3><ul><li><b>เมนูซ้าย:</b> เรียงตามลำดับงาน แบบจำลองอาคาร → ออกแบบโครงสร้างจากบนลงล่าง (หลังคา ① → พื้น ② → คาน ③ → เสา ④ → ตอม่อ ⑤ → ฐานราก ⑥) → วิเคราะห์โครงสร้าง → ข้อมูลอ้างอิง → ปริมาณงาน → เครื่องมืออื่น</li><li><b>งานสำรวจและวางผัง:</b> ย้ายไปเป็นแอปแยก <b>สำรวจและวางผัง Pro</b> (วงรอบและระดับปรับแก้ Least Squares, ตารางระดับแปลงที่ดิน, COGO วางผัง, TIN คอนทัวร์, ปริมาตรดิน, แปลงพิกัด UTM และโค้งถนน)</li><li><b>WSD / SDM:</b> เลือกวิธีออกแบบคอนกรีตเสริมเหล็ก มีผลกับทุกเมนู SDM ใช้ 1.4D + 1.7L ตามกฎกระทรวง 2566</li><li><b>ออกแบบ / รายการคำนวณ:</b> สลับระหว่างหน้ากรอกข้อมูลกับหน้ารายการคำนวณสำหรับพิมพ์</li><li><b>ข้อมูลโครงการและการตั้งค่า:</b> ชื่อโครงการ ผู้คำนวณ ค่าตามมาตรฐาน ซิงก์ และไฟล์โครงการ</li></ul>
 <h3>1.3 วัสดุ</h3><p>กล่อง "วัสดุ" ด้านบนของเมนูออกแบบใช้ร่วมกันทั้งโครงการ ได้แก่ f'c ชั้นเหล็กเสริมหลัก และเหล็กปลอก</p>
 <h3>1.4 รายการชิ้นส่วน</h3><p>ทุกเมนูออกแบบเก็บได้หลายชิ้น (เช่น B1, B2) ใช้ปุ่ม เพิ่ม / ทำสำเนา / ลบ จุดสีหน้าชื่อบอกผล เขียว = ผ่าน แดง = ไม่ผ่าน ช่อง "จำนวน (สำหรับ BOQ)" ใช้คูณปริมาณงาน</p>
 <h3>1.5 หลายโครงการ</h3><p>หน้า "ภาพรวมโครงการ" มีตารางโครงการทั้งหมด: สร้างใหม่ เปิด ทำสำเนา และลบ แต่ละโครงการเก็บข้อมูลแยกกันทั้งหมด ชื่อโครงการที่เปิดอยู่แสดงใต้โลโก้ด้านซ้าย (กดเพื่อกลับหน้าภาพรวม) เปลี่ยนชื่อได้ที่ "ข้อมูลโครงการและการตั้งค่า"</p><h3>1.6 บันทึก ซิงก์ และย้ายข้อมูล</h3><ul><li>แอปบันทึกอัตโนมัติทุกครั้งที่แก้ไข</li><li><b>ซิงก์คอมกับ iPad:</b> ตั้งค่า SyncCode.gs ตามไฟล์คู่มือใน zip แล้วใส่ลิงก์และรหัสในหน้าตั้งค่า</li><li><b>ไฟล์โครงการ:</b> ส่งออกเป็น .json แล้วนำเข้าในอีกเครื่อง (ข้อมูลในเครื่องที่นำเข้าจะถูกแทนที่)</li></ul>`],
@@ -4757,7 +4765,7 @@ function sogSVG(r,v){var W=640,H=220,h=+v.h,th=Math.max(24,h*1.8),y0=78,x0=40,x1
   return s+'</svg>'}
 
 function isEl(m){return !!LIST[base(m)]}
-function renderAll(){var pn=document.getElementById('projName');if(pn)pn.textContent='📁 '+(state.project.name||'โครงการไม่มีชื่อ');
+function renderAll(){installTopBtn();var pn=document.getElementById('projName');if(pn)pn.textContent='📁 '+(state.project.name||'โครงการไม่มีชื่อ');
   var m=state.module;if(m==='slab'){m=state.module='slab2'}if(['trav','level','conv','setout','curve','earth'].indexOf(m)>=0){m=state.module='home'}
   if(!isEl(m)&&!TOOLS[m]&&m!=='boq'&&m!=='self'&&m!=='home'&&m!=='manual'&&m!=='estimate'){m=state.module='home'}
   var el=isEl(m),tool=!el;
@@ -4773,7 +4781,6 @@ function renderAll(){var pn=document.getElementById('projName');if(pn)pn.textCon
   else $('#sheet').innerHTML=m==='boq'?sheetBoq():m==='self'?sheetSelf():m==='home'?'<p>เลือกเมนูเพื่อพิมพ์รายการคำนวณ</p>':m==='manual'?manualHTML(true):m==='estimate'?sheetEstimate():toolSheet(m);
 }
 fillRoofSelects();
-(function(){var b=document.getElementById('surveyLink');if(!b)return;b.onclick=function(){var u=state.params.surveyUrl;if(!u){u=prompt('ลิงก์แอปสำรวจและวางผัง Pro (เช่น https://patarakorn-bas.github.io/ชื่อ-repository/)','https://patarakorn-bas.github.io/');if(!u)return;state.params.surveyUrl=u.trim();save()}window.open(state.params.surveyUrl,'_blank','noopener')}})();
 try{toolRun('loadtab')}catch(e){}
 TOOLS.bim.fields.filter(function(fd){return fd.k==='wallUnit'})[0].o=allWalls().map(function(w){return [String(w[1]),w[0]+' — '+w[1]+' กก./ตร.ม.']});
 $$('[data-llpick]').forEach(function(el){el.innerHTML=llOptions();el.addEventListener('change',function(){if(!el.value)return;var inp=el.parentNode.querySelector('input');inp.value=el.value;inp.dispatchEvent(new Event('input'));el.value=''})});
