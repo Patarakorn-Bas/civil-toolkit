@@ -193,7 +193,7 @@ dialog legend{padding:0 6px;color:var(--ink2)}
 <body>
 <div class="app">
   <nav class="rail" aria-label="เครื่องมือ">
-    <div class="brand"><b>Civil Toolkit</b><span>ชุดเครื่องมือวิศวกรโยธา</span><br><i class="ver">v3.2 · กฎกระทรวง 2566</i><button id="projName" class="projbtn" onclick="__ctGo('home')" title="โครงการที่เปิดอยู่"></button></div>
+    <div class="brand"><b>Civil Toolkit</b><span>ชุดเครื่องมือวิศวกรโยธา</span><br><i class="ver">v3.3 · กฎกระทรวง 2566</i><button id="projName" class="projbtn" onclick="__ctGo('home')" title="โครงการที่เปิดอยู่"></button></div>
     <button class="mod" data-module="home"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10l7-6 7 6v7h-5v-4H8v4H3z"/></svg><span>ภาพรวมโครงการ</span></button>
     <div class="grp">แบบจำลองอาคาร</div>
     <button class="mod" data-module="bim"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6l7-3 7 3v8l-7 3-7-3z"/><path d="M3 6l7 3 7-3M10 9v8"/></svg><span>แบบจำลองโครงสร้าง 3 มิติ</span></button>
@@ -4629,6 +4629,26 @@ function forceData(r,v){var Fr=r.Fr,ci=Math.min(+(v.combo||0),Fr.combos.length-1
     return {k:k,col:col,a:Fr.nodes[mm.i],b:Fr.nodes[mm.j],pts:pts,Mkey:useZ?'My':'Mz',Vkey:useZ?'Vz':'Vy',Nmax:Math.max.apply(null,pts.map(function(p){return Math.abs(p.N)})),Nval:pts[10].N,Mmax:mx(useZ?'My':'Mz'),Vmax:mx(useZ?'Vz':'Vy')}});
   var reac=Fr.base.map(function(bs){return {node:bs.node,Rz:c[1]*bs.D+c[2]*bs.L+c[3]*bs.WXz+c[4]*bs.WYz}});
   return {ci:ci,name:c[0],mem:mem,reac:reac}}
+
+function roofFrameMembers(r){/* straight roof members (eave->ridge rafters at rafter spacing, ridges, hips) on the roof surface + service loads */
+  var A=r.A,m=r.m;if(!A.roof)return [];var gm=A.roof.gm,Z=A.Z,zt=Z[A.nS]-m.roof.eave*Math.tan(m.roof.slope*Math.PI/180),hz=function(x,y){var q=gm.at(x,y);return q?zt+q.h:null},out=[],rsp=m.roof.rafterSp||1;
+  var els={};try{bimRoofElems(r).forEach(function(x){var o=runRoof(x);els[x.type]=o})}catch(e){}
+  var wOf=function(t){var o=els[t]||{};var w=o.wD!=null?(+o.wD||0)+(+o.wL||0):+o.w;return isFinite(w)&&w>0?w:null},wRaf=wOf('rafter')||((A.roof.rs.wPlan||100)*rsp),wRid=wOf('ridge')||wRaf*2,wHip=wOf('hip')||wRaf*1.5;
+  gm.rects.forEach(function(R0){var gx=R0.gx,w=gx?R0.y1-R0.y0:R0.x1-R0.x0,len=gx?R0.x1-R0.x0:R0.y1-R0.y0,hip=m.roof.type==='hip',mid=gx?(R0.y0+R0.y1)/2:(R0.x0+R0.x1)/2,e0=gx?R0.x0:R0.y0,e1=gx?R0.x1:R0.y1,inset=hip?Math.min(w/2,len/2):0;
+    var P2=function(al,ac){return gx?[al,ac]:[ac,al]},pt=function(q){var z=hz(q[0],q[1]);return z==null?null:[q[0],q[1],z]},add=function(a,b,kind,wl){var pa=pt(a),pb=pt(b);if(!pa||!pb)return;var L=Math.hypot(pb[0]-pa[0],pb[1]-pa[1],pb[2]-pa[2]);if(L<0.3)return;out.push({a:pa,b:pb,L:L,kind:kind,w:wl})};
+    for(var t=e0+rsp/2;t<=e1-rsp/2+1e-9;t+=rsp){var s0=hip?Math.max(0,Math.min(t-e0,e1-t)):w/2,reach=Math.min(w/2,hip?Math.max(s0,0):w/2);
+      add(P2(t,mid-w/2),P2(t,mid-w/2+Math.min(reach,w/2)),'rafter',wRaf);add(P2(t,mid+w/2),P2(t,mid+w/2-Math.min(reach,w/2)),'rafter',wRaf)}
+    if(e1-inset>e0+inset+0.3)add(P2(e0+inset,mid),P2(e1-inset,mid),'ridge',wRid);
+    if(hip)[[e0,mid-w/2],[e0,mid+w/2],[e1,mid-w/2],[e1,mid+w/2]].forEach(function(c){var q=P2(c[0],c[1]),zc=hz(q[0],q[1]);if(zc==null||zc-zt>0.2)return;add(q,P2(c[0]===e0?e0+inset:e1-inset,mid),'hip',wHip)})});
+  return out}
+function roofForceItems(r,mode,P,dep,items,sc0){var mem=roofFrameMembers(r),isM=mode[0]==='m',diag=/diag$/.test(mode);if(!mem.length)return;
+  var val=function(m0,x){return isM?m0.w*x*(m0.L-x)/2:m0.w*(m0.L/2-x)},peak=function(m0){return isM?m0.w*m0.L*m0.L/8:m0.w*m0.L/2},gmax=Math.max.apply(null,mem.map(peak))||1,sc=sc0||0.6/gmax*(isM?1:1);
+  mem.forEach(function(m0){var a=m0.a,b=m0.b,col=m0.kind==='rafter'?'#8B5A2B':'#5B3A1E',ck="__ctBimRoofCalcShow()";
+    items.push({d:dep((a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2),line:[P(a[0],a[1],a[2]),P(b[0],b[1],b[2])],stroke:diag||mode==='axial'?col:forceRamp(peak(m0)/gmax),w:m0.kind==='rafter'?1.6:2.6,click:ck});
+    if(!diag)return;var poly=[P(a[0],a[1],a[2])];for(var q=0;q<=12;q++){var x=m0.L*q/12,f0=q/12,t=-val(m0,x)*sc;poly.push(P(a[0]+(b[0]-a[0])*f0,a[1]+(b[1]-a[1])*f0,a[2]+(b[2]-a[2])*f0+t))}poly.push(P(b[0],b[1],b[2]));
+    items.push({d:dep((a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2)+0.02,poly:poly,fill:isM?'rgba(234,88,12,.35)':'rgba(132,204,22,.4)',stroke:isM?'#C2410C':'#4D7C0F'});
+    if(m0.kind!=='rafter'){var c=[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2-(isM?peak(m0)*sc:0)];items.push({d:dep(c[0],c[1],c[2])+0.05,text:kgm(peak(m0)),at:P(c[0],c[1],c[2]),color:isM?'#9A3412':'#3F6212'})}})}
+
 function forceItems(r,v,mode,P,dep,items){var F=forceData(r,v),Fr=r.Fr,isM=mode[0]==='m',isV=mode[0]==='v',diag=/diag$/.test(mode);
   var gmax=Math.max.apply(null,F.mem.map(function(m0){return mode==='axial'?m0.Nmax:isM?m0.Mmax:m0.Vmax}))||1,X=r.A.X,Y=r.A.Y,size=Math.max(X[X.length-1],Y[Y.length-1]),sc=0.12*size/gmax;
   F.mem.forEach(function(m0){var a=m0.a,b=m0.b,mval=mode==='axial'?m0.Nmax:isM?m0.Mmax:m0.Vmax,col=diag?'#3C4D61':forceRamp(mval/gmax);
@@ -4638,11 +4658,12 @@ function forceItems(r,v,mode,P,dep,items){var F=forceData(r,v),Fr=r.Fr,isM=mode[
     var poly=[P(a.x,a.y,a.z)];m0.pts.forEach(function(p){var t=p[key]*sc*sg,x=a.x+ex[0]*p.x+off[0]*t,y=a.y+ex[1]*p.x+off[1]*t,z=a.z+ex[2]*p.x+off[2]*t;poly.push(P(x,y,z))});poly.push(P(b.x,b.y,b.z));
     items.push({d:dep((a.x+b.x)/2,(a.y+b.y)/2,(a.z+b.z)/2)+0.02,poly:poly,fill:isM?'rgba(220,38,38,.45)':'rgba(34,197,94,.5)',stroke:isM?'#B42318':'#15803D'});
     if(mval>0.5*gmax&&L>1.5){var pk=m0.pts.reduce(function(s0,p){return Math.abs(p[key])>Math.abs(s0[key])?p:s0}),t2=pk[key]*sc;items.push({d:dep(a.x,a.y,a.z)+0.05,text:kgm(Math.abs(pk[key])),at:P(a.x+ex[0]*pk.x+off[0]*t2,a.y+ex[1]*pk.x+off[1]*t2,a.z+ex[2]*pk.x+off[2]*t2),color:isM?'#9F1239':'#166534'})}});
+  if(r.A.roof&&mode!=='axial')roofForceItems(r,mode,P,dep,items,null);
   F.reac.forEach(function(rc){var n=rc.node;items.push({d:dep(n.x,n.y,-1)+0.1,text:kgm(rc.Rz),at:P(n.x,n.y,-0.6),color:'#B42318',arrow:[P(n.x,n.y,-0.55),P(n.x,n.y,-0.05)]})});
   return {F:F,gmax:gmax,unit:mode==='axial'||isV?'กก.':'กก.·ม.'}}
 function forceLegend(info,mode,r,v){var g='',n=6;for(var i=0;i<n;i++)g+='<span style="display:inline-block;width:34px;height:10px;background:'+forceRamp(i/(n-1))+'"></span>';
   return '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;margin-top:4px"><label class="f" style="margin:0">กรณีรวมน้ำหนัก<select id="bimCombo" style="font:inherit;border:1px solid var(--line);border-radius:6px;padding:2px 6px">'+r.Fr.combos.map(function(c,k){return '<option value="'+k+'"'+(k===info.F.ci?' selected':'')+'>'+esc(c[0])+'</option>'}).join('')+'</select></label>'+
-    (/diag$/.test(mode)?'<span class="hint" style="margin:0">'+(mode==='mdiag'?'สีแดง = โมเมนต์ (วาดด้านรับแรงดึง)':'สีเขียว = แรงเฉือน')+' · ตัวเลขคือค่าสูงสุดในชิ้นส่วน ('+info.unit+')</span>':'<span>0 '+g+' '+kgm(info.gmax)+' '+info.unit+'</span>')+'<span class="hint" style="margin:0">ตัวเลขสีแดงใต้ฐาน = แรงปฏิกิริยา (กก.)</span></div>'}
+    (/diag$/.test(mode)?'<span class="hint" style="margin:0">'+(mode==='mdiag'?'สีแดง = โมเมนต์ (วาดด้านรับแรงดึง) · สีส้ม = โมเมนต์ในโครงหลังคาเหล็ก (น้ำหนักใช้งาน ASD)':'สีเขียว = แรงเฉือน · สีเขียวอ่อน = โครงหลังคาเหล็ก')+' · ตัวเลขคือค่าสูงสุดในชิ้นส่วน ('+info.unit+')</span>':'<span>0 '+g+' '+kgm(info.gmax)+' '+info.unit+'</span>')+'<span class="hint" style="margin:0">ตัวเลขสีแดงใต้ฐาน = แรงปฏิกิริยา (กก.)</span></div>'}
 
 var bimLastR=null,bimDrag=null,bimRaf=0;
 function bim3DRedraw(){var v=toolVals('bim'),box=document.getElementById('bim3dBox');if(!box||!bimLastR)return;box.innerHTML=bim3D(bimLastR,v);var bc=$('#bimCombo');if(bc)bc.onchange=function(){v.combo=bc.value;save();bim3DRedraw()}}
@@ -4857,7 +4878,7 @@ var MANUAL=[
 ['faq','18. คำถามที่พบบ่อย',`<ul><li><b>ปุ่มติดตั้งแอปไม่ขึ้น:</b> ใช้ Chrome/Edge บนคอม หรือ Safari บน iPad และเปิดจากลิงก์ GitHub Pages (https)</li><li><b>อัปเดตแล้วยังเห็นเวอร์ชันเก่า:</b> ปิดแอปแล้วเปิดใหม่หนึ่งครั้ง</li><li><b>ตรวจกริดจาก PDF ไม่เจอ:</b> แบบอาจเป็นภาพสแกนหรือกริดไม่ได้เขียนเป็นตัวอักษร ให้คลิกวางเส้นกริดเอง</li><li><b>ชิ้นส่วนไม่ผ่าน:</b> ดูข้อความสีแดงในผลลัพธ์ แล้วเพิ่มขนาด เปลี่ยนขนาดเหล็ก หรือเพิ่ม f'c</li><li><b>ข้อมูลหาย:</b> ข้อมูลอยู่ในเบราว์เซอร์ของแต่ละเครื่อง ควรเปิดซิงก์หรือส่งออกไฟล์โครงการเป็นระยะ</li></ul>`]];
 function manualHTML(sheet){var toc='<div class="panel"><h2>สารบัญ</h2><ol style="columns:2;margin:0;padding-left:1.3em;line-height:1.9">'+MANUAL.map(function(s){return '<li><a href="#man-'+s[0]+'" style="color:var(--ink)">'+s[1].replace(/^\d+\.\s*/,'')+'</a></li>'}).join('')+'</ol></div>';
   var body=MANUAL.map(function(s){return (sheet?'<div class="mansec">':'<div class="panel man" id="man-'+s[0]+'">')+'<h2>'+s[1]+'</h2>'+s[2]+'</div>'}).join('');
-  return (sheet?'<div><div class="hd"><div class="t">คู่มือการใช้งาน Civil Toolkit</div><div>เวอร์ชัน 3.2</div><div>กฎกระทรวง 2566</div></div>':'<div class="verdict ok"><b>คู่มือการใช้งาน</b><p>Civil Toolkit v3.2 · พิมพ์คู่มือได้จากปุ่ม "รายการคำนวณ" ด้านบน</p></div>'+toc)+body+(sheet?'</div>':'')}
+  return (sheet?'<div><div class="hd"><div class="t">คู่มือการใช้งาน Civil Toolkit</div><div>เวอร์ชัน 3.3</div><div>กฎกระทรวง 2566</div></div>':'<div class="verdict ok"><b>คู่มือการใช้งาน</b><p>Civil Toolkit v3.3 · พิมพ์คู่มือได้จากปุ่ม "รายการคำนวณ" ด้านบน</p></div>'+toc)+body+(sheet?'</div>':'')}
 function renderManual(){$('#vTool').innerHTML=manualHTML(false)}
 
 /* ===================== PRICE LIBRARY (shared by all projects) ===================== */
