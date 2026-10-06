@@ -193,7 +193,7 @@ dialog legend{padding:0 6px;color:var(--ink2)}
 <body>
 <div class="app">
   <nav class="rail" aria-label="เครื่องมือ">
-    <div class="brand"><b>Civil Toolkit</b><span>ชุดเครื่องมือวิศวกรโยธา</span><br><i class="ver">v3.9 · กฎกระทรวง 2566</i><button id="projName" class="projbtn" onclick="__ctGo('home')" title="โครงการที่เปิดอยู่"></button></div>
+    <div class="brand"><b>Civil Toolkit</b><span>ชุดเครื่องมือวิศวกรโยธา</span><br><i class="ver">v4.0 · กฎกระทรวง 2566</i><button id="projName" class="projbtn" onclick="__ctGo('home')" title="โครงการที่เปิดอยู่"></button></div>
     <button class="mod" data-module="home"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10l7-6 7 6v7h-5v-4H8v4H3z"/></svg><span>ภาพรวมโครงการ</span></button>
     <div class="grp">แบบจำลองอาคาร</div>
     <button class="mod" data-module="bim"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6l7-3 7 3v8l-7 3-7-3z"/><path d="M3 6l7 3 7-3M10 9v8"/></svg><span>แบบจำลองโครงสร้าง 3 มิติ</span></button>
@@ -204,6 +204,7 @@ dialog legend{padding:0 6px;color:var(--ink2)}
     <button class="mod" data-module="roof"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 15L10 5l7 10z"/><path d="M10 5v10M6.5 10h7"/></svg><span>ชิ้นส่วนโครงหลังคา</span><i class="stp">1</i></button>
     <button class="mod" data-module="slab1"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="7" width="14" height="5"/><path d="M7 7v5M13 7v5"/></svg><span>พื้นทางเดียว</span><i class="stp">2</i></button>
     <button class="mod" data-module="slab2"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="5" width="14" height="10"/><path d="M3 5l14 10M17 5L3 15"/></svg><span>พื้นสองทาง</span><i class="stp">2</i></button>
+    <button class="mod" data-module="pcs"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="8" width="16" height="3"/><path d="M5 8v3M9 8v3M13 8v3M2 6h16"/></svg><span>พื้นสำเร็จรูป</span><i class="stp">2</i></button>
     <button class="mod" data-module="sog"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="8" width="16" height="4"/><path d="M2 15h16M4 17h12"/></svg><span>พื้นวางบนดิน</span><i class="stp">2</i></button>
     <button class="mod" data-module="stair"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 17h4v-4h4V9h4V5h2"/></svg><span>บันได</span><i class="stp">2</i></button>
     <button class="mod" data-module="beam"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="7" width="16" height="5"/><path d="M4 12v4M16 12v4"/></svg><span>คาน</span><i class="stp">3</i></button>
@@ -422,6 +423,28 @@ dialog legend{padding:0 6px;color:var(--ink2)}
           </div>
         </div>
         <div class="stack" id="resFdn"></div>
+      </div>
+
+      <div class="cols" data-mod="pcs">
+        <div class="stack">
+          <div class="panel">
+            <h2>พื้นสำเร็จรูป (แผ่นพื้นอัดแรงแบบตัน 5×35 ซม.)</h2>
+            <div class="fields">
+              <label class="f">ชื่อ<input type="text" data-k="name" maxlength="30"></label>
+              <label class="f">จำนวน (ช่อง) <span class="unit">ช่อง</span><input type="number" inputmode="numeric" data-k="qty" min="0" step="1"></label>
+              <label class="f">ช่วงพาดสุทธิ (ระยะห่างริมคานด้านใน) <span class="unit">ม.</span><input type="number" inputmode="decimal" data-k="Ln" min="0.5" step="0.05"></label>
+              <label class="f">ความยาวช่องตามแนวคาน (สำหรับ BOQ) <span class="unit">ม.</span><input type="number" inputmode="decimal" data-k="width" min="0.3" step="0.05"></label>
+              <label class="f">คอนกรีตทับหน้า <span class="unit">ซม.</span><input type="number" inputmode="decimal" data-k="topping" min="0" step="0.5"></label>
+              <label class="f">วัสดุปูผิว ฝ้า ระบบ <span class="unit">กก./ตร.ม.</span><input type="number" inputmode="decimal" data-k="finish" min="0" step="10"></label>
+              <label class="f">น้ำหนักจร <span class="unit">กก./ตร.ม.</span><input type="number" inputmode="decimal" data-k="ll" min="0" step="50"><select class="pick" data-llpick></select></label>
+              <label class="f">การค้ำยันระหว่างเททับหน้า<select data-k="shored"><option value="1">ค้ำยัน</option><option value="0">ไม่ค้ำยัน</option></select></label>
+              <label class="f">จำนวนลวดอัดแรง Ø4 มม.<select data-k="wires"><option value="0">เลือกให้อัตโนมัติ</option><option value="4">4 เส้น</option><option value="5">5 เส้น</option><option value="6">6 เส้น</option><option value="7">7 เส้น</option><option value="8">8 เส้น</option></select></label>
+              <label class="f">เหล็กเสริมทับหน้า<select data-k="bar"><option>RB6</option><option>RB9</option><option>DB10</option></select></label>
+            </div>
+            <p class="hint">แผ่นพื้นวางพาดในทิศด้านสั้นของช่อง · ช่วงพาดสุทธิ = ระยะกริด − ความกว้างคาน</p>
+          </div>
+        </div>
+        <div class="stack" id="resPcs"></div>
       </div>
 
       <div class="cols" data-mod="stair">
@@ -2817,6 +2840,41 @@ dialog legend{padding:0 6px;color:var(--ink2)}
   CT.designSOG = designSOG;
 })(typeof window !== 'undefined' ? window : globalThis);
 
+/* ===================== PRECAST PLANK SLAB (พื้นสำเร็จรูปแบบตัน) ===================== */
+(function (root) {
+  'use strict';
+  var CT = root.CT;
+  /* safe superimposed service load (kg/m²) vs clear span (m); plank 5×35 cm, prestressing wire Ø4 mm (manufacturer table — editable) */
+  var PC_SPANS = [2.00, 2.25, 2.50, 2.75, 3.00, 3.25, 3.50, 3.75, 4.00, 4.25, 4.50];
+  var PC_TABLE = [
+    { n: 4, shored: [1979, 1502, 1166, 921, 711, 516, 362, 239, null, null, null], unshored: [1979, 1431, 971, 635, null, null, null, null, null, null, null] },
+    { n: 5, shored: [2413, 1841, 1438, 1144, 921, 694, 515, 371, 255, null, null], unshored: [2413, 1813, 1278, 886, 592, null, null, null, null, null, null] },
+    { n: 6, shored: [2807, 2149, 1686, 1347, 1092, 871, 667, 504, 371, 261, null], unshored: [2807, 2149, 1584, 1138, 802, null, null, null, null, null, null] },
+    { n: 7, shored: [3166, 2429, 1911, 1531, 1246, 1026, 820, 636, 487, 363, 260], unshored: [3166, 2429, 1890, 1389, 1011, null, null, null, null, null, null] },
+    { n: 8, shored: [3492, 2684, 2115, 1699, 1386, 1144, 954, 769, 603, 466, 351], unshored: [3492, 2684, 2115, 1640, 1221, null, null, null, null, null, null] }];
+  function pcCap(row, L) {
+    if (!(L > 0)) return null; if (L <= PC_SPANS[0]) return row[0];
+    for (var i = 1; i < PC_SPANS.length; i++) if (L <= PC_SPANS[i] + 1e-9) { var a = row[i - 1], b = row[i]; if (a == null || b == null) return null; return a + (b - a) * (L - PC_SPANS[i - 1]) / (PC_SPANS[i] - PC_SPANS[i - 1]); }
+    return null;
+  }
+  function designPcs(o, P) {
+    P = P || CT.DEFAULTS;
+    var t = o.topping, wTop = t / 100 * 2400, wPlank = (o.plankT || 5) / 100 * 2400, q = wTop + o.finish + o.ll, key = o.shored ? 'shored' : 'unshored';
+    var rows = PC_TABLE.map(function (r) { var c = pcCap(r[key], o.Ln); return { n: r.n, cap: c, ok: c != null && c >= q - 1e-9 }; });
+    var pick = o.wires > 0 ? rows.filter(function (r) { return r.n === o.wires; })[0] : rows.filter(function (r) { return r.ok; })[0];
+    var out = { q: q, wTop: wTop, wPlank: wPlank, rows: rows, pick: pick || null, key: key, spans: PC_SPANS };
+    out.wD = wPlank + wTop + o.finish; out.wL = o.ll; out.R = (out.wD + out.wL) * o.Ln / 2;
+    var sdm = o.method === 'SDM', fD = sdm ? P.sdm.loadD : 1, fL = sdm ? P.sdm.loadL : 1; out.Ru = (fD * out.wD + fL * out.wL) * o.Ln / 2;
+    var rt = CT._tempRatio(o.grade || 'SR24', o.fy || 2400, P), As = rt * 100 * t, db = CT.BAR[o.bar || 'RB6'], Ab = Math.PI * db * db / 4;
+    out.rho = rt; out.As = As; out.s = Math.floor(Math.min(Ab * 100 / As, 5 * t, 45) * 2) / 2 / 100;
+    out.topOk = t >= 4; out.spanOk = o.Ln <= PC_SPANS[PC_SPANS.length - 1] + 1e-9;
+    out.ratio = pick && pick.cap ? q / pick.cap : Infinity;
+    out.ok = !!(pick && pick.ok) && out.topOk && out.spanOk;
+    return out;
+  }
+  CT.PC_TABLE = PC_TABLE; CT.PC_SPANS = PC_SPANS; CT.pcCap = pcCap; CT.designPcs = designPcs;
+})(typeof window !== 'undefined' ? window : globalThis);
+
 </script>
 <script>
 (function(){
@@ -2829,8 +2887,8 @@ function uid(p){return p+Date.now().toString(36)+Math.random().toString(36).slic
 function newSlab(n){return {id:uid('s'),name:'S'+n,qty:1,coefMethod:'m2',eL1:true,eL2:true,eS1:true,eS2:true,type:'two',t:12,cover:2,bar:'DB12',S:4,L:5,slabCase:1,support:'bothCont',dl:150,ll:300,selfWeight:true}}
 function newFdn(n){return {id:uid('f'),name:'F'+n,qty:1,M:0,type:'spread',cx:25,cy:25,dl:30,ll:15,qa:15,Df:1.5,autoSize:true,B:2,L:2,cover:7.5,Qa:20,pileSize:22,pileShape:'square',spacing:0.75,edge:0.3,capCover:10,autoN:true,n:'4',autoT:true,t:40,bar:'DB16'}}
 function newCol(n){return {id:uid('c'),name:'C'+n,qty:1,My:0,H:3,b:25,h:25,cover:3,tie:'RB9',bar:'DB16',auto:true,nb:2,ns:0,P:40,M:1.5,Lu:3,k:1,braced:true,m12:0}}
-var MAKE={beam:newBeam,slab:newSlab,col:newCol,fdn:newFdn,stair:newStair,roof:newRoof,ped:newPed},LIST={beam:'beams',slab:'slabs',col:'cols',fdn:'fdns',stair:'stairs',roof:'roofs',ped:'peds'};
-var TITLE={beam:'ออกแบบคาน ค.ส.ล.',slab:'ออกแบบพื้น ค.ส.ล.',col:'ออกแบบเสา ค.ส.ล.',fdn:'ออกแบบฐานราก ค.ส.ล.',home:'ภาพรวมโครงการ',manual:'คู่มือการใช้งาน',estimate:'ประมาณราคาค่าก่อสร้างทั้งหลัง',plans:'แปลนโครงสร้างและตารางชิ้นส่วน',stair:'ออกแบบบันได ค.ส.ล.',ped:'ออกแบบตอม่อ ค.ส.ล.',slab1:'ออกแบบพื้นทางเดียว ค.ส.ล.',slab2:'ออกแบบพื้นสองทาง ค.ส.ล.',roof:'ออกแบบโครงหลังคาเหล็ก',boq:'ถอดปริมาณงานและ BOQ',self:'ทดสอบระบบคำนวณ'},NOUN={beam:'คาน',slab:'พื้น',slab1:'พื้น',slab2:'พื้น',col:'เสา',fdn:'ฐานราก',stair:'บันได',ped:'ตอม่อ',roof:'ชิ้นส่วนหลังคา'};
+var MAKE={beam:newBeam,slab:newSlab,col:newCol,fdn:newFdn,stair:newStair,roof:newRoof,ped:newPed,pcs:newPcs},LIST={beam:'beams',slab:'slabs',col:'cols',fdn:'fdns',stair:'stairs',roof:'roofs',ped:'peds',pcs:'pcs'};
+var TITLE={beam:'ออกแบบคาน ค.ส.ล.',slab:'ออกแบบพื้น ค.ส.ล.',col:'ออกแบบเสา ค.ส.ล.',fdn:'ออกแบบฐานราก ค.ส.ล.',home:'ภาพรวมโครงการ',manual:'คู่มือการใช้งาน',estimate:'ประมาณราคาค่าก่อสร้างทั้งหลัง',plans:'แปลนโครงสร้างและตารางชิ้นส่วน',stair:'ออกแบบบันได ค.ส.ล.',ped:'ออกแบบตอม่อ ค.ส.ล.',slab1:'ออกแบบพื้นทางเดียว ค.ส.ล.',slab2:'ออกแบบพื้นสองทาง ค.ส.ล.',pcs:'ออกแบบพื้นสำเร็จรูป',roof:'ออกแบบโครงหลังคาเหล็ก',boq:'ถอดปริมาณงานและ BOQ',self:'ทดสอบระบบคำนวณ'},NOUN={beam:'คาน',slab:'พื้น',slab1:'พื้น',slab2:'พื้น',col:'เสา',fdn:'ฐานราก',stair:'บันได',ped:'ตอม่อ',roof:'ชิ้นส่วนหลังคา',pcs:'พื้นสำเร็จรูป'};
 var today=new Date();
 var state={project:{name:'',location:'',engineer:'',license:'',checker:'',date:today.toLocaleDateString('th-TH-u-nu-latn',{year:'numeric',month:'long',day:'numeric'})},
   method:'SDM',mat:{fc:240,grade:'SD40',stGrade:'SR24'},params:clone(CT.DEFAULTS),beams:[],slabs:[],cols:[],cur:null,curIds:{},module:'home',view:'design',scope:'one',boq:{prices:{},F:1,extra:''},tools:{}};
@@ -2839,7 +2897,7 @@ try{var s=localStorage.getItem(KEY);if(s){var o=JSON.parse(s);Object.assign(stat
 state.project.date=String(state.project.date||'').replace(/[๐-๙]/g,function(c){return '๐๑๒๓๔๕๖๗๘๙'.indexOf(c)});
 state.curIds=state.curIds||{};if(state.cur&&!state.curIds.beam)state.curIds.beam=state.cur;
 state.beams&&state.beams.forEach(function(b){if(b.unitKg)return;b.dl=num(b.dl)*1000;b.ll=num(b.ll)*1000;(b.items||[]).forEach(function(it){if(it.kind==='udl'||it.kind==='point'){it.D=num(it.D)*1000;it.L=num(it.L)*1000}});b.unitKg=true});
-['beam','slab','col','fdn','stair','roof','ped'].forEach(function(m){var L=state[LIST[m]]=state[LIST[m]]||[];if(!L.length)L.push(MAKE[m](1));
+['beam','slab','col','fdn','stair','roof','ped','pcs'].forEach(function(m){var L=state[LIST[m]]=state[LIST[m]]||[];if(!L.length)L.push(MAKE[m](1));
   if(!L.some(function(x){return x.id===state.curIds[m]}))state.curIds[m]=L[0].id});
 if(!state.slabs.some(function(x){return x.type==='one'})){var s1=newSlab(state.slabs.length+1);s1.type='one';s1.S=3;s1.L=4;s1.name='S'+(state.slabs.length+1);state.slabs.push(s1)}
 if(!state.slabs.some(function(x){return x.type==='two'})){var s2=newSlab(state.slabs.length+1);state.slabs.push(s2)}
@@ -2934,6 +2992,7 @@ function renderForm(){
   if(m==='col'){formCol(b);return}
   if(m==='fdn'){formFdn(b);return}
   if(m==='stair'){formStair(b);return}
+  if(m==='pcs'){return}
   if(m==='roof'){formRoof(b);return}
   if(m==='ped'){formPed(b);return}
   $$('[data-lm]').forEach(function(btn){btn.setAttribute('aria-pressed',btn.dataset.lm===b.loadMode)});
@@ -2999,6 +3058,7 @@ function renderResults(){
   if(state.module==='col')return renderCol();
   if(state.module==='fdn')return renderFdn();
   if(state.module==='stair')return renderStair();
+  if(state.module==='pcs')return renderPcs();
   var b=cur(),r=run(b),box=$('#results');
   if(r.invalid){box.innerHTML='<div class="verdict bad"><b>ข้อมูลไม่ครบ</b><p>ตรวจขนาดหน้าตัด ระยะหุ้ม และ f\'c ให้เป็นค่าที่ใช้ได้</p></div>';return}
   var sdm=state.method==='SDM',ld=r.loads,h='';
@@ -3134,7 +3194,7 @@ function sheetOne(b,first){
   return h;
 }
 function renderSheet(){
-  var m=state.module,bm=base(m),list=state.scope==='all'?listOf(m):[cur()],fn=bm==='beam'?sheetOne:bm==='slab'?sheetSlab:bm==='fdn'?sheetFdn:bm==='stair'?sheetStair:bm==='roof'?sheetRoof:bm==='ped'?sheetPed:sheetCol;
+  var m=state.module,bm=base(m),list=state.scope==='all'?listOf(m):[cur()],fn=bm==='beam'?sheetOne:bm==='slab'?sheetSlab:bm==='fdn'?sheetFdn:bm==='stair'?sheetStair:bm==='pcs'?sheetPcs:bm==='roof'?sheetRoof:bm==='ped'?sheetPed:sheetCol;
   $('#sheet').innerHTML=list.map(function(b,k){return fn(b,k===0)}).join('');
 }
 function downloadDoc(){
@@ -3661,12 +3721,14 @@ function boqCollect(){
     list.push({type:'ตอม่อ',name:x.name,count:num(x.qty),q:CT.qtyCol({b:i.b,h:i.h,H:num(x.H),bar:i.bar,n:2*i.nb+2*i.ns,tie:i.tie,sTie:r.tieS||20,cover:i.cover,count:num(x.qty)},state.params)})});
   state.fdns.forEach(function(x){var r=runFdn(x);if(r.invalid)return notes.push('ฐานราก '+x.name+': ข้อมูลไม่ครบ');var pile=x.type==='pile';if(r.stX.error||r.stY.error)return notes.push('ฐานราก '+x.name+': ออกแบบเหล็กไม่ได้');
     list.push({type:'ฐานราก',name:x.name,count:num(x.qty),q:CT.qtyFdn({Lx:pile?r.Lx:r.L,Ly:pile?r.Ly:r.B,t:r.t,bar:x.bar,nx:r.stX.n,ny:r.stY.n,Df:pile?0:num(x.Df),colA:num(x.cx)*num(x.cy)/1e4,piles:pile?r.n:0,count:num(x.qty)},P)})});
+  var pcsArea=0,pcsTxt={};(state.pcs||[]).forEach(function(x){var r=runPcs(x);if(r.invalid)return notes.push('พื้นสำเร็จรูป '+x.name+': ข้อมูลไม่ครบ');var q=num(x.qty)||0,A=num(x.Ln)*num(x.width)*q;if(!(A>0))return;pcsArea+=A;var k=r.pick?r.pick.n:0;pcsTxt[k]=(pcsTxt[k]||0)+A;var db=CT.BAR[x.bar||'RB6'],st={};st[x.bar||'RB6']=A*2/(r.s||0.2)*Math.PI*db*db/4/1e4*7850;list.push({type:'พื้นสำเร็จรูป',name:x.name,count:q,q:{conc:A*num(x.topping)/100,form:0,steel:st}})});
   state.stairs.forEach(function(x){var r=runStair(x);if(r.invalid)return notes.push('บันได '+x.name+': ข้อมูลไม่ครบ');var i=r.input;
     list.push({type:'บันได',name:x.name,count:num(x.qty),q:CT.qtyStair({Lh:i.Lh,width:i.width,R:i.R,T:i.T,t:i.t,bar:i.bar,sMain:r.items[0].sUse||20,sDist:r.items[r.items.length-1].sUse||25,count:num(x.qty)},P)})});
   var roofKg=0;state.roofs.forEach(function(x){var r=runRoof(x);if(r.invalid||r.error)return notes.push('หลังคา '+x.name+': ข้อมูลไม่ครบ');var n=num(x.qty),kg=x.type==='truss'?r.weight:x.type==='post'?r.sec.w*r.H:isRB(x.type)?r.sec.w*(r.Ls||r.L):x.type==='rafter'?r.sec.w*r.Ls:r.sec.w*r.input.span;
     roofKg+=kg*n;list.push({type:{purlin:'แป',rafter:'จันทัน',truss:'โครงถัก',eave:'อะเส',ridge:'อกไก่',support:'สะพานรับจันทัน',hip:'ตะเฆ่สัน',valley:'ตะเฆ่ราง',tie:'ขื่อ',post:'ดั้ง/เสาตุ๊กตา'}[x.type],name:x.name+' ('+(r.sec?r.sec.name:'ท่อเหลี่ยม')+')',count:n,q:{conc:0,form:0,steel:{},roofKg:kg*n}})});
   var tot=CT.qtySum(list.map(function(e){return e.q})),bw=P.boq,rows=[];
   rows.push({key:'conc',label:'คอนกรีตโครงสร้าง f\'c '+state.mat.fc+' กก./ตร.ซม. (เผื่อ '+f(bw.concWaste*100,0)+'%)',qty:tot.conc*(1+bw.concWaste),unit:'ลบ.ม.'});
+  Object.keys(pcsTxt).forEach(function(k){rows.push({key:'pcs_'+k,label:'แผ่นพื้นสำเร็จรูปแบบตัน 5×35 ซม.'+(+k?' ลวด '+k+'Ø4 มม.':''),qty:pcsTxt[k],unit:'ตร.ม.'})});
   if(tot.lean)rows.push({key:'lean',label:'คอนกรีตหยาบรองพื้น หนา '+f(bw.lean*100,0)+' ซม.',qty:tot.lean,unit:'ลบ.ม.'});
   rows.push({key:'form',label:'ไม้แบบ',qty:tot.form*(1+bw.formWaste),unit:'ตร.ม.'});
   var wb=bw.wasteBy||{},stTot=0;['RB6','RB9','DB10','DB12','DB16','DB20','DB25','DB28','DB32'].forEach(function(b){if(!tot.steel[b])return;var wf=wb[b]!=null?+wb[b]/100:bw.steelWaste;stTot+=tot.steel[b];rows.push({key:'st_'+b,label:'เหล็กเสริม '+b+' (เผื่อ '+f(wf*100,1)+'%)',qty:tot.steel[b]*(1+wf),unit:'กก.'})});
@@ -3781,6 +3843,7 @@ function selfTests(){var P=CT.DEFAULTS,m={fc:240,fy:4000,fyt:2400},pi=Math.PI,T=
   var sg=CT.designSOG({h:15,fc:240,k:5,P:0,w:0,Lj:4.5,bar:'RB9',fy:2400,F:1.5});add('พื้นวางบนดิน','เหล็กต้านแรงเสียดทานดิน As = F·L·W/(2fs) (ตร.ซม./ม.)',sg.AsDrag,1.5*4.5*360/(2*0.67*2400),1e-9,'สูตร subgrade drag');
   var st2=CT.designStair({stype:'landing',Lland:1.2,Lh:3,width:1.2,R:17.5,T:25,t:15,cover:2,bar:'DB12',support:'simple',dl:100,ll:200,method:'WSD'},m,'SD40',P),Ra=(st2.w*3*(4.2-1.5)+st2.w2*1.2*0.6)/4.2,x0=Ra/st2.w;
   add('บันได','บันไดมีชานพัก: M สูงสุด (กก.·ม./ม.)',st2.items[0].Mkgm,Ra*x0-st2.w*x0*x0/2,1e-4,'คานช่วงเดี่ยวน้ำหนักสองช่วง (จุดแรงเฉือนเป็นศูนย์)');
+  var pcR=CT.designPcs({Ln:4.0,topping:0,finish:240,ll:200,shored:true},P);add('พื้นสำเร็จรูป','ช่วง 4.00 ม. q = 440 → จำนวนลวด Ø4',pcR.pick.n,7,1e-9,'รายการคำนวณตัวอย่าง (ตารางผู้ผลิต)');
   add('BOQ','น้ำหนักเหล็ก DB12 (กก./ม.)',CT.wpm('DB12'),0.888,2e-3,'ตารางมาตรฐาน 0.888');
   add('BOQ','น้ำหนักเหล็ก DB25 (กก./ม.)',CT.wpm('DB25'),3.853,2e-3,'ตารางมาตรฐาน 3.853');
   return T}
@@ -4312,10 +4375,10 @@ function roof3D(M,v){var ang=(+v.ang||35)*Math.PI/180,ca=Math.cos(ang),sa=Math.s
 
 
 /* ===================== DASHBOARD ===================== */
-var GROUPOF={roofsys:'ออกแบบโครงสร้าง · หลังคา',roofmodel:'ออกแบบโครงสร้าง · หลังคา',roof:'ออกแบบโครงสร้าง · หลังคา',slab1:'ออกแบบโครงสร้าง · พื้น',slab2:'ออกแบบโครงสร้าง · พื้น',stair:'ออกแบบโครงสร้าง · พื้น',beam:'ออกแบบโครงสร้าง · คาน',col:'ออกแบบโครงสร้าง · เสา',ped:'ออกแบบโครงสร้าง · ตอม่อ',fdn:'ออกแบบโครงสร้าง · ฐานราก',
+var GROUPOF={roofsys:'ออกแบบโครงสร้าง · หลังคา',roofmodel:'ออกแบบโครงสร้าง · หลังคา',roof:'ออกแบบโครงสร้าง · หลังคา',slab1:'ออกแบบโครงสร้าง · พื้น',slab2:'ออกแบบโครงสร้าง · พื้น',pcs:'ออกแบบโครงสร้าง · พื้น',stair:'ออกแบบโครงสร้าง · พื้น',beam:'ออกแบบโครงสร้าง · คาน',col:'ออกแบบโครงสร้าง · เสา',ped:'ออกแบบโครงสร้าง · ตอม่อ',fdn:'ออกแบบโครงสร้าง · ฐานราก',
   bim:'แบบจำลองอาคาร',plans:'แบบจำลองอาคาร',sog:'ออกแบบโครงสร้าง · พื้น',cbeam:'วิเคราะห์โครงสร้าง',frame:'วิเคราะห์โครงสร้าง',loadtab:'ข้อมูลอ้างอิง',steel:'ข้อมูลอ้างอิง',rebar:'ข้อมูลอ้างอิง',boq:'ปริมาณงาน',trav:'สำรวจและวางผัง',level:'สำรวจและวางผัง',conv:'สำรวจและวางผัง',setout:'สำรวจและวางผัง',curve:'สำรวจและวางผัง',earth:'สำรวจและวางผัง',mix:'เครื่องมืออื่น',hyd:'เครื่องมืออื่น',units:'เครื่องมืออื่น',self:'ระบบ',manual:'ระบบ',estimate:'ปริมาณงาน',home:'Civil Toolkit'};
 function renderHome(){var pr=state.project,sdm=state.method==='SDM',h='';
-  var types=[['roof','ชิ้นส่วนโครงหลังคา','roofs',runRoof],['slab1','พื้นทางเดียว','slabs1',null],['slab2','พื้นสองทาง','slabs2',null],['stair','บันได','stairs',runStair],['beam','คาน','beams',run],['col','เสา','cols',runCol],['ped','ตอม่อ','peds',runPed],['fdn','ฐานราก','fdns',runFdn]];
+  var types=[['roof','ชิ้นส่วนโครงหลังคา','roofs',runRoof],['slab1','พื้นทางเดียว','slabs1',null],['slab2','พื้นสองทาง','slabs2',null],['pcs','พื้นสำเร็จรูป','pcs',runPcs],['stair','บันได','stairs',runStair],['beam','คาน','beams',run],['col','เสา','cols',runCol],['ped','ตอม่อ','peds',runPed],['fdn','ฐานราก','fdns',runFdn]];
   h+='<div class="panel"><div class="rgrid"><div><h2>'+esc(pr.name||'โครงการยังไม่ได้ตั้งชื่อ')+'</h2>'+kv([['สถานที่',esc(pr.location||'–')],['ผู้คำนวณ',esc(pr.engineer||'–')+(pr.license?' (กว. '+esc(pr.license)+')':'')],['วิธีออกแบบ ค.ส.ล.',sdm?'วิธีกำลัง (SDM) 1.4D + 1.7L':'วิธีหน่วยแรงใช้งาน (WSD)'],['วัสดุ',"f'c "+state.mat.fc+' กก./ตร.ซม. · '+state.mat.grade+' · ปลอก '+state.mat.stGrade]])+'<button class="btn" onclick="document.getElementById(\'btnProject\').click()">แก้ไขข้อมูลโครงการ</button></div>';
   var c=null;try{c=boqCollect()}catch(e){}
   if(c){var st=0;c.rows.forEach(function(r){if(/^st_|steelSec|roofsysSteel|rm_steel/.test(r.key))st+=r.qty});var conc=c.rows.filter(function(r){return r.key==='conc'})[0];
@@ -4647,7 +4710,7 @@ function bimHTML(r,v){var h=bimPdfPanel(v);setTimeout(bimPlanBind,0);if(r.error)
   else out+='<div class="panel overflow"><h2>เสา ('+D.cols.length+' ต้น-ชั้น)</h2>'+tbl(['เสา','ชั้น','DL / LL (ตัน)','P ออกแบบ (ตัน)','เหล็กยืน','อัตราส่วน','ผล'],D.cols.map(function(x){var d=x.d,i=d.input;return [gridLab(x.c.node.i)+'-'+(x.c.node.j+1),x.c.st,f(x.c.D/1000,2)+' / '+f(x.c.Lr/1000,2),f(x.Pd,2),(2*i.nb+2*i.ns)+'-'+i.bar,f(d.ratio,3),badge(x.ok)]}))+'</div>';
   out+='<div class="panel overflow"><h2>ฐานราก ('+D.fdns.length+' ฐาน)</h2>'+tbl(['ตำแหน่ง','DL / LL (ตัน)','ขนาด','หนา','ผล'],D.fdns.map(function(x){var d=x.d;return [gridLab(x.N.i)+'-'+(x.N.j+1)+(x.uplift?' <span class="tag bad">แรงถอนจากลม</span>':''),f(x.N.fdnD/1000,2)+' / '+f(x.N.fdnL/1000,2),d.error?'–':(d.type==='pile'?f(d.Lx,2)+'×'+f(d.Ly,2)+' ม. เข็ม '+d.n+' ต้น':f(d.L,2)+'×'+f(d.B,2)+' ม.'),d.error?'–':f(d.t,0)+' ซม.',badge(x.ok)]}))+'</div>';
   if(A.stairs.length)out+='<div class="panel overflow"><h2>บันได ('+A.stairs.length+')</h2>'+tbl(['ชั้น','ช่อง','รูปแบบ','ทิศขึ้น','น้ำหนักคงที่ (กก./ตร.ม.)'],A.stairs.map(function(st){return [st.lv+1,gridLab(st.i)+(st.j+1),(STAIRTYPES.filter(function(t){return t[0]===st.type})[0]||['',''])[1],st.dir.toUpperCase(),f(CT.stairDL(st),0)]}))+'<p class="hint">บันไดตรง: ครึ่งหนึ่งลงคานต้นบันได อีกครึ่งลงคานปลายบันไดชั้นบน · มีชานพัก: ชานพักลงคานฝั่งชานพักระดับล่าง · บันไดวน: กระจายลงคานรอบช่องทั้งสองระดับ</p></div>';
-  out+=yothaPanel()+yothaLoadsPanel();
+  out+=yothaPanel();
   out+='<div class="panel"><h2>ส่งต่อไปออกแบบ</h2><p class="hint" style="margin-top:0">สร้างชิ้นส่วนในเมนูออกแบบพร้อมแรง: คาน คานซอย เสา ฐานราก แผ่นพื้นหล่อในที่ (กำหนดขอบต่อเนื่องจากช่องข้างเคียง) บันได และชุดหลังคา (ส่งไปเมนูแบบจำลองหลังคาและชิ้นส่วนโครงหลังคา)</p><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><label class="f" style="margin:0">จัดกลุ่มชิ้นส่วนที่รับแรงใกล้เคียงกัน<select onchange="__ctBimOpt(\'grp\',this.value)">'+[['-1','ไม่จัดกลุ่ม (ส่งทุกชิ้น)'],['0.1','ต่างกันไม่เกิน 10%'],['0.2','ต่างกันไม่เกิน 20%'],['0.3','ต่างกันไม่เกิน 30%'],['1','รวมทุกชิ้นขนาดเดียวกันเป็นแบบเดียว']].map(function(o){return '<option value="'+o[0]+'"'+(String(v.grp==null?'0.2':v.grp)===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></label><label class="f" style="margin:0">การตั้งเบอร์คาน<select onchange="__ctBimOptR(\'beamMarks\',this.value)">'+[['1','เบอร์มาตรฐาน GB / B / RB'],['0','ตามเกณฑ์ % ด้านซ้าย']].map(function(o){return '<option value="'+o[0]+'"'+(String(bimDefaultMarks(v,A.nS))===o[0]?' selected':'')+'>'+o[1]+'</option>'}).join('')+'</select></label>'+['C','F'].map(function(c){var cur=c==='C'?(v.marksC!=null&&v.marksC!==''?+v.marksC:2):(v.marksF!=null&&v.marksF!==''?+v.marksF:3);return '<label class="f" style="margin:0">'+(c==='C'?'เสา C':'ฐานราก F')+' <select onchange="__ctBimOptR(\'marks'+c+'\',this.value)">'+[1,2,3,4,5,6].map(function(k){return '<option'+(cur===k?' selected':'')+'>'+k+'</option>'}).join('')+'</select> แบบ</label>'}).join('')+(bimDefaultMarks(v,A.nS)>0?['GB','B','RB'].map(function(c){return '<label class="f" style="margin:0">'+c+' <select onchange="__ctBimOptR(\'marks'+c+'\',this.value)">'+[1,2,3,4,5].map(function(k){return '<option'+(bimCatMarks(v,c,A.nS)===k?' selected':'')+'>'+k+'</option>'}).join('')+'</select> เบอร์</label>'}).join(''):'')+'<button class="btn primary" onclick="__ctBimExport()">ส่งชิ้นส่วนทั้งหมดไปเมนูออกแบบ</button></div>'+bimMarksTable(r,v)+'<p class="hint">จัดกลุ่มแยกตามระดับชั้นและขนาดหน้าตัด ใช้แรงสูงสุดของกลุ่มออกแบบ จำนวนชิ้นในกลุ่มไปอยู่ช่อง "จำนวน" สำหรับ BOQ · การส่งซ้ำจะแทนที่รายการเดิมที่ส่งจากแบบจำลอง</p></div>';
   return out}
 /* ===================== 3D FORCE VISUALISATION (axial / moment / shear) ===================== */
@@ -4878,8 +4941,12 @@ window.__ctBimExport=function(){var r=toolRun('bim');if(r.error)return;var D=r.D
   var KB=bimDefaultMarks(v,nS),gB=KB>0?bimGroupCats(bAll,nS,v):tol>=0?bimGroup(bAll,function(o){return o.pre+'|'+o.inp.b+'x'+o.inp.h},function(o){return [o.inp.Mp,o.inp.Mn,o.inp.V]},tol):bAll.map(function(o){return {lead:o,items:[o]}});
   var CF=bimCF(r,v),gC=CF.gC,gF=CF.gF;cAll=CF.cAll;fAll=CF.fAll;
   var old=['beams','cols','fdns','slabs','stairs'].reduce(function(a,k){return a+state[k].filter(function(x){return x.bim}).length},0);
-  if(!confirm('สร้างชิ้นส่วนในเมนูออกแบบ: คาน '+gB.length+' แบบ (จาก '+bAll.length+' ช่วง) · เสา '+gC.length+' แบบ (จาก '+cAll.length+') · ฐานราก/ตอม่อ '+gF.length+' แบบ (จาก '+fAll.length+') · พื้น '+slabsOut.length+' · บันได '+A.stairs.length+(old?'\n\nรายการที่เคยส่งจากแบบจำลอง '+old+' รายการจะถูกแทนที่':'')+'\nตกลง?'))return;
-  ['beams','cols','fdns','slabs','stairs','peds'].forEach(function(k){state[k]=(state[k]||[]).filter(function(x){return !x.bim})});
+  if(!confirm('สร้างชิ้นส่วนในเมนูออกแบบ: คาน '+gB.length+' แบบ (จาก '+bAll.length+' ช่วง) · เสา '+gC.length+' แบบ (จาก '+cAll.length+') · ฐานราก/ตอม่อ '+gF.length+' แบบ (จาก '+fAll.length+') · พื้น '+slabsOut.length+' + พื้นสำเร็จรูป · บันได '+A.stairs.length+(old?'\n\nรายการที่เคยส่งจากแบบจำลอง '+old+' รายการจะถูกแทนที่':'')+'\nตกลง?'))return;
+  ['beams','cols','fdns','slabs','stairs','peds','pcs'].forEach(function(k){state[k]=(state[k]||[]).filter(function(x){return !x.bim})});
+  var pcsG={};A.levels.forEach(function(lv){if(!lv.hasSlab)return;var secs=lv.k<nS?(m.floors[lv.k].sec||[]):[];for(var j=0;j<A.occ.length;j++)for(var i=0;i<A.occ[0].length;i++){if(!A.occ[j][i]||lv.voids[i+','+j])continue;var ck=i+','+j,t=(lv.slabs||{})[ck]||'cast',a=A.X[i+1]-A.X[i],b=A.Y[j+1]-A.Y[j],sb=secs.filter(function(q){return q.i===i&&q.j===j})[0],pans=[];
+      if(!sb)pans.push([t,a,b]);else [0,1].forEach(function(sub){pans.push([(lv.slabs||{})[ck+':'+sub]||t,sb.dir==='y'?(sub?a-sb.pos:sb.pos):a,sb.dir==='x'?(sub?b-sb.pos:sb.pos):b])});
+      pans.forEach(function(pn){if(pn[0]!=='pc')return;var Ln=Math.round((Math.min(pn[1],pn[2])-m.beam.b/100)*20)/20,fin=lv.k===nS?m.roof.finish:m.slab.finish,ll=lv.k===nS?m.roof.llFlat:m.slab.ll,key=Ln+'|'+fin+'|'+ll;(pcsG[key]=pcsG[key]||{Ln:Ln,fin:fin,ll:ll,W:0,n:0,mem:[]});pcsG[key].W+=Math.max(pn[1],pn[2]);pcsG[key].n++;pcsG[key].mem.push(gridLab(i)+(j+1)+(nS>1?' ('+bimLvName(lv.k,nS)+')':''))})}});
+  Object.keys(pcsG).sort(function(a,b){return pcsG[b].Ln-pcsG[a].Ln}).forEach(function(k,ix){var g=pcsG[k],x=newPcs(ix+1);Object.assign(x,{bim:true,name:'PS'+(ix+1),qty:g.n,Ln:g.Ln,width:Math.round(g.W/g.n*100)/100,topping:5,finish:g.fin,ll:g.ll,members:g.mem.join(', ')});state.pcs=state.pcs||[];state.pcs.push(x)});
   var cnt={};var nameOf=function(pre,grp,single){cnt[pre]=(cnt[pre]||0)+1;return grp.items.length>1||!single?pre+'-'+cnt[pre]:single};
   gB.forEach(function(g){var L=g.lead,mx=function(k){return Math.max.apply(null,g.items.map(function(o){return o.inp[k]}))},nb=newBeam(0),Lq=g.items.reduce(function(a,o){return a+o.inp.L},0)/g.items.length;
     Object.assign(nb,{bim:true,name:KB>0?g.name:tol>=0?nameOf(L.pre,g):L.nm,qty:g.items.length,members:g.items.map(function(o){return o.nm}).join(', '),loadMode:'direct',b:L.inp.b,h:L.inp.h,bar:L.inp.bar,L:mx('L'),Lq:Math.round(Lq*100)/100,support:g.items.some(function(o){return o.inp.support==='simple'})?'simple':L.inp.support,Mp:mx('Mp'),Mn:mx('Mn'),V:mx('V')});state.beams.push(nb)});
@@ -4902,7 +4969,7 @@ window.__ctBimExport=function(){var r=toolRun('bim');if(r.error)return;var D=r.D
     else if(st.type==='straight')Object.assign(o,{Lh:Math.round(run*100)/100,width:Math.round(wid*100)/100});
     else Object.assign(o,{Lh:Math.round((run-land)*100)/100,Lland:Math.round(land*100)/100,width:Math.round(wid/2*100)/100});
     Object.assign(nst,o);state.stairs.push(nst)});
-  ['beam','col','fdn','slab','stair','ped'].forEach(function(mk){var L0=state[LIST[mk]];if(!L0.length)L0.push(MAKE[mk](1));if(!L0.some(function(x){return x.id===state.curIds[mk]}))state.curIds[mk]=L0[0].id});
+  ['beam','col','fdn','slab','stair','ped','pcs'].forEach(function(mk){var L0=state[LIST[mk]];if(!L0.length)L0.push(MAKE[mk](1));if(!L0.some(function(x){return x.id===state.curIds[mk]}))state.curIds[mk]=L0[0].id});
   if(A.roof){var rv=toolVals('roofmodel');rv.src='bim';bimRoofParts(r)}
   save();alert('สร้างแล้ว: คาน '+gB.length+' แบบ · เสา '+gC.length+' แบบ · ฐานราก '+gF.length+' แบบ · พื้น '+slabsOut.length+' · บันได '+A.stairs.length+(A.roof?' · ชุดหลังคา':'')+'\nจำนวนชิ้นจริงของแต่ละแบบอยู่ในช่อง "จำนวน" (ใช้ใน BOQ)');state.module='home';renderAll()};
 /* ---------- PDF / image import ---------- */
@@ -4980,8 +5047,9 @@ var MANUAL=[
 ['col','8. เสา 9. ตอม่อ 10. ฐานราก',`<ul><li><b>เสา:</b> กรอก P, Mx, My ใช้แผนภาพปฏิสัมพันธ์ P-M หาจำนวนเหล็กอัตโนมัติ ตรวจแรงดัดสองทาง โมเมนต์ขั้นต่ำ และความชะลูด (ขยายโมเมนต์ในโครงค้ำยัน)</li><li><b>ตอม่อ:</b> รวมน้ำหนักจากเสาชั้นบน คานคอดิน และตอม่อเอง ปุ่ม "ส่งน้ำหนักไปออกแบบฐานราก"</li><li><b>ฐานราก:</b> ฐานแผ่ (หาขนาดและความหนาอัตโนมัติ รับโมเมนต์ทิศเดียว) หรือฐานเสาเข็ม 1–9 ต้น ตรวจแรงเฉือนทางเดียว เฉือนทะลุ แรงกดใต้เสา และเหล็กเสริม</li></ul>`],
 ['anal','11. วิเคราะห์โครงสร้าง',`<ul><li><b>คานต่อเนื่อง:</b> สูงสุด 8 ช่วง น้ำหนักแผ่และแรงจุด (กก./ม., กก.) จัดน้ำหนักจรสลับช่วงอัตโนมัติ ส่งค่าไปออกแบบคานทุกช่วงด้วยปุ่มเดียว</li><li><b>โครงข้อแข็ง 2 มิติ:</b> ตัวช่วยสร้างหลายช่วงหลายชั้น กรอกจุดต่อ ชิ้นส่วน จุดรองรับ น้ำหนักกรณี D/L/W ได้แผนภาพโมเมนต์และการเสียรูป</li><li><b>3 มิติทั้งอาคาร:</b> อยู่ในเมนูแบบจำลองโครงสร้าง 3 มิติ (หัวข้อ 3)</li></ul>`],
 ['ref','12. ข้อมูลอ้างอิง 13. BOQ',`<ul><li><b>ตารางน้ำหนักบรรทุก:</b> น้ำหนักจรตามกฎกระทรวง 2566 ครบ 7 กลุ่มอาคาร หน่วยแรงลม การรวมน้ำหนัก ตัวคูณลดกำลัง การลดน้ำหนักจรตามชั้น และน้ำหนักวัสดุ ผนัง หลังคา พื้น เพิ่ม "วัสดุที่กำหนดเอง" ได้ (หมวด, ชื่อ, น้ำหนัก) แล้วจะไปอยู่ในช่องเลือกของผนังและพื้น</li><li><b>ตารางเหล็กรูปพรรณ / เหล็กเสริม:</b> พื้นที่ น้ำหนัก I Z r</li><li><b>BOQ:</b> กำหนด % เผื่อเหล็กแยกแต่ละขนาด และลวดผูกเหล็ก (กก. ต่อเหล็ก 1 ตัน) รวมปริมาณคอนกรีต ไม้แบบ เหล็กตามขนาด เหล็กรูปพรรณหลังคา วัสดุมุง งานดิน ใส่ราคาวัสดุและค่าแรง Factor F และรายการเพิ่มเติม แล้วพิมพ์</li></ul>`],
+['pcs','5.2 พื้นสำเร็จรูป',`<p>ออกแบบแผ่นพื้นอัดแรงแบบตัน 5×35 ซม. (ลวด Ø4 มม. 4–8 เส้น) จากตารางน้ำหนักบรรทุกปลอดภัยตามช่วงพาดสุทธิ ทั้งแบบค้ำยันและไม่ค้ำยัน: น้ำหนักที่แผ่นต้องรับ = คอนกรีตทับหน้า + วัสดุปูผิว + น้ำหนักจร (ไม่รวมแผ่นเอง) เลือกจำนวนลวดน้อยที่สุดที่รับได้ (เทียบส่วนระหว่างช่วง) คำนวณแรงลงคานและเหล็กกันร้าวในทับหน้า พร้อมรูปตัด · ช่องที่กำหนดเป็นพื้นสำเร็จรูปในแบบจำลอง 3 มิติ (หรือจากโยธาแคด) ถูกส่งมาเป็น PS1, PS2 … อัตโนมัติ จัดกลุ่มตามช่วงพาดและน้ำหนัก และลงตาราง BOQ / แปลนโครงสร้าง · ค่าตารางเป็นของผู้ผลิตทั่วไป ต้องตรวจกับผู้ผลิตที่ใช้จริง</p>`],
 ['sog','5.1 พื้นวางบนดิน',`<p>ออกแบบพื้นวางบนดินรับน้ำหนักกองเก็บและแรงจุด (ขาชั้นวาง ล้อรถยก): ตรวจหน่วยแรงดัดจากแรงจุดด้วยสูตร Westergaard (ภายใน ขอบ มุม) และน้ำหนักแผ่ด้วยสูตร PCA เทียบกับ MR/อัตราส่วนความปลอดภัย คำนวณเหล็กต้านแรงเสียดทานดินตามระยะรอยต่อ แนะนำระยะรอยต่อ 24h–36h และตรวจแรงกดบนดิน ค่า k ของดินควรได้จากการทดสอบแผ่นกด (plate bearing test)</p>`],
-['yotha','3.8 เชื่อมกับโยธาแคด',`<ul><li><b>รับแบบ:</b> ในโยธาแคดใช้ ไฟล์ → ส่งแบบไป Civil Toolkit แล้วเลือกไฟล์ .json ที่หน้าภาพรวม (กล่อง "นำเข้าแบบจากโยธาแคด") หรือในหน้าตั้งค่า → นำเข้าไฟล์โครงการ หรือกดลิงก์ "เปิด Civil Toolkit พร้อมข้อมูล" แอปสร้างเป็นโครงการใหม่และเติมแบบจำลองโครงสร้าง 3 มิติให้ทันที (กริด A, B, C ตามแกน X ของโยธาแคด ชั้น ผนังตามกริดและนอกกริด พื้นห้องน้ำ คานซอย บันได ประตูหน้าต่าง สุขภัณฑ์ หลังคา ฐานราก)</li><li><b>ตรวจค่า:</b> ผนังที่น้ำหนักไม่ตรงตัวเลือกจะใช้ค่าที่ใกล้ที่สุด หลังคาเพิงหมาแหงนใช้จั่วแทนในแบบจำลอง และแจ้งข้อสังเกตทุกครั้ง</li><li><b>น้ำหนักและหลังคา (โยธาแคด 7.7 ขึ้นไป):</b> รับน้ำหนักวัสดุปูผิวและฝ้า น้ำหนักจรตามการใช้งาน วัสดุมุงหลังคา ระยะจันทัน และอะเสเหล็กเข้าแบบจำลองให้อัตโนมัติ กล่อง "น้ำหนักบรรทุกและหลังคาจากโยธาแคด" แสดงรายละเอียดทุกชั้น และปุ่ม "ออกแบบหลังคานี้" เปิดเมนูหลังคาพร้อมข้อมูล</li><li><b>ส่งผลกลับ (โยธาแคด 8.1 ขึ้นไป):</b> นอกจากเหล็กเสริม ไฟล์ผลยังส่งขนาดเสา คาน ขนาดและความหนาฐานราก และจำนวนเสาเข็มกลับไปด้วย โยธาแคดปรับแบบ แปลนฐานราก ตารางเสา ตอม่อ และแบบขยายคานให้อัตโนมัติ</li><li><b>ส่งผลกลับ:</b> หลังวิเคราะห์ กล่อง "เชื่อมกับโยธาแคด" ในเมนูแบบจำลองแสดงเหล็กเสริมของแต่ละเครื่องหมาย (C1, B1, S1, F1, บันได) ใช้ผลของชิ้นที่รับแรงมากที่สุดในกลุ่ม กดส่งผลเป็นไฟล์ yothacad-rebar แล้วในโยธาแคดใช้ ไฟล์ → นำเข้าผลออกแบบเหล็กเสริม</li></ul>`],
+['yotha','3.8 เชื่อมกับโยธาแคด',`<ul><li><b>รับแบบ:</b> ในโยธาแคดใช้ ไฟล์ → ส่งแบบไป Civil Toolkit แล้วเลือกไฟล์ .json ที่หน้าภาพรวม (กล่อง "นำเข้าแบบจากโยธาแคด") หรือในหน้าตั้งค่า → นำเข้าไฟล์โครงการ หรือกดลิงก์ "เปิด Civil Toolkit พร้อมข้อมูล" แอปสร้างเป็นโครงการใหม่และเติมแบบจำลองโครงสร้าง 3 มิติให้ทันที (กริด A, B, C ตามแกน X ของโยธาแคด ชั้น ผนังตามกริดและนอกกริด พื้นห้องน้ำ คานซอย บันได ประตูหน้าต่าง สุขภัณฑ์ หลังคา ฐานราก)</li><li><b>ตรวจค่า:</b> ผนังที่น้ำหนักไม่ตรงตัวเลือกจะใช้ค่าที่ใกล้ที่สุด หลังคาเพิงหมาแหงนใช้จั่วแทนในแบบจำลอง และแจ้งข้อสังเกตทุกครั้ง</li><li><b>ส่งผลกลับ:</b> หลังวิเคราะห์ กล่อง "เชื่อมกับโยธาแคด" ในเมนูแบบจำลองแสดงเหล็กเสริมของแต่ละเครื่องหมาย (C1, B1, S1, F1, บันได) ใช้ผลของชิ้นที่รับแรงมากที่สุดในกลุ่ม กดส่งผลเป็นไฟล์ yothacad-rebar แล้วในโยธาแคดใช้ ไฟล์ → นำเข้าผลออกแบบเหล็กเสริม</li></ul>`],
 ['est','13.1 ประมาณราคาทั้งหลัง',`<p>เมนู "ประมาณราคาทั้งหลัง" รวม <b>งานโครงสร้าง</b> จาก BOQ กับ <b>งานสถาปัตย์</b> ที่คำนวณจากแบบจำลอง 3 มิติ: ผนังแต่ละชนิด (หักประตูหน้าต่าง) ฉาบปูน ทาสี บุกระเบื้องห้องน้ำ ปูพื้น กันซึม ฝ้าเพดาน ประตู หน้าต่าง สุขภัณฑ์ (กรอกในแปลนแต่ละชั้น) และหลังคา (วัสดุมุง ครอบ โครงเหล็ก เชิงชาย รางน้ำ) ใส่ค่าวัสดุและค่าแรงต่อหน่วย Factor F และ VAT ได้ราคารวมและราคาต่อตารางเมตร ราคาที่กรอกเก็บในคลังราคากลางของเครื่อง ใช้ได้ทุกโครงการ เพิ่มรายการอื่นในช่องรายการเพิ่มเติม</p>`],
 ['print','14. รายการคำนวณและการพิมพ์',`<p>กด "รายการคำนวณ" ด้านบน เลือก "ชิ้นนี้" หรือ "ทุกชิ้น" แล้วกด "พิมพ์ / บันทึกเป็น PDF" เอกสารใช้ฟอนต์ TH SarabunPSK 16 pt มีหัวโครงการ สูตรพร้อมแทนค่าทุกบรรทัด และช่องลงนามผู้คำนวณ/ผู้ตรวจสอบ ปุ่ม "ดาวน์โหลด Word" ใช้ได้ในแอปที่ติดตั้ง</p>`],
 ['units','15. หน่วยและสัญลักษณ์',`<ul><li>ความยาว ม. / ซม. · หน่วยแรง กก./ตร.ซม. (ksc) · น้ำหนักแผ่ กก./ม. · น้ำหนักต่อพื้นที่ กก./ตร.ม. · แรง ตัน หรือ กก. · โมเมนต์ ตัน·ม. หรือ กก.·ม.</li><li>D = น้ำหนักคงที่ · L = น้ำหนักจร · W = แรงลม · Mu, Vu, Pu = แรงประลัย (SDM) · φ = ตัวคูณลดกำลัง · ρ = อัตราส่วนเหล็ก</li><li>เมนู "แปลงหน่วย" แปลง ksc ↔ MPa ↔ psi, ตัน ↔ kN</li></ul>`],
@@ -4990,7 +5058,7 @@ var MANUAL=[
 ['faq','18. คำถามที่พบบ่อย',`<ul><li><b>ปุ่มติดตั้งแอปไม่ขึ้น:</b> ใช้ Chrome/Edge บนคอม หรือ Safari บน iPad และเปิดจากลิงก์ GitHub Pages (https)</li><li><b>อัปเดตแล้วยังเห็นเวอร์ชันเก่า:</b> ปิดแอปแล้วเปิดใหม่หนึ่งครั้ง</li><li><b>ตรวจกริดจาก PDF ไม่เจอ:</b> แบบอาจเป็นภาพสแกนหรือกริดไม่ได้เขียนเป็นตัวอักษร ให้คลิกวางเส้นกริดเอง</li><li><b>ชิ้นส่วนไม่ผ่าน:</b> ดูข้อความสีแดงในผลลัพธ์ แล้วเพิ่มขนาด เปลี่ยนขนาดเหล็ก หรือเพิ่ม f'c</li><li><b>ข้อมูลหาย:</b> ข้อมูลอยู่ในเบราว์เซอร์ของแต่ละเครื่อง ควรเปิดซิงก์หรือส่งออกไฟล์โครงการเป็นระยะ</li></ul>`]];
 function manualHTML(sheet){var toc='<div class="panel"><h2>สารบัญ</h2><ol style="columns:2;margin:0;padding-left:1.3em;line-height:1.9">'+MANUAL.map(function(s){return '<li><a href="#man-'+s[0]+'" style="color:var(--ink)">'+s[1].replace(/^\d+\.\s*/,'')+'</a></li>'}).join('')+'</ol></div>';
   var body=MANUAL.map(function(s){return (sheet?'<div class="mansec">':'<div class="panel man" id="man-'+s[0]+'">')+'<h2>'+s[1]+'</h2>'+s[2]+'</div>'}).join('');
-  return (sheet?'<div><div class="hd"><div class="t">คู่มือการใช้งาน Civil Toolkit</div><div>เวอร์ชัน 3.9</div><div>กฎกระทรวง 2566</div></div>':'<div class="verdict ok"><b>คู่มือการใช้งาน</b><p>Civil Toolkit v3.9 · พิมพ์คู่มือได้จากปุ่ม "รายการคำนวณ" ด้านบน</p></div>'+toc)+body+(sheet?'</div>':'')}
+  return (sheet?'<div><div class="hd"><div class="t">คู่มือการใช้งาน Civil Toolkit</div><div>เวอร์ชัน 4.0</div><div>กฎกระทรวง 2566</div></div>':'<div class="verdict ok"><b>คู่มือการใช้งาน</b><p>Civil Toolkit v4.0 · พิมพ์คู่มือได้จากปุ่ม "รายการคำนวณ" ด้านบน</p></div>'+toc)+body+(sheet?'</div>':'')}
 function renderManual(){$('#vTool').innerHTML=manualHTML(false)}
 
 /* ===================== PRICE LIBRARY (shared by all projects) ===================== */
@@ -5174,35 +5242,10 @@ function yothaToBim(o){var b=o.civilToolkitBim,w=[],num0=function(v,d){v=+v;retu
     roofType:rt,slope:rt==='flat'?0:slope,eave:Math.round(num0(b.eave,100))/100,fdnType:b.fdnType==='pile'?'pile':'spread',Df:num0(b.Df,1.5),pileSize:num0(b.pileSize,22)};
   if(!v.cells){var c=[];for(var j=0;j<ys.length;j++)for(var i=0;i<xs.length;i++)c.push(i+','+j);v.cells=c.join(';');w.push('ไม่มีข้อมูลช่องตัวอาคาร ใช้ทุกช่องของกริด')}
   if(v.fdnType==='pile'&&!(+b.pileSize>0))w.push('ไม่มีขนาดเสาเข็ม ใช้ 22 ซม.');
-  /* design loads & roof data sent by โยธาแคด v7.7+ */
-  if(+b.finish>0){v.finish=Math.round(+b.finish);w.push('น้ำหนักวัสดุปูผิว ฝ้า และระบบ '+v.finish+' กก./ตร.ม. คำนวณจากวัสดุที่กำหนดในโยธาแคด')}
-  if(+b.ll>0){v.ll=Math.round(+b.ll);if(v.ll<200)w.push('น้ำหนักบรรทุกจรพื้น '+v.ll+' กก./ตร.ม. ต่ำกว่ากฎกระทรวง 2566 สำหรับบ้านพักอาศัย (200) ตรวจสอบก่อนวิเคราะห์')}
-  if(b.roofMat&&CT.ROOFMAT.some(function(m){return m.id===b.roofMat&&m.sup!=='slab'}))v.roofMat=b.roofMat;
-  if(+b.roofSp>0)v.roofSp=+b.roofSp;if(+b.roofLL>0)v.roofLL=Math.max(50,+b.roofLL);
-  if(b.roofSupport==='steel'&&rt!=='flat'){v.roofSupport='steel';if(topBeams)w.push('รับอะเสเหล็กจากโยธาแคด: หลังคาวางบนอะเสเหล็กบนหัวเสา ไม่ออกแบบอะเสเป็นคาน ค.ส.ล.')}
   return {v:v,warn:w}}
-function yothaRoofTool(r){var sh=['gable','hip','manila','shed','butterfly','lshape','curved','flat'].indexOf(r.ctShape)>=0?r.ctShape:'hip';
-  return {shape:sh,mat:r.ctMat||'concTile',W:Math.max(1,+r.planW||8),L:Math.max(1,+r.planL||12),slope:+r.pitch||30,eave:+r.overhang||1,gable:+r.overhang||0.5,hipRatio:0.5,Ww:5,Lw:4,system:'rafter',rafterSp:+r.rafterSpacing||1,postSp:3,spacing:3,ll:Math.max(50,+r.roofLL||50),wind:60,ceiling:0,waste:5,boq:'1'}}
-window.__ctYothaRoof=function(i){var y=state.yotha;if(!y||!(y.roofDesign||[])[i])return;state.tools=state.tools||{};state.tools.roofsys=yothaRoofTool(y.roofDesign[i]);state.module='roofsys';state.view='design';save();renderAll();window.scrollTo(0,0)};
-function yothaLoadsPanel(){var y=state.yotha;if(!y||(!y.loads&&!(y.roofDesign||[]).length))return '';var L=y.loads||{},h='<div class="panel overflow"><h2>น้ำหนักบรรทุกและหลังคาจากโยธาแคด</h2>';
-  var grp=function(arr,key,val){var o={};(arr||[]).forEach(function(x){var k=x[key]||'-';o[k]=o[k]||{n:0,a:0,v:x[val],len:0};o[k].n++;o[k].a+=+x.area||0;o[k].len+=+x.length||0});return o};
-  var F=grp(L.floors,'material','sdl');if(Object.keys(F).length)h+='<h3>วัสดุปูพื้น (SDL รวมปูนทรายปรับระดับ)</h3>'+tbl(['วัสดุ','พื้นที่ (ตร.ม.)','SDL (กก./ตร.ม.)'],Object.keys(F).map(function(k){return [esc(k),f(F[k].a,1),f(F[k].v,0)]}));
-  var C=grp(L.ceilings,'material','sdl');if(Object.keys(C).length)h+='<h3>ฝ้าเพดาน</h3>'+tbl(['ชนิดฝ้า','พื้นที่ (ตร.ม.)','น้ำหนัก (กก./ตร.ม.)'],Object.keys(C).map(function(k){return [esc(k),f(C[k].a,1),f(C[k].v,0)]}));
-  if((L.walls||[]).length){var W={};L.walls.forEach(function(x){var k=x.material+'|'+x.unitWeight;W[k]=W[k]||{m:x.material,u:x.unitWeight,len:0,q:0};W[k].len+=+x.length||0;W[k].q=Math.max(W[k].q,+x.lineLoad||0)});
-    h+='<h3>ผนัง</h3>'+tbl(['วัสดุผนัง','กก./ตร.ม.','ยาวรวม (ม.)','น้ำหนักแผ่สูงสุด (กก./ม.)'],Object.keys(W).map(function(k){var o=W[k];return [esc(o.m),f(o.u,0),f(o.len,1),f(o.q,0)]}))}
-  if((L.rooms||[]).length){var R={};L.rooms.forEach(function(x){R[x.liveLoad]=(R[x.liveLoad]||[]).concat(x.name)});h+='<h3>น้ำหนักบรรทุกจรตามการใช้งาน</h3>'+tbl(['LL (กก./ตร.ม.)','ห้อง'],Object.keys(R).map(function(k){return [f(+k,0),esc(R[k].join(', '))]}),'wrap')}
-  if((L.equipment||[]).length)h+='<h3>อุปกรณ์ (แรงจุด)</h3>'+tbl(['อุปกรณ์','ชั้น','ตำแหน่ง (ม.)','แรง (กก.)'],L.equipment.map(function(x){return [esc(x.name),(+x.level+1)+'',f(x.x,2)+', '+f(x.y,2),f(x.pointLoad,0)]}));
-  if((L.porches||[]).length)h+='<h3>ระเบียง</h3>'+tbl(['ระดับ','พื้นที่ (ตร.ม.)','SDL','LL'],L.porches.map(function(x){return ['+'+f(x.topLevel,2),f(x.area,1),f(x.sdl,0),f(x.liveLoad,0)]}));
-  var RD=y.roofDesign||[];if(RD.length){h+='<h3>หลังคาและโครงหลังคา</h3>'+tbl(['หลังคา','วัสดุมุง','ผัง (ม.)','ลาด','ชิ้นโครง','เหล็ก (กก.)',''],RD.map(function(r,i){var kg=(r.members||[]).reduce(function(a,m){return a+(+m.kgPerM||0)*(+m.length||0)},0);
-      return [esc((r.shape||r.kind)+(r.polygon?' (หลายปีก)':'')),esc(r.material),f(r.planW,2)+' × '+f(r.planL,2),f(r.pitch,0)+'°',(r.members||[]).length+'',f(kg,0),r.ctShape==='flat'?'-':'<button class="btn" onclick="__ctYothaRoof('+i+')">ออกแบบหลังคานี้</button>']}),'wrap')+
-      '<p class="hint">ปุ่ม "ออกแบบหลังคานี้" เปิดเมนูหลังคาพร้อมทรง วัสดุมุง ขนาดผัง ความลาด ชายคา และระยะจันทันจากโยธาแคด · น้ำหนักจรหลังคาใช้ 50 กก./ตร.ม. ตามกฎกระทรวง 2566 · หลังคาหลายปีกใช้ขนาดกรอบนอกเป็นค่าเริ่มต้น</p>'}
-  var SB=y.steelBeams||[];if(SB.length){var S2={};SB.forEach(function(x){var k=x.name+'|'+x.section;S2[k]=S2[k]||{n:x.name,s:x.section,kg:+x.kgPerM||0,len:0,c:0};S2[k].len+=+x.span||0;S2[k].c++});
-    h+='<h3>อะเส / คานเหล็กรูปพรรณ</h3>'+tbl(['ชิ้นส่วน','หน้าตัด','จำนวน','ยาวรวม (ม.)','น้ำหนัก (กก.)'],Object.keys(S2).map(function(k){var o=S2[k];return [esc(o.n),esc(o.s),o.c+'',f(o.len,1),f(o.len*o.kg,0)]}))+'<p class="hint">อะเสเหล็กไม่ถูกนำไปออกแบบเป็นคาน ค.ส.ล. ในแบบจำลอง</p>'}
-  return h+(L.note?'<p class="hint">'+esc(L.note)+'</p>':'')+'</div>'}
 function yothaImport(o,src){yothaValidate(o);var cv=yothaToBim(o),nm=(o.project&&(o.project.name||o.project.title))||'แบบจากโยธาแคด',id=uid('p'),L=projIndex();
-  var rds=(o.roofDesign||[]).filter(function(r){return r.ctShape!=='flat'}),tl={bim:cv.v};if(rds.length)tl.roofsys=yothaRoofTool(rds[0]);
   var st={project:{name:nm,location:(o.project&&o.project.location)||'',engineer:(o.project&&o.project.engineer)||'',license:'',checker:'',date:state.project.date},method:state.method,mat:state.mat,params:state.params,module:'bim',view:'design',
-    tools:tl,yotha:{received:new Date().toISOString(),source:src||'file',grid:o.grid,levels:o.levels,members:o.members||{},rebar:o.rebar||{},project:o.project||{},warn:cv.warn,loads:o.loads||null,roofDesign:o.roofDesign||[],steelBeams:((o.members||{}).steelBeams)||[]}};
+    tools:{bim:cv.v},yotha:{received:new Date().toISOString(),source:src||'file',grid:o.grid,levels:o.levels,members:o.members||{},rebar:o.rebar||{},project:o.project||{},warn:cv.warn}};
   try{localStorage.setItem('civil-toolkit.p.'+id,JSON.stringify(st))}catch(e){throw new Error('พื้นที่เก็บข้อมูลในเบราว์เซอร์ไม่พอ')}
   L.push({id:id,name:nm,updated:Date.now()});projSaveIndex(L);return {id:id,warn:cv.warn,name:nm}}
 function yothaHandle(o,src){try{var r=yothaImport(o,src);alert('สร้างโครงการ "'+r.name+'" จากแบบโยธาแคดแล้ว'+(r.warn.length?'\n\nข้อสังเกต:\n• '+r.warn.join('\n• '):''));projSwitch(r.id)}catch(e){alert('นำเข้าไม่ได้: '+(e.message||e))}}
@@ -5218,16 +5261,16 @@ function yothaRebar(){var y=state.yotha;if(!y)return {error:'โครงกา�
   var cm=function(v){return Math.round(v)/100};
   (M.columns||[]).forEach(function(c){var i=c.grid&&c.grid[0]>=0?c.grid[0]:near(X,c.x-gx0),j=c.grid&&c.grid[1]>=0?c.grid[1]:near(Y,c.y-gy0),stn=(+c.level||0)+1;
     var d=D.cols.filter(function(q){return q.c.node.i===i&&q.c.node.j===j&&q.c.st===stn})[0];if(!d){miss.push('เสา '+c.mark);return}var inp=d.d.input||d.inp;
-    put(c.rkey,'column',c.mark,{n:2*inp.nb+2*inp.ns,d:inp.bar,td:inp.tie,ts:cm(d.d.tieS||15),c:cm(inp.cover||3),cb:cm(inp.b),ch:cm(inp.h)},d.d.ratio||0)});
+    put(c.rkey,'column',c.mark,{n:2*inp.nb+2*inp.ns,d:inp.bar,td:inp.tie,ts:cm(d.d.tieS||15),c:cm(inp.cover||3)},d.d.ratio||0)});
   (M.beams||[]).forEach(function(b){var lv=b.at==='floor'?(+b.level||0):(+b.level||0)+1,ax=b.a.x-gx0,ay=b.a.y-gy0,bx=b.b.x-gx0,by=b.b.y-gy0,hz=Math.abs(ay-by)<0.02,list=[];
     if(hz){var j=near(Y,ay),lo=Math.min(ax,bx),hi=Math.max(ax,bx);if(j>=0)D.beams.forEach(function(q){if(q.lv===lv&&q.r.dir==='x'&&q.r.line===j){var s=q.r.s0+q.q;if(X[s]>=lo-0.05&&X[s+1]<=hi+0.05)list.push(q)}})}
     else{var i=near(X,ax),lo2=Math.min(ay,by),hi2=Math.max(ay,by);if(i>=0)D.beams.forEach(function(q){if(q.lv===lv&&q.r.dir==='y'&&q.r.line===i){var s=q.r.s0+q.q;if(Y[s]>=lo2-0.05&&Y[s+1]<=hi2+0.05)list.push(q)}})}
     if(!list.length)(D.secs||[]).forEach(function(q){var sb=q.sr.sb;if(q.sr.lv!==lv)return;var on=sb.dir==='x'?(hz&&Math.abs(ay-(Y[q.sr.j]+sb.pos))<0.05):(!hz&&Math.abs(ax-(X[q.sr.i]+sb.pos))<0.05);if(on)list.push(q)});
     if(!list.length){miss.push('คาน '+b.mark);return}
     var g=list.reduce(function(a,q){return (q.inp.Mp+q.inp.Mn)>(a.inp.Mp+a.inp.Mn)?q:a}),d=g.d,inp=g.inp,nb=d.pos&&!d.pos.error?d.pos.nBar:2,nt=d.neg&&!d.neg.error&&inp.Mn>0?Math.max(2,d.neg.nBar):2;
-    put(b.rkey,'beam',b.mark,{tn:nt,td:inp.bar,bn:nb,bd:inp.bar,sd:inp.stirrup,ss:d.shear&&!d.shear.error?cm(d.shear.sUse):0.15,c:cm(inp.cover),bw:cm(inp.b),bh:cm(inp.h)},inp.Mp+inp.Mn)});
+    put(b.rkey,'beam',b.mark,{tn:nt,td:inp.bar,bn:nb,bd:inp.bar,sd:inp.stirrup,ss:d.shear&&!d.shear.error?cm(d.shear.sUse):0.15,c:cm(inp.cover)},inp.Mp+inp.Mn)});
   (M.footings||[]).forEach(function(fq){var i=near(X,fq.x-gx0),j=near(Y,fq.y-gy0),d=D.fdns.filter(function(q){return q.N.i===i&&q.N.j===j})[0];if(!d||d.d.error||!d.d.stX||d.d.stX.error){miss.push('ฐานราก '+fq.mark);return}
-    var R=d.d,Lx=R.type==='pile'?R.Lx:R.L,cv=(d.inp.cover||7.5)/100,n=R.stX.n,s=n>1?(Lx-2*cv)/(n-1):0.15;put(fq.rkey,'footing',fq.mark,{d:d.inp.bar,s:Math.floor(s*100/2.5)*2.5/100,c:cv,fx:R.type==='pile'?R.Lx:R.L,fy:R.type==='pile'?R.Ly:R.B,ft:cm(R.t),np:R.type==='pile'?R.n:0},(d.N.fdnD+d.N.fdnL))});
+    var R=d.d,Lx=R.type==='pile'?R.Lx:R.L,cv=(d.inp.cover||7.5)/100,n=R.stX.n,s=n>1?(Lx-2*cv)/(n-1):0.15;put(fq.rkey,'footing',fq.mark,{d:d.inp.bar,s:Math.floor(s*100/2.5)*2.5/100,c:cv},(d.N.fdnD+d.N.fdnL))});
   (M.slabs||[]).forEach(function(sq){var lv=+sq.level||0,lvl=A.levels[lv];if(!lvl||!lvl.hasSlab){miss.push('พื้น '+sq.mark);return}var best=null,P=state.params;
     for(var j=0;j<A.occ.length;j++)for(var i=0;i<A.occ[0].length;i++){if(!A.occ[j][i])continue;var c={x:(X[i]+X[i+1])/2+gx0,y:(Y[j]+Y[j+1])/2+gy0};if(sq.pts&&sq.pts.length>2&&!ptIn(c,sq.pts))continue;var t=(lvl.slabs||{})[i+','+j]||'cast';if(t==='void'||t==='pc'||lvl.voids[i+','+j])continue;
       var a=X[i+1]-X[i],bb=Y[j+1]-Y[j],has=function(ii,jj){return jj>=0&&jj<A.occ.length&&ii>=0&&ii<A.occ[0].length&&A.occ[jj][ii]},xl=a>=bb,e={b:has(i,j-1),t:has(i,j+1),l:has(i-1,j),r:has(i+1,j)};
@@ -5235,7 +5278,9 @@ function yothaRebar(){var y=state.yotha;if(!y)return {error:'โครงกา�
       var o2=CT.designSlab(inp,mat(),state.mat.grade==='SD40'&&false?'SD40':'SR24',P);if(!o2.ok){inp.bar='DB12';o2=CT.designSlab(inp,mat(),state.mat.grade,P)}
       var main=Math.min.apply(null,o2.items.filter(function(q){return !q.error&&/ด้านสั้น|เหล็กหลัก/.test(q.label)}).map(function(q){return q.sUse})),dist=Math.min.apply(null,o2.items.filter(function(q){return !q.error&&/ด้านยาว|กันร้าว/.test(q.label)}).map(function(q){return q.sUse}));
       var sc=1/main;if(!best||sc>best.sc)best={sc:sc,bar:inp.bar,ms:main,ds:isFinite(dist)?dist:main}}
-    if(!best){miss.push('พื้น '+sq.mark);return}put(sq.rkey,'slab',sq.mark,{md:best.bar,ms:cm(best.ms),dd:best.bar,ds:cm(best.ds),c:0.02},best.sc)});
+    if(!best){var pcc=null;for(var j2=0;j2<A.occ.length;j2++)for(var i2=0;i2<A.occ[0].length;i2++){if(!A.occ[j2][i2])continue;var cc={x:(X[i2]+X[i2+1])/2+gx0,y:(Y[j2]+Y[j2+1])/2+gy0};if(sq.pts&&sq.pts.length>2&&!ptIn(cc,sq.pts))continue;if(((lvl.slabs||{})[i2+','+j2]||'cast')==='pc'){var Ln=Math.min(X[i2+1]-X[i2],Y[j2+1]-Y[j2])-m.beam.b/100;if(!pcc||Ln>pcc.Ln)pcc={Ln:Ln}}}
+      if(pcc){var rp=CT.designPcs({Ln:pcc.Ln,topping:5,finish:m.slab.finish,ll:m.slab.ll,shored:true,bar:'RB6',grade:'SR24',fy:2400,method:state.method},state.params);put(sq.rkey,'slab',sq.mark,{md:'RB6',ms:rp.s,dd:'RB6',ds:rp.s,c:0.02,precast:'แผ่นพื้นสำเร็จรูป 5×35 ซม.'+(rp.pick?' ลวด '+rp.pick.n+'Ø4 มม.':'')+' ทับหน้า 5 ซม.'},pcc.Ln);return}
+      miss.push('พื้น '+sq.mark);return}put(sq.rkey,'slab',sq.mark,{md:best.bar,ms:cm(best.ms),dd:best.bar,ds:cm(best.ds),c:0.02},best.sc)});
   (M.stairs||[]).forEach(function(s2){var run=+s2.run||3,R0=(+s2.riser||0.175)*100,T0=(+s2.tread||0.25)*100,inp={stype:'straight',Lh:run,width:+s2.width||1,R:R0,T:T0,t:15,cover:2,bar:'DB12',support:'simple',dl:100,ll:m.slab.ll,method:state.method};
     var o3=CT.designStair(inp,mat(),state.mat.grade,state.params);for(var t=15;!o3.ok&&t<=25;t+=2.5){inp.t=t;o3=CT.designStair(inp,mat(),state.mat.grade,state.params)}
     var mi=o3.items.filter(function(q){return !q.error&&/เหล็กหลัก/.test(q.label)}).map(function(q){return q.sUse}),di=o3.items.filter(function(q){return /กระจาย/.test(q.label)})[0];
@@ -5267,7 +5312,8 @@ function keyPlanSVG(kind,members,mark){var bv=state.tools&&state.tools.bim;if(!b
   for(var j=0;j<g.ys.length;j++)for(var i=0;i<g.xs.length;i++)if(sel[i+','+j])s+='<rect x="'+Xs(X[i])+'" y="'+Ys(Y[j+1])+'" width="'+g.xs[i]*sc+'" height="'+g.ys[j]*sc+'" fill="#F1F5F9" stroke="#CBD5E1"/>';
   X.forEach(function(x,i){s+='<text x="'+Xs(x)+'" y="14" text-anchor="middle" font-size="10" fill="#475569" font-family="var(--font)">'+gridLab(i)+'</text>'});Y.forEach(function(y,j){s+='<text x="'+(W-10)+'" y="'+(Ys(y)+3)+'" text-anchor="middle" font-size="10" fill="#475569" font-family="var(--font)">'+(j+1)+'</text>'});
   L.segs.forEach(function(q){s+='<line x1="'+Xs(at(q[0],X))+'" y1="'+Ys(at(q[1],Y))+'" x2="'+Xs(at(q[2],X))+'" y2="'+Ys(at(q[3],Y))+'" stroke="#DC2626" stroke-width="5" stroke-linecap="round"/>'});
-  L.nodes.forEach(function(q){s+='<rect x="'+(Xs(at(q[0],X))-6)+'" y="'+(Ys(at(q[1],Y))-6)+'" width="12" height="12" fill="#DC2626" stroke="#7F1D1D"/>'});
+  if(kind==='pcs')L.nodes.forEach(function(q){var i=q[0],j=q[1];if(i<0||j<0||i>=g.xs.length||j>=g.ys.length)return;s+='<rect x="'+Xs(X[i])+'" y="'+Ys(Y[j+1])+'" width="'+g.xs[i]*sc+'" height="'+g.ys[j]*sc+'" fill="rgba(220,38,38,.35)" stroke="#DC2626"/>'});
+  else L.nodes.forEach(function(q){s+='<rect x="'+(Xs(at(q[0],X))-6)+'" y="'+(Ys(at(q[1],Y))-6)+'" width="12" height="12" fill="#DC2626" stroke="#7F1D1D"/>'});
   return s+'</svg>'}
 function locPanel(x,kind){if(!x||!x.members)return '';var kp=keyPlanSVG(kind,x.members,x.name);return '<div class="panel"><h2>ตำแหน่งของ '+esc(x.name)+' ในแปลน ('+num(x.qty)+' ตำแหน่ง)</h2><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start">'+kp+'<p class="hint" style="flex:1;min-width:200px;margin:0">'+esc(x.members)+'</p></div></div>'}
 function locSheet(x,kind){if(!x||!x.members)return '';return '<div style="display:flex;gap:12px;align-items:flex-start;margin:6px 0"><div style="width:46%">'+keyPlanSVG(kind,x.members,x.name)+'</div><p class="note" style="flex:1">ตำแหน่ง ('+num(x.qty)+'): '+esc(x.members)+'</p></div>'}
@@ -5302,8 +5348,39 @@ function plansHTML(sheet){var bv=state.tools&&state.tools.bim;if(!bv)return '<p 
     out+=T('ตารางคาน',['เบอร์','จำนวน','ขนาด (ซม.)','เหล็กบน','เหล็กล่าง','เหล็กปลอก','ตำแหน่ง'],bm.map(function(b){var q=run(b),nt=q.neg&&!q.neg.error&&q.neg.nBar?Math.max(2,q.neg.nBar):2,nb=q.pos&&!q.pos.error?q.pos.nBar:2,ss=q.shear&&!q.shear.error?q.shear.sUse:0;return ['<b>'+esc(b.name)+'</b>',num(b.qty),f(b.b,0)+'×'+f(b.h,0),nt+'-'+b.bar,nb+'-'+b.bar,(b.stirrup||'RB9')+' @ '+spacingTxt(ss),esc(b.members||'')]}));
     out+=T('ตารางเสา',['เบอร์','จำนวน','ขนาด (ซม.)','เหล็กยืน','เหล็กปลอก','ตำแหน่ง'],cl.map(function(c){var q=runCol(c)||{},i2=q.input||c;return ['<b>'+esc(c.name)+'</b>',num(c.qty),f(c.b,0)+'×'+f(c.h,0),(2*(i2.nb||2)+2*(i2.ns||0))+'-'+(i2.bar||c.bar),(c.tie||'RB9')+' @ '+spacingTxt(q.tieS||15),esc(c.members||'')]}));
     out+=T('ตารางฐานรากและตอม่อ',['เบอร์','จำนวน','ขนาดฐาน (ม.)','หนา','เหล็กตะแกรง','ตอม่อ','ตำแหน่ง'],fd.map(function(x,k){var q=runFdn(x)||{},p0=pd[k],qp=p0?runPed(p0):null,ip=qp&&qp.input?qp.input:p0;return ['<b>'+esc(x.name)+'</b>',num(x.qty),q.type==='pile'?f(q.Lx,2)+'×'+f(q.Ly,2)+' เข็ม '+q.n+' ต้น':f(q.L,2)+'×'+f(q.B,2),f(q.t,0)+' ซม.',q.stX&&!q.stX.error?q.stX.n+'-'+x.bar+' / '+(q.stY||q.stX).n+'-'+x.bar:'–',p0?esc(p0.name)+' '+f(p0.b,0)+'×'+f(p0.h,0)+(ip&&ip.nb?' '+(2*ip.nb+2*(ip.ns||0))+'-'+ip.bar:''):'–',esc(x.members||'')]}))}
+  var pcl=(state.pcs||[]).filter(function(x){return x.bim});if(pcl.length)out+='<div class="'+(sheet?'':'panel overflow')+'"><h2>ตารางพื้นสำเร็จรูป</h2>'+tbl(['เบอร์','จำนวนช่อง','ช่วงพาดสุทธิ (ม.)','แผ่นพื้น','ทับหน้า','ตำแหน่ง'],pcl.map(function(x){var q=runPcs(x);return ['<b>'+esc(x.name)+'</b>',num(x.qty),f(num(x.Ln),2),'5×35 ซม. '+(q.pick?'ลวด '+q.pick.n+'Ø4 มม.':'ไม่ผ่าน'),f(num(x.topping),0)+' ซม. '+x.bar+' @ '+f(q.s||0.2,2),esc(x.members||'')]}),'wrap')+'</div>';
   return (sheet?'<div><div class="hd"><div class="t">แปลนโครงสร้างและตารางชิ้นส่วน</div><div>โครงการ: '+esc(state.project.name||'–')+'</div><div>วันที่: '+esc(state.project.date||'–')+'</div></div>':'<div class="verdict ok"><b>แปลนโครงสร้าง</b><p>เบอร์ชิ้นส่วนตรงกับรายการคำนวณ · พิมพ์ได้จากปุ่ม "รายการคำนวณ"</p></div>')+out+(sheet?sigBlock(state.project)+'</div>':'')}
 function renderPlans(){$('#vTool').innerHTML=plansHTML(false)}
+
+/* ===================== PRECAST PLANK SLAB MODULE ===================== */
+function newPcs(n){return {id:uid('k'),name:'PS'+n,qty:1,Ln:3,width:4,topping:5,finish:120,ll:200,shored:'1',wires:'0',bar:'RB6'}}
+function runPcs(x){var o={Ln:num(x.Ln),width:num(x.width),topping:num(x.topping),finish:num(x.finish),ll:num(x.ll),shored:x.shored!=='0',wires:+x.wires||0,bar:x.bar||'RB6',grade:state.mat.stGrade||'SR24',fy:2400,method:state.method};
+  if(!(o.Ln>0&&o.topping>=0&&o.finish>=0&&o.ll>=0))return {invalid:true};var r=CT.designPcs(o,state.params);r.input=o;return r}
+function pcsTableHTML(r){var L=r.input.Ln;return tbl(['ลวด Ø4 มม.'].concat(CT.PC_SPANS.map(function(s){return f(s,2)})).concat(['ที่ '+f(L,2)+' ม.']),CT.PC_TABLE.map(function(row){var v=row[r.key],c=CT.pcCap(v,L),pk=r.pick&&r.pick.n===row.n;
+  return ['<b>5×35 ซม. '+row.n+' เส้น</b>'].concat(v.map(function(x,k){var on=k<CT.PC_SPANS.length-1&&L>=CT.PC_SPANS[k]-1e-9&&L<=CT.PC_SPANS[k+1]+1e-9;return x==null?'–':(on&&pk?'<b>'+f(x,0)+'</b>':f(x,0))})).concat([c==null?'เกินตาราง':(pk?'<b>'+f(c,0)+'</b> '+badge(c>=r.q):f(c,0))])}),'wrap')}
+function renderPcs(){var x=cur(),r=runPcs(x),box=$('#resPcs'),sdm=state.method==='SDM',h='';
+  if(r.invalid){box.innerHTML=errBox('ใส่ช่วงพาดสุทธิ ความหนาคอนกรีตทับหน้า และน้ำหนักบรรทุก');return}
+  var pk=r.pick;h+='<div class="verdict '+(r.ok?'ok':'bad')+'"><b>'+(r.ok?'ผ่าน':'ไม่ผ่าน')+'</b><p class="sumline">'+esc(x.name)+' · แผ่นพื้นสำเร็จรูปแบบตัน 5×35 ซม. '+(pk?'ลวดอัดแรง '+pk.n+' เส้น Ø4 มม.':'— ไม่มีขนาดในตารางที่รับได้')+' · '+(x.shored!=='0'?'ค้ำยันระหว่างเท':'ไม่ค้ำยัน')+' · ทับหน้า '+f(r.input.topping,0)+' ซม. '+r.input.bar+' @ '+f(r.s,2)+' ม.</p></div>';
+  h+=locPanel(x,'pcs');
+  h+='<div class="panel">'+kv([['ช่วงพาดสุทธิ (ระยะห่างริมคานด้านใน)',f(r.input.Ln,2)+' ม.'],['คอนกรีตทับหน้า '+f(r.input.topping,0)+' ซม. × 2,400',f(r.wTop,0)+' กก./ตร.ม.'],['วัสดุปูผิว ฝ้า ระบบ',f(r.input.finish,0)+' กก./ตร.ม.'],['น้ำหนักจร',f(r.input.ll,0)+' กก./ตร.ม.'],
+    ['น้ำหนักบรรทุกที่แผ่นต้องรับ (ไม่รวมน้ำหนักแผ่นเอง)','<b>'+f(r.q,0)+' กก./ตร.ม.</b>'],['น้ำหนักบรรทุกปลอดภัยของแผ่นที่เลือก',pk&&pk.cap!=null?f(pk.cap,0)+' กก./ตร.ม. '+badge(pk.ok):'เกินตาราง '+badge(false)],['อัตราส่วนใช้งาน',isFinite(r.ratio)?f(r.ratio,3):'–'],
+    ['แรงที่ถ่ายลงคานรองรับ (ใช้งาน) = (แผ่น '+f(r.wPlank,0)+' + ทับหน้า + ปูผิว + จร) × L/2',f(r.R,0)+' กก./ม.'],[sdm?'แรงออกแบบลงคาน (1.4D + 1.7L) × L/2':'แรงลงคาน',f(sdm?r.Ru:r.R,0)+' กก./ม.'],
+    ['เหล็กเสริมกันร้าวในคอนกรีตทับหน้า As = '+f(r.rho,4)+' × 100 × '+f(r.input.topping,0),f(r.As,2)+' ตร.ซม./ม. → '+r.input.bar+' @ '+f(r.s,2)+' ม. สองทาง']])+
+    (r.topOk?'':'<p class="warn">คอนกรีตทับหน้าควรหนาอย่างน้อย 4–5 ซม.</p>')+(r.spanOk?'':'<p class="warn">ช่วงพาดยาวเกินตาราง (4.50 ม.) ให้ใช้พื้นหล่อในที่หรือแผ่นพื้นกลวง</p>')+'</div>';
+  h+='<div class="panel overflow"><h2>ตารางน้ำหนักบรรทุกปลอดภัย (กก./ตร.ม.) · '+(x.shored!=='0'?'ค้ำยัน':'ไม่ค้ำยัน')+' · ช่วงพาดสุทธิ (ม.)</h2>'+pcsTableHTML(r)+'<p class="hint">ค่าในตารางเป็นน้ำหนักบรรทุกที่แผ่นรับได้เพิ่มจากน้ำหนักตัวเอง (รวมคอนกรีตทับหน้า วัสดุปูผิว และน้ำหนักจร) ตามตารางผู้ผลิตแบบตัน 5×35 ซม. ลวด Ø4 มม. ที่ใช้ในรายการคำนวณทั่วไป ช่วงระหว่างคอลัมน์ใช้การเทียบส่วน · <b>ควรตรวจกับตารางของผู้ผลิตที่ใช้จริง</b> · ระยะวางแผ่นบนคานไม่น้อยกว่า 5 ซม. และวางพาดในทิศด้านสั้น</p></div>';
+  h+='<div class="panel"><h2>รายละเอียดการวางแผ่นพื้น</h2>'+pcsSVG(x,r)+'</div>';box.innerHTML=h}
+function pcsSVG(x,r){var W=640,H=200,L=r.input.Ln,k=Math.min(420/L,160),x0=80,y0=80,tp=Math.max(10,r.input.topping*2.2),pl=12,s='<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;display:block" role="img" aria-label="รูปตัดพื้นสำเร็จรูป">'+rbT('รูปตัดตามช่วงพาด (มาตราส่วนโดยประมาณ)',W/2,16,{fs:13,c:'var(--ink2)'});
+  [x0-28,x0+L*k].forEach(function(xx){s+='<rect x="'+xx+'" y="'+(y0+pl)+'" width="28" height="60" fill="#D9DEE4" stroke="#111"/>'});
+  s+='<rect x="'+(x0-14)+'" y="'+y0+'" width="'+(L*k+28)+'" height="'+pl+'" fill="#CBD5E1" stroke="#334155"/>';for(var i=0;i<Math.min(12,Math.round(L/0.35));i++){}
+  s+='<rect x="'+(x0-14)+'" y="'+(y0-tp)+'" width="'+(L*k+28)+'" height="'+tp+'" fill="var(--concrete)" stroke="#111"/><line x1="'+(x0-10)+'" y1="'+(y0-tp/2)+'" x2="'+(x0+L*k+10)+'" y2="'+(y0-tp/2)+'" stroke="#B42318" stroke-width="2"/>';
+  for(var q=0;q<14;q++)s+='<circle cx="'+(x0+q*L*k/13)+'" cy="'+(y0+pl-3)+'" r="1.8" fill="#1F5FA8"/>';
+  s+=rbT('คอนกรีตทับหน้า '+f(r.input.topping,0)+' ซม. + '+r.input.bar+' @ '+f(r.s,2)+' ม. สองทาง',W/2,y0-tp-8,{fs:12,c:'#B42318'})+rbT('แผ่นพื้นสำเร็จรูป 5×35 ซม. '+(r.pick?'ลวด '+r.pick.n+'Ø4 มม.':''),W/2,y0+pl+18,{fs:12,c:'#1F5FA8'})+rbT('ช่วงพาดสุทธิ '+f(L,2)+' ม. · วางบนคาน ≥ 5 ซม.',W/2,H-10,{fs:11,c:'var(--muted)'});
+  return s+'</svg>'}
+function sheetPcs(x,first){var r=runPcs(x),pr=state.project,h='<div class="'+(first?'':'pb')+'"><div class="hd"><div class="t">รายการคำนวณพื้นสำเร็จรูป (แผ่นพื้นอัดแรงแบบตัน)</div><div>โครงการ: '+esc(pr.name||'–')+'</div><div>พื้น: <b>'+esc(x.name)+'</b></div><div>สถานที่: '+esc(pr.location||'–')+'</div><div>วันที่: '+esc(pr.date||'–')+'</div></div>'+locSheet(x,'pcs');
+  if(r.invalid)return h+'<p>ข้อมูลไม่ครบ</p></div>';var pk=r.pick;
+  h+='<h3>1. น้ำหนักบรรทุก</h3>'+ln('คอนกรีตทับหน้า '+f(r.input.topping,0)+' ซม. × 2,400',f(r.wTop,0)+' กก./ตร.ม.')+ln('วัสดุปูผิว ฝ้า ระบบ',f(r.input.finish,0)+' กก./ตร.ม.')+ln('น้ำหนักจร',f(r.input.ll,0)+' กก./ตร.ม.')+ln('รวมน้ำหนักที่แผ่นต้องรับ','<b>'+f(r.q,0)+' กก./ตร.ม.</b>');
+  h+='<h3>2. เลือกแผ่นพื้น ('+(x.shored!=='0'?'ค้ำยันระหว่างเท':'ไม่ค้ำยัน')+')</h3>'+ln('ช่วงพาดสุทธิ',f(r.input.Ln,2)+' ม.')+(pk?ln('แผ่นตัน 5×35 ซม. ลวด '+pk.n+'Ø4 มม. รับได้',(pk.cap!=null?f(pk.cap,0):'–')+' กก./ตร.ม. ≥ '+f(r.q,0)+' '+(pk.ok?'<span class="ok">ผ่าน</span>':'<span class="bad">ไม่ผ่าน</span>')):ln('ไม่มีขนาดในตารางที่รับได้','<span class="bad">ไม่ผ่าน</span>'))+pcsTableHTML(r);
+  h+='<h3>3. แรงลงคานและเหล็กทับหน้า</h3>'+ln('แรงลงคานรองรับ (ใช้งาน) = '+f(r.wD+r.wL,0)+' × '+f(r.input.Ln,2)+' / 2',f(r.R,0)+' กก./ม.')+ln('เหล็กกันร้าวทับหน้า As = '+f(r.rho,4)+' × 100 × '+f(r.input.topping,0),f(r.As,2)+' ตร.ซม./ม. → '+r.input.bar+' @ '+f(r.s,2)+' ม.')+'<h3>รายละเอียด</h3>'+pcsSVG(x,r)+'<p class="note">ค่าความสามารถรับน้ำหนักจากตารางผู้ผลิต ต้องตรวจกับผู้ผลิตที่ใช้จริง · ผลคำนวณนี้ต้องตรวจสอบและรับรองโดยวิศวกรผู้มีใบอนุญาต</p>'+sigBlock(pr)+'</div>';return h}
 
 function isEl(m){return !!LIST[base(m)]}
 function renderAll(){installTopBtn();var pn=document.getElementById('projName');if(pn)pn.textContent='📁 '+(state.project.name||'โครงการไม่มีชื่อ');
