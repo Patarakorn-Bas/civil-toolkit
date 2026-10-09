@@ -193,7 +193,7 @@ dialog legend{padding:0 6px;color:var(--ink2)}
 <body>
 <div class="app">
   <nav class="rail" aria-label="เครื่องมือ">
-    <div class="brand"><b>Civil Toolkit</b><span>ชุดเครื่องมือวิศวกรโยธา</span><br><i class="ver">v4.3 · กฎกระทรวง 2566</i><button id="projName" class="projbtn" onclick="__ctGo('home')" title="โครงการที่เปิดอยู่"></button></div>
+    <div class="brand"><b>Civil Toolkit</b><span>ชุดเครื่องมือวิศวกรโยธา</span><br><i class="ver">v4.4 · กฎกระทรวง 2566</i><button id="projName" class="projbtn" onclick="__ctGo('home')" title="โครงการที่เปิดอยู่"></button></div>
     <button class="mod" data-module="home"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10l7-6 7 6v7h-5v-4H8v4H3z"/></svg><span>ภาพรวมโครงการ</span></button>
     <div class="grp">แบบจำลองอาคาร</div>
     <button class="mod" data-module="bim"><svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 6l7-3 7 3v8l-7 3-7-3z"/><path d="M3 6l7 3 7-3M10 9v8"/></svg><span>แบบจำลองโครงสร้าง 3 มิติ</span></button>
@@ -2901,13 +2901,16 @@ try{var s=localStorage.getItem(KEY);if(s){var o=JSON.parse(s);Object.assign(stat
 state.project.date=String(state.project.date||'').replace(/[๐-๙]/g,function(c){return '๐๑๒๓๔๕๖๗๘๙'.indexOf(c)});
 state.curIds=state.curIds||{};if(state.cur&&!state.curIds.beam)state.curIds.beam=state.cur;
 state.beams&&state.beams.forEach(function(b){if(b.unitKg)return;b.dl=num(b.dl)*1000;b.ll=num(b.ll)*1000;(b.items||[]).forEach(function(it){if(it.kind==='udl'||it.kind==='point'){it.D=num(it.D)*1000;it.L=num(it.L)*1000}});b.unitKg=true});
-['beam','slab','col','fdn','stair','roof','ped','pcs'].forEach(function(m){var L=state[LIST[m]]=state[LIST[m]]||[];if(!L.length)L.push(MAKE[m](1));
+['beam','slab','col','fdn','stair','roof','ped','pcs'].forEach(function(m){var L=state[LIST[m]]=state[LIST[m]]||[];if(!L.length){var d0=MAKE[m](1);d0._def=true;L.push(d0)}
   if(!L.some(function(x){return x.id===state.curIds[m]}))state.curIds[m]=L[0].id});
-if(!state.slabs.some(function(x){return x.type==='one'})){var s1=newSlab(state.slabs.length+1);s1.type='one';s1.S=3;s1.L=4;s1.name='S'+(state.slabs.length+1);state.slabs.push(s1)}
-if(!state.slabs.some(function(x){return x.type==='two'})){var s2=newSlab(state.slabs.length+1);state.slabs.push(s2)}
+if(!state.slabs.some(function(x){return x.type==='one'})){var s1=newSlab(state.slabs.length+1);s1.type='one';s1.S=3;s1.L=4;s1.name='S'+(state.slabs.length+1);s1._def=true;state.slabs.push(s1)}
+if(!state.slabs.some(function(x){return x.type==='two'})){var s2=newSlab(state.slabs.length+1);s2._def=true;state.slabs.push(s2)}
 if(state.module==='slab'){var cs0=state.slabs.filter(function(x){return x.id===state.curIds.slab})[0];state.module=cs0&&cs0.type==='one'?'slab1':'slab2'}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}if(typeof syncOnChange==='function')syncOnChange()}
 function base(m){return m==='slab1'||m==='slab2'?'slab':m}
+function isDefEl(mk,x){if(!x||x.bim)return false;if(x._def)return true;var strip=function(o){var c={};Object.keys(o).forEach(function(k){if(k!=='id'&&k!=='name'&&k!=='_def')c[k]=o[k]});return JSON.stringify(c,Object.keys(c).sort())};
+  var d=MAKE[mk]&&MAKE[mk](1);if(!d)return false;if(strip(d)===strip(x))return true;if(mk==='slab'){var d1=newSlab(1);d1.type='one';d1.S=3;d1.L=4;if(strip(d1)===strip(x))return true}return false}
+function realList(mk,L){L=L||[];var r=L.filter(function(x){return !isDefEl(mk,x)});return r}
 function listOf(m){var bm=base(m),L=state[LIST[bm]];if(m==='slab1')return L.filter(function(x){return x.type==='one'});if(m==='slab2')return L.filter(function(x){return x.type==='two'});return L}
 function curOf(m){if(m==='slab')m=state.module==='slab1'?'slab1':'slab2';var L=listOf(m);return L.filter(function(b){return b.id===state.curIds[m]})[0]||L[0]}
 function cur(){return curOf(state.module)}
@@ -3198,7 +3201,7 @@ function sheetOne(b,first){
   return h;
 }
 function renderSheet(){
-  var m=state.module,bm=base(m),list=state.scope==='all'?listOf(m):[cur()],fn=bm==='beam'?sheetOne:bm==='slab'?sheetSlab:bm==='fdn'?sheetFdn:bm==='stair'?sheetStair:bm==='pcs'?sheetPcs:bm==='roof'?sheetRoof:bm==='ped'?sheetPed:sheetCol;
+  var m=state.module,bm=base(m),list=state.scope==='all'?(function(){var L0=listOf(m),r0=realList(bm,L0);return r0.length?r0:L0})():[cur()],fn=bm==='beam'?sheetOne:bm==='slab'?sheetSlab:bm==='fdn'?sheetFdn:bm==='stair'?sheetStair:bm==='pcs'?sheetPcs:bm==='roof'?sheetRoof:bm==='ped'?sheetPed:sheetCol;
   $('#sheet').innerHTML=list.map(function(b,k){return fn(b,k===0)}).join('');
 }
 function downloadDoc(){
@@ -3237,7 +3240,7 @@ function renderSlab(){
   h+='</table><p class="hint">* ใช้ปริมาณเหล็กขั้นต่ำ (เหล็กกันร้าว ρ = '+f(r.rhoTemp,4)+') · d ด้านสั้น '+f(r.d1,1)+' ซม., ด้านยาว '+f(r.d2,1)+' ซม.</p></div>';
   var s=r.shear;h+='<div class="panel"><h2>แรงเฉือน <span class="tag '+(s.ok?'ok':'bad')+'">'+(s.ok?'ผ่าน':'ไม่ผ่าน')+'</span></h2><table class="res">';
   h+=sdm?'<tr><th>Vu</th><td>'+f(s.V*1000,0)+' กก./ม.</td></tr><tr><th>φVc</th><td>'+f(s.phiVc*1000,0)+' กก./ม.</td></tr>':'<tr><th>v</th><td>'+f(s.v)+' กก./ตร.ซม.</td></tr><tr><th>vc</th><td>'+f(s.vc)+' กก./ตร.ซม.</td></tr>';
-  h+='</table></div>';h+='<div class="panel"><h2>รายละเอียดการเสริมเหล็ก</h2>'+slabRebarSVG(x,r)+'</div>';box.innerHTML=h;
+  h+='</table></div>';h+='<div class="panel"><h2>รายละเอียดการเสริมเหล็ก</h2>'+slabRebarSVG(x,r)+'</div>';box.innerHTML=locPanel(x,'slab')+h;
 }
 function slabSVG(x,r){
   var W=300,H=240,two=x.type==='two',S=two?r.S:r.span,L=two?r.Lg:Math.max(r.span*1.6,1),sc=Math.min(210/L,140/S),w=L*sc,hh=S*sc,x0=(W-w)/2,y0=(H-hh)/2-10,T=function(tx,xx,yy,o){return '<text x="'+xx+'" y="'+yy+'" '+(o||'text-anchor="middle"')+' fill="var(--ink2)" font-size="14" font-family="var(--font)">'+tx+'</text>'};
@@ -3260,7 +3263,7 @@ function slabSVG(x,r){
 function sheetSlab(x,first){
   var r=runSlab(x),m=mat(),P=state.params,pr=state.project,sdm=state.method==='SDM',h='';
   h+='<div class="'+(first?'':'pb')+'"><div class="hd"><div class="t">รายการคำนวณออกแบบพื้น ค.ส.ล. ('+(sdm?'วิธีกำลัง SDM':'วิธีหน่วยแรงใช้งาน WSD')+')</div>';
-  h+='<div>โครงการ: '+esc(pr.name||'–')+'</div><div>พื้น: <b>'+esc(x.name)+'</b></div><div>สถานที่: '+esc(pr.location||'–')+'</div><div>วันที่: '+esc(pr.date||'–')+'</div></div>';
+  h+='<div>โครงการ: '+esc(pr.name||'–')+'</div><div>พื้น: <b>'+esc(x.name)+'</b></div><div>สถานที่: '+esc(pr.location||'–')+'</div><div>วันที่: '+esc(pr.date||'–')+'</div></div>'+locSheet(x,'slab');
   if(r.invalid)return h+'<p class="bad">ข้อมูลไม่ครบหรือไม่ถูกต้อง</p></div>';
   var i=r.input,two=i.type==='two',it0=r.items.filter(function(q){return !q.error&&q.M>0})[0];
   h+='<h3>1. วัสดุและหน้าตัด</h3>'+ln('f\'c / fy ('+state.mat.grade+')',f(m.fc,0)+' / '+f(m.fy,0)+' กก./ตร.ซม.');
@@ -3713,22 +3716,22 @@ function sheetStair(x,first){var r=runStair(x),P=state.params,pr=state.project,s
 /* ===================== BOQ ===================== */
 function boqCollect(){
   var P=state.params,list=[],notes=[];
-  state.beams.forEach(function(b){var r=run(b),i=inputOf(b);if(r.invalid)return notes.push('คาน '+b.name+': ข้อมูลไม่ครบ');if(!(i.L>0))return notes.push('คาน '+b.name+': ไม่มีความยาว L');
+  realList('beam',state.beams).forEach(function(b){var r=run(b),i=inputOf(b);if(r.invalid)return notes.push('คาน '+b.name+': ข้อมูลไม่ครบ');if(!(i.L>0))return notes.push('คาน '+b.name+': ไม่มีความยาว L');
     var q=CT.qtyBeam({b:i.b,h:i.h,L:num(b.Lq)||i.L,cover:i.cover,bar:i.bar,nBot:r.pos&&!r.pos.error?r.pos.nBar:2,nTop:r.neg&&!r.neg.error?r.neg.nBar:(r.pos&&r.pos.doubly?r.pos.nBarC:2),stirrup:i.stirrup,s1:r.shear&&!r.shear.error&&r.shear.sUse>0?r.shear.sUse:20,s2:r.shear2&&!r.shear2.error?r.shear2.sUse:0,count:num(b.qty)},P);list.push({type:'คาน',name:b.name,count:num(b.qty),q:q})});
-  state.slabs.forEach(function(x){var r=runSlab(x);if(r.invalid)return notes.push('พื้น '+x.name+': ข้อมูลไม่ครบ');var it=function(re){var m=r.items.filter(function(q){return re.test(q.label)&&!q.error});return m.length?Math.min.apply(null,m.map(function(q){return q.sUse})):0};
+  realList('slab',state.slabs).forEach(function(x){var r=runSlab(x);if(r.invalid)return notes.push('พื้น '+x.name+': ข้อมูลไม่ครบ');var it=function(re){var m=r.items.filter(function(q){return re.test(q.label)&&!q.error});return m.length?Math.min.apply(null,m.map(function(q){return q.sUse})):0};
     var g=x.type==='two'?{S:r.S,L:r.Lg,t:num(x.t),bar:x.bar,sBotS:it(/ด้านสั้น กลางช่วง/),sBotL:it(/ด้านยาว กลางช่วง/),negS:it(/ด้านสั้น .*−M/),negL:it(/ด้านยาว .*−M/),count:num(x.qty)}:
       {S:num(x.S),L:num(x.L)||num(x.S),t:num(x.t),bar:x.bar,oneWay:true,sBotS:it(/กลางช่วง/)||it(/ฐานรองรับ/),sTemp:it(/กันร้าว/),negS:x.support==='simple'?0:it(/ฐานรองรับ/),count:num(x.qty)};
     list.push({type:'พื้น',name:x.name,count:num(x.qty),q:CT.qtySlab(g,P)})});
-  state.cols.forEach(function(x){var r=runCol(x);if(r.invalid)return notes.push('เสา '+x.name+': ข้อมูลไม่ครบ');var i=r.input,H=num(x.H)||i.Lu;if(!(H>0))return notes.push('เสา '+x.name+': ไม่มีความสูง');
+  realList('col',state.cols).forEach(function(x){var r=runCol(x);if(r.invalid)return notes.push('เสา '+x.name+': ข้อมูลไม่ครบ');var i=r.input,H=num(x.H)||i.Lu;if(!(H>0))return notes.push('เสา '+x.name+': ไม่มีความสูง');
     list.push({type:'เสา',name:x.name,count:num(x.qty),q:CT.qtyCol({b:i.b,h:i.h,H:H,bar:i.bar,n:2*i.nb+2*i.ns,tie:i.tie,sTie:r.tieS||20,cover:i.cover,count:num(x.qty)},P)})});
-  (state.peds||[]).forEach(function(x){var r=runPed(x);if(r.invalid)return notes.push('ตอม่อ '+x.name+': ข้อมูลไม่ครบ');var i=r.input;
+  realList('ped',state.peds).forEach(function(x){var r=runPed(x);if(r.invalid)return notes.push('ตอม่อ '+x.name+': ข้อมูลไม่ครบ');var i=r.input;
     list.push({type:'ตอม่อ',name:x.name,count:num(x.qty),q:CT.qtyCol({b:i.b,h:i.h,H:num(x.H),bar:i.bar,n:2*i.nb+2*i.ns,tie:i.tie,sTie:r.tieS||20,cover:i.cover,count:num(x.qty)},state.params)})});
-  state.fdns.forEach(function(x){var r=runFdn(x);if(r.invalid)return notes.push('ฐานราก '+x.name+': ข้อมูลไม่ครบ');var pile=x.type==='pile';if(r.stX.error||r.stY.error)return notes.push('ฐานราก '+x.name+': ออกแบบเหล็กไม่ได้');
+  realList('fdn',state.fdns).forEach(function(x){var r=runFdn(x);if(r.invalid)return notes.push('ฐานราก '+x.name+': ข้อมูลไม่ครบ');var pile=x.type==='pile';if(r.stX.error||r.stY.error)return notes.push('ฐานราก '+x.name+': ออกแบบเหล็กไม่ได้');
     list.push({type:'ฐานราก',name:x.name,count:num(x.qty),q:CT.qtyFdn({Lx:pile?r.Lx:r.L,Ly:pile?r.Ly:r.B,t:r.t,bar:x.bar,nx:r.stX.n,ny:r.stY.n,Df:pile?0:num(x.Df),colA:num(x.cx)*num(x.cy)/1e4,piles:pile?r.n:0,count:num(x.qty)},P)})});
-  var pcsArea=0,pcsTxt={};(state.pcs||[]).forEach(function(x){var r=runPcs(x);if(r.invalid)return notes.push('พื้นสำเร็จรูป '+x.name+': ข้อมูลไม่ครบ');var q=num(x.qty)||0,A=num(x.Ln)*num(x.width)*q;if(!(A>0))return;pcsArea+=A;var k=r.pick?r.pick.n:0;pcsTxt[k]=(pcsTxt[k]||0)+A;var db=CT.BAR[x.bar||'RB6'],st={};st[x.bar||'RB6']=A*2/(r.s||0.2)*Math.PI*db*db/4/1e4*7850;list.push({type:'พื้นสำเร็จรูป',name:x.name,count:q,q:{conc:A*num(x.topping)/100,form:0,steel:st}})});
-  state.stairs.forEach(function(x){var r=runStair(x);if(r.invalid)return notes.push('บันได '+x.name+': ข้อมูลไม่ครบ');var i=r.input;
+  var pcsArea=0,pcsTxt={};realList('pcs',state.pcs).forEach(function(x){var r=runPcs(x);if(r.invalid)return notes.push('พื้นสำเร็จรูป '+x.name+': ข้อมูลไม่ครบ');var q=num(x.qty)||0,A=num(x.Ln)*num(x.width)*q;if(!(A>0))return;pcsArea+=A;var k=r.pick?r.pick.n:0;pcsTxt[k]=(pcsTxt[k]||0)+A;var db=CT.BAR[x.bar||'RB6'],st={};st[x.bar||'RB6']=A*2/(r.s||0.2)*Math.PI*db*db/4/1e4*7850;list.push({type:'พื้นสำเร็จรูป',name:x.name,count:q,q:{conc:A*num(x.topping)/100,form:0,steel:st}})});
+  realList('stair',state.stairs).forEach(function(x){var r=runStair(x);if(r.invalid)return notes.push('บันได '+x.name+': ข้อมูลไม่ครบ');var i=r.input;
     list.push({type:'บันได',name:x.name,count:num(x.qty),q:CT.qtyStair({Lh:i.Lh,width:i.width,R:i.R,T:i.T,t:i.t,bar:i.bar,sMain:r.items[0].sUse||20,sDist:r.items[r.items.length-1].sUse||25,count:num(x.qty)},P)})});
-  var roofKg=0;state.roofs.forEach(function(x){var r=runRoof(x);if(r.invalid||r.error)return notes.push('หลังคา '+x.name+': ข้อมูลไม่ครบ');var n=num(x.qty),kg=x.type==='truss'?r.weight:x.type==='post'?r.sec.w*r.H:isRB(x.type)?r.sec.w*(r.Ls||r.L):x.type==='rafter'?r.sec.w*r.Ls:r.sec.w*r.input.span;
+  var roofKg=0;realList('roof',state.roofs).forEach(function(x){var r=runRoof(x);if(r.invalid||r.error)return notes.push('หลังคา '+x.name+': ข้อมูลไม่ครบ');var n=num(x.qty),kg=x.type==='truss'?r.weight:x.type==='post'?r.sec.w*r.H:isRB(x.type)?r.sec.w*(r.Ls||r.L):x.type==='rafter'?r.sec.w*r.Ls:r.sec.w*r.input.span;
     roofKg+=kg*n;list.push({type:{purlin:'แป',rafter:'จันทัน',truss:'โครงถัก',eave:'อะเส',ridge:'อกไก่',support:'สะพานรับจันทัน',hip:'ตะเฆ่สัน',valley:'ตะเฆ่ราง',tie:'ขื่อ',post:'ดั้ง/เสาตุ๊กตา'}[x.type],name:x.name+' ('+(r.sec?r.sec.name:'ท่อเหลี่ยม')+')',count:n,q:{conc:0,form:0,steel:{},roofKg:kg*n}})});
   var tot=CT.qtySum(list.map(function(e){return e.q})),bw=P.boq,rows=[];
   rows.push({key:'conc',label:'คอนกรีตโครงสร้าง f\'c '+state.mat.fc+' กก./ตร.ซม. (เผื่อ '+f(bw.concWaste*100,0)+'%)',qty:tot.conc*(1+bw.concWaste),unit:'ลบ.ม.'});
@@ -4892,7 +4895,7 @@ function bimFlowTable(r){var F=bimLoadFlow(r),A=r.A,nS=A.nS,ln=function(k){retur
     '<p class="hint">น้ำหนักบนคาน = (น้ำหนักแผ่จริงจากพื้น + ผนัง + คานเอง + หลังคา + บันได) × ความยาว + แรงจุดจากคานซอย · แรงปฏิกิริยาจากการวิเคราะห์คานต่อเนื่องของแต่ละแนว · เสา = น้ำหนักจากชั้นบน + แรงปฏิกิริยาคานที่หัวเสา + น้ำหนักเสาเอง</p></div>'}
 
 function bim3D(r,v,inner){bimLastR=r;var A=r.A,D=r.D,m=r.m,mode=($('#bimView')||{}).value||v.view||'all',ang=(v.ang==null?35:+v.ang)*Math.PI/180,ca=Math.cos(ang),sa=Math.sin(ang),tilt=(v.tilt==null?30:+v.tilt)*Math.PI/180,el=Math.sin(tilt),zf=Math.cos(tilt),W=660,H=440,X=A.X,Y=A.Y,Z=A.Z,zoom=+v.zoom||1;
-  var P=function(x,y,z){return [x*ca-y*sa,(x*sa+y*ca)*el-z*zf]},dep=function(x,y,z){return (x*sa+y*ca)*zf+z*el},items=[],stat=function(ok){return ok?'#1F7A4D':'#B42318'},bh=m.beam.h/100,finfo=null;
+  var P=function(x,y,z){y=-y;return [x*ca-y*sa,(x*sa+y*ca)*el-z*zf]},dep=function(x,y,z){y=-y;return (x*sa+y*ca)*zf+z*el},items=[],stat=function(ok){return ok?'#1F7A4D':'#B42318'},bh=m.beam.h/100,finfo=null;
   if(FORCEMODES[mode]&&!r.Fr)mode='frame';
   var flowF=null;if(mode==='flow'){flowF=bimFlowItems(r,v,P,dep,items);finfo={flow:true}}
   else if(FORCEMODES[mode])finfo=forceItems(r,v,mode,P,dep,items);
@@ -4908,7 +4911,7 @@ function bim3D(r,v,inner){bimLastR=r;var A=r.A,D=r.D,m=r.m,mode=($('#bimView')||
         if(st.dir==='x'){fx=x0+a*tq-a/n/2;fx2=fx+a/n*(st.type==='straight'?1:2);fy=y0+(st.type==='straight'?0:side*b/2);fy2=fy+(st.type==='straight'?b:b/2)}else{fy=y0+b*tq-b/n/2;fy2=fy+b/n*(st.type==='straight'?1:2);fx=x0+(st.type==='straight'?0:side*a/2);fx2=fx+(st.type==='straight'?a:a/2)}
         items.push({d:dep((fx+fx2)/2,(fy+fy2)/2,z),poly:[P(fx,fy,z),P(fx2,fy,z),P(fx2,fy2,z),P(fx,fy2,z)],fill:'#A7B0BA',stroke:'#6B7785'})}})});
   if(!finfo){
-    var V3=[sa*zf,ca*zf,el],hexs=function(c,f){var n=parseInt(c.slice(1),16),R=(n>>16)&255,G2=(n>>8)&255,B=n&255;return 'rgb('+Math.round(R*f)+','+Math.round(G2*f)+','+Math.round(B*f)+')'};
+    var V3=[sa*zf,-ca*zf,el],hexs=function(c,f){var n=parseInt(c.slice(1),16),R=(n>>16)&255,G2=(n>>8)&255,B=n&255;return 'rgb('+Math.round(R*f)+','+Math.round(G2*f)+','+Math.round(B*f)+')'};
     var box=function(x0,x1,y0,y1,z0,z1,col,click,bias){var F=[[[0,0,1],[[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]],1.0],[[0,0,-1],[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0]],0.5],[[1,0,0],[[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],[x1,y0,z1]],0.78],[[-1,0,0],[[x0,y0,z0],[x0,y1,z0],[x0,y1,z1],[x0,y0,z1]],0.7],[[0,1,0],[[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1]],0.86],[[0,-1,0],[[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1]],0.64]];
       F.forEach(function(fc){var n=fc[0];if(n[0]*V3[0]+n[1]*V3[1]+n[2]*V3[2]<=1e-6)return;var c3=fc[1].reduce(function(a,p){return [a[0]+p[0]/4,a[1]+p[1]/4,a[2]+p[2]/4]},[0,0,0]);
         items.push({d:dep(c3[0],c3[1],c3[2])+(bias||0),poly:fc[1].map(function(p){return P(p[0],p[1],p[2])}),fill:hexs(col,fc[2]),stroke:hexs(col,0.45),click:click})})};
@@ -4935,7 +4938,7 @@ function bim3D(r,v,inner){bimLastR=r;var A=r.A,D=r.D,m=r.m,mode=($('#bimView')||
   if(mode==='all'&&A.roof){var gm=A.roof.gm,b=gm.bbox,nd=34,c=Math.max(b[2]-b[0],b[3]-b[1])/nd,zt=Z[A.nS];
     for(var jj=0;jj<nd+2;jj++)for(var ii=0;ii<nd+2;ii++){var x0=b[0]+ii*c,y0=b[1]+jj*c;if(x0>=b[2]-1e-9||y0>=b[3]-1e-9)continue;var cen=gm.at(x0+c/2,y0+c/2);if(!cen)continue;
       var hz=function(x,y){var a=gm.at(Math.min(Math.max(x,b[0]),b[2]),Math.min(Math.max(y,b[1]),b[3]));return zt-m.roof.eave*Math.tan(m.roof.slope*Math.PI/180)+(a?a.h:cen.h)};
-      var vx={W:[-1,0],E:[1,0],S:[0,-1],N:[0,1]}[cen.side],kk=Math.max(0.45,Math.min(1,0.7+0.25*(vx[0]*sa+vx[1]*ca)-0.22*(vx[0]*ca-vx[1]*sa))),cl=Math.round(150+80*kk);
+      var vx={W:[-1,0],E:[1,0],S:[0,-1],N:[0,1]}[cen.side],kk=Math.max(0.45,Math.min(1,0.7+0.25*(vx[0]*sa-vx[1]*ca)-0.22*(vx[0]*ca+vx[1]*sa))),cl=Math.round(150+80*kk);
       items.push({d:dep(x0+c/2,y0+c/2,zt+2),poly:[[x0,y0],[x0+c,y0],[x0+c,y0+c],[x0,y0+c]].map(function(q2){return P(q2[0],q2[1],hz(q2[0],q2[1]))}),fill:'rgba('+Math.round(cl*0.78)+','+Math.round(cl*0.55)+','+Math.round(cl*0.45)+',.9)',stroke:'none'})}}
   if(mode!=='flow'){var gz=-0.62,Xm=X[X.length-1],Ym=Y[Y.length-1];X.forEach(function(x,i){items.push({d:dep(x,Ym/2,gz)-5,line:[P(x,-1,gz),P(x,Ym+1,gz)],stroke:'rgba(100,116,139,.45)',w:0.8});items.push({d:dep(x,-1.4,gz)+5,text:gridLab(i),at:P(x,-1.4,gz),color:'#334155'})});
     Y.forEach(function(y,j){items.push({d:dep(Xm/2,y,gz)-5,line:[P(-1,y,gz),P(Xm+1,y,gz)],stroke:'rgba(100,116,139,.45)',w:0.8});items.push({d:dep(Xm+1.4,y,gz)+5,text:String(j+1),at:P(Xm+1.4,y,gz),color:'#334155'})});
@@ -5004,7 +5007,7 @@ window.__ctBimExport=function(){var r=toolRun('bim');if(r.error)return;var D=r.D
       colD:Math.round(mx(function(o){var N=o.x.N;return (N.fdnD-N.RD[0])/1000})*100)/100,colL:Math.round(mx(function(o){var N=o.x.N;return (N.fdnL-N.RL[0])/1000})*100)/100,gbD:Math.round(mx(function(o){return o.x.N.RD[0]/1000})*100)/100,gbL:Math.round(mx(function(o){return o.x.N.RL[0]/1000})*100)/100});state.peds=state.peds||[];state.peds.push(np)});
   slabsOut.forEach(function(sx){var a=sx.a,b=sx.b,S=Math.min(a,b),L=Math.max(a,b),lv=sx.lv,has=function(ii,jj){return jj>=0&&jj<A.occ.length&&ii>=0&&ii<A.occ[0].length&&A.occ[jj][ii]&&((lv.slabs||{})[ii+','+jj]||'cast')!=='void'&&!lv.voids[ii+','+jj]};
     var ns=newSlab(0),dl=(sx.lv.k===nS?m.roof.finish:m.slab.finish)+(sx.t==='bath'?m.bath.extra:0),ll=sx.lv.k===nS?m.roof.llFlat:m.slab.ll,xl=a>=b,inner=sx.sb?true:null;
-    Object.assign(ns,{bim:true,name:'S'+ln(sx.lv.k)+'-'+gridLab(sx.i)+(sx.j+1)+(sx.sub!==''?'/'+(sx.sub+1):'')+(sx.t==='bath'?' ห้องน้ำ':''),t:m.slab.t,dl:dl,ll:ll,S:S,L:L});
+    Object.assign(ns,{bim:true,qty:1,members:gridLab(sx.i)+(sx.j+1)+(sx.sub!==''?'/'+(sx.sub+1):'')+' ('+bimLvName(sx.lv.k,nS)+')',name:'S'+ln(sx.lv.k)+'-'+gridLab(sx.i)+(sx.j+1)+(sx.sub!==''?'/'+(sx.sub+1):'')+(sx.t==='bath'?' ห้องน้ำ':''),t:m.slab.t,dl:dl,ll:ll,S:S,L:L});
     var e={b:has(sx.i,sx.j-1),t:has(sx.i,sx.j+1),l:has(sx.i-1,sx.j),r:has(sx.i+1,sx.j)};if(sx.sb){if(sx.sb.dir==='x'){if(sx.sub)e.b=true;else e.t=true}else{if(sx.sub)e.l=true;else e.r=true}}
     if(S/L>=0.5){ns.type='two';ns.eL1=xl?e.b:e.l;ns.eL2=xl?e.t:e.r;ns.eS1=xl?e.l:e.b;ns.eS2=xl?e.r:e.t}
     else{ns.type='one';var c1=xl?e.b:e.l,c2=xl?e.t:e.r;ns.support=c1&&c2?'bothCont':c1||c2?'oneCont':'simple'}
@@ -5015,6 +5018,7 @@ window.__ctBimExport=function(){var r=toolRun('bim');if(r.error)return;var D=r.D
     else if(st.type==='straight')Object.assign(o,{Lh:Math.round(run*100)/100,width:Math.round(wid*100)/100});
     else Object.assign(o,{Lh:Math.round((run-land)*100)/100,Lland:Math.round(land*100)/100,width:Math.round(wid/2*100)/100});
     Object.assign(nst,o);state.stairs.push(nst)});
+  ['beam','col','fdn','slab','stair','ped','pcs','roof'].forEach(function(mk){var Lk=LIST[mk],LL=state[Lk]=state[Lk]||[];if(LL.some(function(x){return !isDefEl(mk,x)}))state[Lk]=LL.filter(function(x){return !isDefEl(mk,x)});if(!state[Lk].length){var d1=MAKE[mk](1);d1._def=true;state[Lk].push(d1)}if(!state[Lk].some(function(x){return x.id===state.curIds[mk]}))state.curIds[mk]=state[Lk][0].id});
   ['beam','col','fdn','slab','stair','ped','pcs'].forEach(function(mk){var L0=state[LIST[mk]];if(!L0.length)L0.push(MAKE[mk](1));if(!L0.some(function(x){return x.id===state.curIds[mk]}))state.curIds[mk]=L0[0].id});
   if(A.roof){var rv=toolVals('roofmodel');rv.src='bim';bimRoofParts(r)}
   save();alert('สร้างแล้ว: คาน '+gB.length+' แบบ · เสา '+gC.length+' แบบ · ฐานราก '+gF.length+' แบบ · พื้น '+slabsOut.length+' · บันได '+A.stairs.length+(A.roof?' · ชุดหลังคา':'')+'\nจำนวนชิ้นจริงของแต่ละแบบอยู่ในช่อง "จำนวน" (ใช้ใน BOQ)');state.module='home';renderAll()};
@@ -5104,7 +5108,7 @@ var MANUAL=[
 ['faq','18. คำถามที่พบบ่อย',`<ul><li><b>ปุ่มติดตั้งแอปไม่ขึ้น:</b> ใช้ Chrome/Edge บนคอม หรือ Safari บน iPad และเปิดจากลิงก์ GitHub Pages (https)</li><li><b>อัปเดตแล้วยังเห็นเวอร์ชันเก่า:</b> ปิดแอปแล้วเปิดใหม่หนึ่งครั้ง</li><li><b>ตรวจกริดจาก PDF ไม่เจอ:</b> แบบอาจเป็นภาพสแกนหรือกริดไม่ได้เขียนเป็นตัวอักษร ให้คลิกวางเส้นกริดเอง</li><li><b>ชิ้นส่วนไม่ผ่าน:</b> ดูข้อความสีแดงในผลลัพธ์ แล้วเพิ่มขนาด เปลี่ยนขนาดเหล็ก หรือเพิ่ม f'c</li><li><b>ข้อมูลหาย:</b> ข้อมูลอยู่ในเบราว์เซอร์ของแต่ละเครื่อง ควรเปิดซิงก์หรือส่งออกไฟล์โครงการเป็นระยะ</li></ul>`]];
 function manualHTML(sheet){var toc='<div class="panel"><h2>สารบัญ</h2><ol style="columns:2;margin:0;padding-left:1.3em;line-height:1.9">'+MANUAL.map(function(s){return '<li><a href="#man-'+s[0]+'" style="color:var(--ink)">'+s[1].replace(/^\d+\.\s*/,'')+'</a></li>'}).join('')+'</ol></div>';
   var body=MANUAL.map(function(s){return (sheet?'<div class="mansec">':'<div class="panel man" id="man-'+s[0]+'">')+'<h2>'+s[1]+'</h2>'+s[2]+'</div>'}).join('');
-  return (sheet?'<div><div class="hd"><div class="t">คู่มือการใช้งาน Civil Toolkit</div><div>เวอร์ชัน 4.3</div><div>กฎกระทรวง 2566</div></div>':'<div class="verdict ok"><b>คู่มือการใช้งาน</b><p>Civil Toolkit v4.3 · พิมพ์คู่มือได้จากปุ่ม "รายการคำนวณ" ด้านบน</p></div>'+toc)+body+(sheet?'</div>':'')}
+  return (sheet?'<div><div class="hd"><div class="t">คู่มือการใช้งาน Civil Toolkit</div><div>เวอร์ชัน 4.4</div><div>กฎกระทรวง 2566</div></div>':'<div class="verdict ok"><b>คู่มือการใช้งาน</b><p>Civil Toolkit v4.4 · พิมพ์คู่มือได้จากปุ่ม "รายการคำนวณ" ด้านบน</p></div>'+toc)+body+(sheet?'</div>':'')}
 function renderManual(){$('#vTool').innerHTML=manualHTML(false)}
 
 /* ===================== PRICE LIBRARY (shared by all projects) ===================== */
@@ -5327,37 +5331,46 @@ yothaHash();window.addEventListener('hashchange',yothaHash);
 function yothaRebar(){var y=state.yotha;if(!y)return {error:'โครงการนี้ไม่ได้มาจากโยธาแคด'};var r=toolRun('bim');if(!r||r.error)return {error:'ต้องวิเคราะห์แบบจำลองให้ได้ก่อน: '+(r&&r.error||'')};
   var A=r.A,D=r.D,m=r.m,nS=A.nS,X=A.X,Y=A.Y,G=y.grid||{},gx0=(G.x||[0])[0],gy0=(G.y||[0])[0],M=y.members||{},items={},miss=[];
   var near=function(arr,v){var b=-1,bd=0.05;arr.forEach(function(a,k){if(Math.abs(a-v)<bd){bd=Math.abs(a-v);b=k}});return b};
+  var vB=toolVals('bim'),CFm=bimCF(r,vB),MMm=bimMarkMap(r,vB),pcsMark=function(lv,i,j){var nm=gridLab(i)+(j+1),hit=null;(state.pcs||[]).forEach(function(x){if(x.bim&&String(x.members||'').split(/\s*,\s*/).some(function(q){return q.indexOf(nm)===0&&(nS<2||q.indexOf(bimLvName(lv,nS))>=0||q.indexOf('(')<0)}))hit=x.name});return hit};
   var put=function(key,type,mark,res,score){if(!key)return;var it=items[key];if(!it||score>it._s)items[key]=Object.assign({key:key,type:type,mark:mark,_s:score},res)};
   var cm=function(v){return Math.round(v)/100};
   (M.columns||[]).forEach(function(c){var i=c.grid&&c.grid[0]>=0?c.grid[0]:near(X,c.x-gx0),j=c.grid&&c.grid[1]>=0?c.grid[1]:near(Y,c.y-gy0),stn=(+c.level||0)+1;
     var d=D.cols.filter(function(q){return q.c.node.i===i&&q.c.node.j===j&&q.c.st===stn})[0];if(!d){miss.push('เสา '+c.mark);return}var inp=d.d.input||d.inp;
-    put(c.rkey,'column',c.mark,{n:2*inp.nb+2*inp.ns,d:inp.bar,td:inp.tie,ts:cm(d.d.tieS||15),c:cm(inp.cover||3)},d.d.ratio||0)});
+    put(c.rkey,'column',c.mark,{n:2*inp.nb+2*inp.ns,d:inp.bar,td:inp.tie,ts:cm(d.d.tieS||15),c:cm(inp.cover||3),b:cm(inp.b),h:cm(inp.h),ctMark:CFm.mc[i+','+j+'|'+stn]||''},d.d.ratio||0)});
   (M.beams||[]).forEach(function(b){var lv=b.at==='floor'?(+b.level||0):(+b.level||0)+1,ax=b.a.x-gx0,ay=b.a.y-gy0,bx=b.b.x-gx0,by=b.b.y-gy0,hz=Math.abs(ay-by)<0.02,list=[];
     if(hz){var j=near(Y,ay),lo=Math.min(ax,bx),hi=Math.max(ax,bx);if(j>=0)D.beams.forEach(function(q){if(q.lv===lv&&q.r.dir==='x'&&q.r.line===j){var s=q.r.s0+q.q;if(X[s]>=lo-0.05&&X[s+1]<=hi+0.05)list.push(q)}})}
     else{var i=near(X,ax),lo2=Math.min(ay,by),hi2=Math.max(ay,by);if(i>=0)D.beams.forEach(function(q){if(q.lv===lv&&q.r.dir==='y'&&q.r.line===i){var s=q.r.s0+q.q;if(Y[s]>=lo2-0.05&&Y[s+1]<=hi2+0.05)list.push(q)}})}
     if(!list.length)(D.secs||[]).forEach(function(q){var sb=q.sr.sb;if(q.sr.lv!==lv)return;var on=sb.dir==='x'?(hz&&Math.abs(ay-(Y[q.sr.j]+sb.pos))<0.05):(!hz&&Math.abs(ax-(X[q.sr.i]+sb.pos))<0.05);if(on)list.push(q)});
     if(!list.length){miss.push('คาน '+b.mark);return}
     var g=list.reduce(function(a,q){return (q.inp.Mp+q.inp.Mn)>(a.inp.Mp+a.inp.Mn)?q:a}),d=g.d,inp=g.inp,nb=d.pos&&!d.pos.error?d.pos.nBar:2,nt=d.neg&&!d.neg.error&&inp.Mn>0?Math.max(2,d.neg.nBar):2;
-    put(b.rkey,'beam',b.mark,{tn:nt,td:inp.bar,bn:nb,bd:inp.bar,sd:inp.stirrup,ss:d.shear&&!d.shear.error?cm(d.shear.sUse):0.15,c:cm(inp.cover)},inp.Mp+inp.Mn)});
+    put(b.rkey,'beam',b.mark,{tn:nt,td:inp.bar,bn:nb,bd:inp.bar,sd:inp.stirrup,ss:d.shear&&!d.shear.error?cm(d.shear.sUse):0.15,c:cm(inp.cover),b:cm(inp.b),h:cm(inp.h),ctMark:g.r&&g.r.loads?(MMm[g.lv+'|'+g.r.loads[g.q].key]||''):''},inp.Mp+inp.Mn)});
   (M.footings||[]).forEach(function(fq){var i=near(X,fq.x-gx0),j=near(Y,fq.y-gy0),d=D.fdns.filter(function(q){return q.N.i===i&&q.N.j===j})[0];if(!d||d.d.error||!d.d.stX||d.d.stX.error){miss.push('ฐานราก '+fq.mark);return}
-    var R=d.d,Lx=R.type==='pile'?R.Lx:R.L,cv=(d.inp.cover||7.5)/100,n=R.stX.n,s=n>1?(Lx-2*cv)/(n-1):0.15;put(fq.rkey,'footing',fq.mark,{d:d.inp.bar,s:Math.floor(s*100/2.5)*2.5/100,c:cv},(d.N.fdnD+d.N.fdnL))});
-  (M.slabs||[]).forEach(function(sq){var lv=+sq.level||0,lvl=A.levels[lv];if(!lvl||!lvl.hasSlab){miss.push('พื้น '+sq.mark);return}var best=null,P=state.params;
+    var R=d.d,Lx=R.type==='pile'?R.Lx:R.L,cv=(d.inp.cover||7.5)/100,n=R.stX.n,s=n>1?(Lx-2*cv)/(n-1):0.15;var fx={d:d.inp.bar,s:Math.floor(s*100/2.5)*2.5/100,c:cv,ftype:R.type==='pile'?'pile':'spread',w:Math.round(Lx*100)/100,l:Math.round((R.type==='pile'?R.Ly:R.B)*100)/100,t:Math.round((R.t||40))/100,ctMark:CFm.mf[i+','+j]||''};if(R.type==='pile'){fx.piles=R.n;fx.pileSize=cm(d.inp.pileSize);fx.pileSpacing=d.inp.spacing}put(fq.rkey,'footing',fq.mark,fx,(d.N.fdnD+d.N.fdnL))});
+  (M.slabs||[]).forEach(function(sq){var lv=+sq.level||0,lvl=A.levels[lv];if(!lvl||!lvl.hasSlab){miss.push('พื้น '+sq.mark);return}var best=null,P=state.params,nPc=0,nCast=0,pcM=null;
+    for(var j0=0;j0<A.occ.length;j0++)for(var i0=0;i0<A.occ[0].length;i0++){if(!A.occ[j0][i0])continue;var c0={x:(X[i0]+X[i0+1])/2+gx0,y:(Y[j0]+Y[j0+1])/2+gy0};if(sq.pts&&sq.pts.length>2&&!ptIn(c0,sq.pts))continue;var t0=(lvl.slabs||{})[i0+','+j0]||'cast';if(t0==='pc'){nPc++;pcM=pcM||pcsMark(lv,i0,j0)}else if(t0!=='void')nCast++}
+    var forcePc=nPc>nCast;
     for(var j=0;j<A.occ.length;j++)for(var i=0;i<A.occ[0].length;i++){if(!A.occ[j][i])continue;var c={x:(X[i]+X[i+1])/2+gx0,y:(Y[j]+Y[j+1])/2+gy0};if(sq.pts&&sq.pts.length>2&&!ptIn(c,sq.pts))continue;var t=(lvl.slabs||{})[i+','+j]||'cast';if(t==='void'||t==='pc'||lvl.voids[i+','+j])continue;
       var a=X[i+1]-X[i],bb=Y[j+1]-Y[j],has=function(ii,jj){return jj>=0&&jj<A.occ.length&&ii>=0&&ii<A.occ[0].length&&A.occ[jj][ii]},xl=a>=bb,e={b:has(i,j-1),t:has(i,j+1),l:has(i-1,j),r:has(i+1,j)};
       var inp={type:Math.min(a,bb)/Math.max(a,bb)>=0.5?'two':'one',t:Math.round((+sq.t||m.slab.t/100)*100),cover:2,bar:'RB9',S:Math.min(a,bb),L:Math.max(a,bb),coefMethod:'m2',edges:{L1:xl?e.b:e.l,L2:xl?e.t:e.r,S1:xl?e.l:e.b,S2:xl?e.r:e.t},support:'bothCont',dl:(lv===nS?m.roof.finish:m.slab.finish)+(t==='bath'?m.bath.extra:0),ll:lv===nS?m.roof.llFlat:m.slab.ll,selfWeight:true,method:state.method};
       var o2=CT.designSlab(inp,mat(),state.mat.grade==='SD40'&&false?'SD40':'SR24',P);if(!o2.ok){inp.bar='DB12';o2=CT.designSlab(inp,mat(),state.mat.grade,P)}
       var main=Math.min.apply(null,o2.items.filter(function(q){return !q.error&&/ด้านสั้น|เหล็กหลัก/.test(q.label)}).map(function(q){return q.sUse})),dist=Math.min.apply(null,o2.items.filter(function(q){return !q.error&&/ด้านยาว|กันร้าว/.test(q.label)}).map(function(q){return q.sUse}));
       var sc=1/main;if(!best||sc>best.sc)best={sc:sc,bar:inp.bar,ms:main,ds:isFinite(dist)?dist:main}}
+    if(forcePc)best=null;
     if(!best){var pcc=null;for(var j2=0;j2<A.occ.length;j2++)for(var i2=0;i2<A.occ[0].length;i2++){if(!A.occ[j2][i2])continue;var cc={x:(X[i2]+X[i2+1])/2+gx0,y:(Y[j2]+Y[j2+1])/2+gy0};if(sq.pts&&sq.pts.length>2&&!ptIn(cc,sq.pts))continue;if(((lvl.slabs||{})[i2+','+j2]||'cast')==='pc'){var Ln=Math.min(X[i2+1]-X[i2],Y[j2+1]-Y[j2])-m.beam.b/100;if(!pcc||Ln>pcc.Ln)pcc={Ln:Ln}}}
-      if(pcc){var rp=CT.designPcs({Ln:pcc.Ln,topping:5,finish:m.slab.finish,ll:m.slab.ll,shored:true,bar:'RB6',grade:'SR24',fy:2400,method:state.method},state.params);put(sq.rkey,'slab',sq.mark,{md:'RB6',ms:rp.s,dd:'RB6',ds:rp.s,c:0.02,precast:'แผ่นพื้นสำเร็จรูป 5×35 ซม.'+(rp.pick?' ลวด '+rp.pick.n+'Ø4 มม.':'')+' ทับหน้า 5 ซม.'},pcc.Ln);return}
-      miss.push('พื้น '+sq.mark);return}put(sq.rkey,'slab',sq.mark,{md:best.bar,ms:cm(best.ms),dd:best.bar,ds:cm(best.ds),c:0.02},best.sc)});
+      if(pcc){var rp=CT.designPcs({Ln:pcc.Ln,topping:5,finish:m.slab.finish,ll:m.slab.ll,shored:true,bar:'RB6',grade:'SR24',fy:2400,method:state.method},state.params);put(sq.rkey,'slab',sq.mark,{md:'RB6',ms:rp.s,dd:'RB6',ds:rp.s,c:0.02,slabType:'precast',plank:'5x35',wires:rp.pick?rp.pick.n:0,topping:0.05,ctMark:pcM||'',precast:'แผ่นพื้นสำเร็จรูป 5×35 ซม.'+(rp.pick?' ลวด '+rp.pick.n+'Ø4 มม.':'')+' ทับหน้า 5 ซม.'},pcc.Ln);return}
+      miss.push('พื้น '+sq.mark);return}put(sq.rkey,'slab',sq.mark,{md:best.bar,ms:cm(best.ms),dd:best.bar,ds:cm(best.ds),c:0.02,slabType:'cast',t:cm(+sq.t*100||m.slab.t)},best.sc)});
   (M.stairs||[]).forEach(function(s2){var run=+s2.run||3,R0=(+s2.riser||0.175)*100,T0=(+s2.tread||0.25)*100,inp={stype:'straight',Lh:run,width:+s2.width||1,R:R0,T:T0,t:15,cover:2,bar:'DB12',support:'simple',dl:100,ll:m.slab.ll,method:state.method};
     var o3=CT.designStair(inp,mat(),state.mat.grade,state.params);for(var t=15;!o3.ok&&t<=25;t+=2.5){inp.t=t;o3=CT.designStair(inp,mat(),state.mat.grade,state.params)}
     var mi=o3.items.filter(function(q){return !q.error&&/เหล็กหลัก/.test(q.label)}).map(function(q){return q.sUse}),di=o3.items.filter(function(q){return /กระจาย/.test(q.label)})[0];
     put(s2.rkey,'stair',s2.mark||'ST',{md:inp.bar,ms:cm(Math.min.apply(null,mi)),dd:'RB9',ds:cm(di?di.sUse:25),c:0.02},run)});
-  var out=Object.keys(items).map(function(k){var it=items[k];delete it._s;return it});return {items:out,miss:miss,ok:D.ok}}
+  var out=Object.keys(items).map(function(k){var it=items[k];delete it._s;return it});
+  var pl={footings:D.fdns.map(function(x){var R=x.d||{},N=x.N,o={x:Math.round((X[N.i]+gx0)*1000)/1000,y:Math.round((Y[N.j]+gy0)*1000)/1000,ctMark:CFm.mf[N.i+','+N.j]||'',ftype:R.type==='pile'?'pile':'spread',w:Math.round((R.type==='pile'?R.Lx:R.L)*100)/100,l:Math.round((R.type==='pile'?R.Ly:R.B)*100)/100,t:Math.round(R.t||40)/100,column:D.cols.some(function(c){return c.c.st===1&&c.c.node.i===N.i&&c.c.node.j===N.j})};
+      if(R.type==='pile'){o.piles=R.n;o.pileSize=(x.inp.pileSize||22)/100}if(R.stX&&!R.stX.error){o.bars=R.stX.n+'-'+x.inp.bar+(R.stY?' / '+R.stY.n+'-'+x.inp.bar:'')}return o}),
+    slabs:[]};
+  A.levels.forEach(function(L0){if(!L0.hasSlab)return;(L0.panels||[]).forEach(function(pn){pl.slabs.push({level:L0.k,x0:Math.round((pn.x0+gx0)*1000)/1000,y0:Math.round((pn.y0+gy0)*1000)/1000,w:Math.round(pn.a*1000)/1000,l:Math.round(pn.b*1000)/1000,slabType:pn.typ==='pc'?'precast':pn.typ==='bath'?'cast-bath':'cast',ctMark:pn.typ==='pc'?(pcsMark(L0.k,near(X,pn.x0),near(Y,pn.y0))||'PS'):''})})});
+  return {items:out,miss:miss,ok:D.ok,placements:pl}}
 function ptIn(p,pts){var c=false;for(var i=0,j=pts.length-1;i<pts.length;j=i++){var a=pts[i],b=pts[j];if(((a.y>p.y)!==(b.y>p.y))&&(p.x<(b.x-a.x)*(p.y-a.y)/((b.y-a.y)||1e-12)+a.x))c=!c}return c}
-window.__ctYothaRebar=function(){var r=yothaRebar();if(r.error){alert(r.error);return}var data={format:'yothacad-rebar',version:1,app:'Civil Toolkit',createdAt:new Date().toISOString(),project:state.project.name||'',method:state.method,items:r.items};
+window.__ctYothaRebar=function(){var r=yothaRebar();if(r.error){alert(r.error);return}var data={placements:r.placements,format:'yothacad-rebar',version:1,app:'Civil Toolkit',createdAt:new Date().toISOString(),project:state.project.name||'',method:state.method,items:r.items};
   var blob=new Blob([JSON.stringify(data,null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(state.project.name||'project').replace(/[\\/:*?"<>|]/g,'_')+' ผลเหล็กเสริม.json';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},1000);
   alert('ส่งออกผลเหล็กเสริม '+r.items.length+' รายการ'+(r.miss.length?'\nไม่พบผลออกแบบของ: '+r.miss.slice(0,8).join(', ')+(r.miss.length>8?' …':''):'')+(r.ok?'':'\n\nหมายเหตุ: ยังมีชิ้นส่วนที่ไม่ผ่านในแบบจำลอง ควรแก้ก่อนส่งกลับ')+'\n\nในโยธาแคดใช้ ไฟล์ → นำเข้าผลออกแบบเหล็กเสริม')};
 function yothaPanel(){var y=state.yotha;if(!y)return '';var M=y.members||{},n=function(k){return (M[k]||[]).length};
@@ -5382,10 +5395,10 @@ function keyPlanSVG(kind,members,mark){var bv=state.tools&&state.tools.bim;if(!b
   for(var j=0;j<g.ys.length;j++)for(var i=0;i<g.xs.length;i++)if(sel[i+','+j])s+='<rect x="'+Xs(X[i])+'" y="'+Ys(Y[j+1])+'" width="'+g.xs[i]*sc+'" height="'+g.ys[j]*sc+'" fill="#F1F5F9" stroke="#CBD5E1"/>';
   X.forEach(function(x,i){s+='<text x="'+Xs(x)+'" y="14" text-anchor="middle" font-size="10" fill="#475569" font-family="var(--font)">'+gridLab(i)+'</text>'});Y.forEach(function(y,j){s+='<text x="'+(W-10)+'" y="'+(Ys(y)+3)+'" text-anchor="middle" font-size="10" fill="#475569" font-family="var(--font)">'+(j+1)+'</text>'});
   L.segs.forEach(function(q){s+='<line x1="'+Xs(at(q[0],X))+'" y1="'+Ys(at(q[1],Y))+'" x2="'+Xs(at(q[2],X))+'" y2="'+Ys(at(q[3],Y))+'" stroke="#DC2626" stroke-width="5" stroke-linecap="round"/>'});
-  if(kind==='pcs')L.nodes.forEach(function(q){var i=q[0],j=q[1];if(i<0||j<0||i>=g.xs.length||j>=g.ys.length)return;s+='<rect x="'+Xs(X[i])+'" y="'+Ys(Y[j+1])+'" width="'+g.xs[i]*sc+'" height="'+g.ys[j]*sc+'" fill="rgba(220,38,38,.35)" stroke="#DC2626"/>'});
+  if(kind==='pcs'||kind==='slab')L.nodes.forEach(function(q){var i=q[0],j=q[1];if(i<0||j<0||i>=g.xs.length||j>=g.ys.length)return;s+='<rect x="'+Xs(X[i])+'" y="'+Ys(Y[j+1])+'" width="'+g.xs[i]*sc+'" height="'+g.ys[j]*sc+'" fill="rgba(220,38,38,.35)" stroke="#DC2626"/>'});
   else L.nodes.forEach(function(q){s+='<rect x="'+(Xs(at(q[0],X))-6)+'" y="'+(Ys(at(q[1],Y))-6)+'" width="12" height="12" fill="#DC2626" stroke="#7F1D1D"/>'});
   return s+'</svg>'}
-function locPanel(x,kind){if(!x||!x.members)return '';var kp=keyPlanSVG(kind,x.members,x.name);return '<div class="panel"><h2>ตำแหน่งของ '+esc(x.name)+' ในแปลน ('+num(x.qty)+' ตำแหน่ง)</h2><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start">'+kp+'<p class="hint" style="flex:1;min-width:200px;margin:0">'+esc(x.members)+'</p></div></div>'}
+function locPanel(x,kind){if(!x)return '';if(!x.members)return kind==='slab'?'<div class="panel"><p class="hint" style="margin:0">พื้นนี้กรอกเอง ไม่ได้ส่งมาจากแบบจำลอง จึงไม่มีตำแหน่งในแปลน · พื้นที่ส่งจากแบบจำลองจะมีแปลนย่อบอกตำแหน่งช่องพื้น</p></div>':'';var kp=keyPlanSVG(kind,x.members,x.name);return '<div class="panel"><h2>ตำแหน่งของ '+esc(x.name)+' ในแปลน ('+num(x.qty)+' ตำแหน่ง)</h2><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start">'+kp+'<p class="hint" style="flex:1;min-width:200px;margin:0">'+esc(x.members)+'</p></div></div>'}
 function locSheet(x,kind){if(!x||!x.members)return '';return '<div style="display:flex;gap:12px;align-items:flex-start;margin:6px 0"><div style="width:46%">'+keyPlanSVG(kind,x.members,x.name)+'</div><p class="note" style="flex:1">ตำแหน่ง ('+num(x.qty)+'): '+esc(x.members)+'</p></div>'}
 function beamRebarSVG(b,r){if(!r||r.invalid||!r.pos)return '';var W=600,H=250,bw=+b.b,hh=+b.h,k=Math.min(150/hh,110/bw),ct=3,nb=r.pos&&!r.pos.error?r.pos.nBar:2,nt=r.neg&&!r.neg.error&&r.neg.nBar?Math.max(2,r.neg.nBar):2,s=r.shear&&!r.shear.error?r.shear.sUse:20,bar=b.bar||'DB16',st=b.stirrup||'RB9';
   var sec=function(cx,top,bot,title){var x0=cx-bw*k/2,y0=40,w=bw*k,h=hh*k,o='<rect x="'+x0+'" y="'+y0+'" width="'+w+'" height="'+h+'" fill="var(--concrete)" stroke="#111"/><rect x="'+(x0+ct*k)+'" y="'+(y0+ct*k)+'" width="'+(w-2*ct*k)+'" height="'+(h-2*ct*k)+'" fill="none" stroke="#1F5FA8" stroke-width="1.6" rx="3"/>';
@@ -5453,7 +5466,8 @@ function sheetPcs(x,first){var r=runPcs(x),pr=state.project,h='<div class="'+(fi
   h+='<h3>3. แรงลงคานและเหล็กทับหน้า</h3>'+ln('แรงลงคานรองรับ (ใช้งาน) = '+f(r.wD+r.wL,0)+' × '+f(r.input.Ln,2)+' / 2',f(r.R,0)+' กก./ม.')+ln('เหล็กกันร้าวทับหน้า As = '+f(r.rho,4)+' × 100 × '+f(r.input.topping,0),f(r.As,2)+' ตร.ซม./ม. → '+r.input.bar+' @ '+f(r.s,2)+' ม.')+'<h3>รายละเอียด</h3>'+pcsSVG(x,r)+'<p class="note">ค่าความสามารถรับน้ำหนักจากตารางผู้ผลิต ต้องตรวจกับผู้ผลิตที่ใช้จริง · ผลคำนวณนี้ต้องตรวจสอบและรับรองโดยวิศวกรผู้มีใบอนุญาต</p>'+sigBlock(pr)+'</div>';return h}
 
 function isEl(m){return !!LIST[base(m)]}
-function renderAll(){installTopBtn();var pn=document.getElementById('projName');if(pn)pn.textContent='📁 '+(state.project.name||'โครงการไม่มีชื่อ');
+function clearDefFlag(){try{var m=base(state.module);if(LIST[m]){var x=cur();if(x&&x._def&&!isDefEl(m,Object.assign({},x,{_def:false})))delete x._def}}catch(e){}}
+function renderAll(){clearDefFlag();installTopBtn();var pn=document.getElementById('projName');if(pn)pn.textContent='📁 '+(state.project.name||'โครงการไม่มีชื่อ');
   var m=state.module;if(m==='slab'){m=state.module='slab2'}if(['trav','level','conv','setout','curve','earth'].indexOf(m)>=0){m=state.module='home'}
   if(!isEl(m)&&!TOOLS[m]&&m!=='boq'&&m!=='self'&&m!=='home'&&m!=='manual'&&m!=='estimate'&&m!=='plans'){m=state.module='home'}
   var el=isEl(m),tool=!el;
